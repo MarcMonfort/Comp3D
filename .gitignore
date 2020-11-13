@@ -1,0 +1,11 @@
+**/.vs
+*.log
+*.obj
+*.ilk
+*.exe
+*.recipe
+*.user
+*.pdb
+*.idb
+*.FileListAbsolute.txt
+*.tlog
