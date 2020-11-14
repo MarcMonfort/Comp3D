@@ -7,13 +7,21 @@ void Game::init()
 {
 	bPlay = true;
 	glClearColor(0.f, 0.f, 0.f, 1.0f);
+
+	SoundManager::instance().init();
+
+	FMOD::Sound* sound = SoundManager::instance().createSound("sounds/eBall.mp3", FMOD_DEFAULT);
+	FMOD::Channel* channel = SoundManager::instance().playSound(sound);
+	
+	
 	scene.init();
 }
 
 bool Game::update(int deltaTime)
 {
+	SoundManager::instance().update();
 	scene.update(deltaTime);
-	
+
 	return bPlay;
 }
 
