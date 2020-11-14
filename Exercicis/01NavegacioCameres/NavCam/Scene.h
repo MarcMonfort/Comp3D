@@ -5,6 +5,7 @@
 #include <glm/glm.hpp>
 #include "ShaderProgram.h"
 #include "Level.h"
+#include "SimpleObject.h"
 
 
 #define CAMERA_WIDTH 640
@@ -35,6 +36,18 @@ private:
 	float currentTime;
 	glm::mat4 projection;
 
+	enum class Camera
+	{
+		CAM_FPS,
+		CAM_FIX1,
+		CAM_FIX2,
+		CAM_FIX3,
+		CAM_FIX4
+	};
+	Camera eCam;
+
+	SimpleObject* entity;
+	glm::vec3 posEntity = glm::vec3(0.f);
 };
 
 

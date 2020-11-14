@@ -16,6 +16,7 @@
     <ClInclude Include="Scene.h" />
     <ClInclude Include="Shader.h" />
     <ClInclude Include="ShaderProgram.h" />
+    <ClInclude Include="SimpleObject.h" />
     <ClInclude Include="SoundManager.h" />
     <ClInclude Include="Texture.h" />
   </ItemGroup>
@@ -26,6 +27,7 @@
     <ClCompile Include="Scene.cpp" />
     <ClCompile Include="Shader.cpp" />
     <ClCompile Include="ShaderProgram.cpp" />
+    <ClCompile Include="SimpleObject.cpp" />
     <ClCompile Include="SoundManager.cpp" />
     <ClCompile Include="Texture.cpp" />
   </ItemGroup>
