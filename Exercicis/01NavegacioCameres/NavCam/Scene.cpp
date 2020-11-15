@@ -30,6 +30,8 @@ void Scene::init()
 
 	projection = glm::perspective(90.f / 180.f * PI, float(CAMERA_WIDTH) / float(CAMERA_HEIGHT), 0.1f, 100.f);
 	currentTime = 0.0f;
+
+	lastMousePosition = glm::vec2(CAMERA_WIDTH / 2, CAMERA_HEIGHT / 2);
 }
 
 void Scene::update(int deltaTime)
@@ -50,32 +52,41 @@ void Scene::update(int deltaTime)
 		eCam = Camera::CAM_FIX4;
 	}
 
+	/*currentMousePosition = Game::instance().getMousePosition();
+	yaw -= (currentMousePosition.x - lastMousePosition.x)/100;
+	cout << lastMousePosition.x << "   " << currentMousePosition.x << endl;
+	lastMousePosition = currentMousePosition;*/
+
+	yaw -= Game::instance().getMouseOffset().x;
+	pitch -= Game::instance().getMouseOffset().y;
+	
+	cout << Game::instance().getMouseOffset().x << endl;
+
 	//glm::vec3 posEntity = entity->getPosition();
 	if (Game::instance().getKey('a')) {
-		angleCam += 5;
+		yaw += 5;
 	}
 	if (Game::instance().getKey('d')) {
-		angleCam -= 5;
+		yaw -= 5;
 	}
 
 	if (Game::instance().getKey('w')) {
-		posEntity.x += step * cos(angleCam / 180 * PI);
-		posEntity.z -= step * sin(angleCam / 180 * PI);
+		posEntity.x += (velocity*deltaTime) * cos(glm::radians(yaw));
+		posEntity.z -= (velocity*deltaTime) * sin(glm::radians(yaw));
 	}
 	if (Game::instance().getKey('s')) {
-		posEntity.x -= step * cos(angleCam / 180 * PI);
-		posEntity.z += step * sin(angleCam / 180 * PI);
+		posEntity.x -= (velocity*deltaTime) * cos(glm::radians(yaw));
+		posEntity.z += (velocity*deltaTime) * sin(glm::radians(yaw));
 	}
 	if (Game::instance().getKey('q')) {
-		posEntity.x += step * cos((angleCam + 90) / 180 * PI);
-		posEntity.z -= step * sin((angleCam + 90) / 180 * PI);
+		posEntity.x += (velocity*deltaTime) * cos(glm::radians(yaw + 90));
+		posEntity.z -= (velocity*deltaTime) * sin(glm::radians(yaw + 90));
 	}
 	if (Game::instance().getKey('e')) {
-		posEntity.x -= step * cos((angleCam + 90) / 180 * PI);
-		posEntity.z += step * sin((angleCam + 90) / 180 * PI);
+		posEntity.x -= (velocity*deltaTime) * cos(glm::radians(yaw + 90));
+		posEntity.z += (velocity*deltaTime) * sin(glm::radians(yaw + 90));
 	}
 	
-
 	entity->setPosition(posEntity);
 
 	currentTime += deltaTime;
@@ -92,8 +103,25 @@ void Scene::render()
 	switch (eCam)
 	{
 		case Camera::CAM_FPS:
-			modelview = glm::rotate(glm::mat4(1.0f), -(angleCam-90) / 180 * PI, glm::vec3(0, 1, 0));	//el orden en la camara va al reves que el objeto.
-			modelview = glm::translate(modelview, glm::vec3(-posEntity.x, -posEntity.y, -posEntity.z)); //  Estamos rotando TODO.
+		{
+			if (bTest) {
+				modelview = glm::rotate(glm::mat4(1.0f), glm::radians(pitch), glm::vec3(1, 0, 0));	//  Estamos rotando TODA la escena.
+				modelview = glm::rotate(modelview, -glm::radians(yaw - 90), glm::vec3(0, 1, 0));	//el orden en la camara va al reves que el objeto.
+				modelview = glm::translate(modelview, glm::vec3(-posEntity.x, -posEntity.y, -posEntity.z));
+			}
+			else {
+				// forma alternativa usando LookAt
+				glm::vec3 cameraPos = glm::vec3(posEntity.x, posEntity.y, posEntity.z);
+				glm::vec3 cameraFront = glm::vec3(0.0f, 0.0f, -1.0f);
+				glm::vec3 cameraUp = glm::vec3(0.0f, 1.0f, 0.0f);
+				glm::vec3 direction;
+				direction.x = cos(glm::radians(yaw)) * cos(glm::radians(pitch));
+				direction.y = sin(glm::radians(pitch));
+				direction.z = sin(glm::radians(yaw)) * cos(glm::radians(pitch));
+				cameraFront = glm::normalize(direction);
+				modelview = glm::lookAt(cameraPos, cameraPos + cameraFront, cameraUp);
+			}
+		}
 			break;
 		case Camera::CAM_FIX1:
 			modelview = glm::mat4(1.0f);
@@ -115,11 +143,24 @@ void Scene::render()
 	level->render();
 
 	modelview = glm::translate(modelview, glm::vec3(posEntity.x, posEntity.y, posEntity.z));
-	modelview = glm::rotate(modelview, (angleCam - 90) / 180 * PI, glm::vec3(0, 1, 0));
+	modelview = glm::rotate(modelview, glm::radians(yaw - 90), glm::vec3(0, 1, 0));
 	texProgram.setUniformMatrix4f("modelview", modelview);
 	texProgram.setUniform4f("color", 1.0f, 0.0f, 0.0f, 0.0f);
 	entity->render();
 }
+
+
+
+
+void Scene::keyPressed(int key)
+{
+	if (key == 't')
+	{
+		bTest = !bTest;
+	}
+}
+
+
 
 void Scene::initShaders()
 {

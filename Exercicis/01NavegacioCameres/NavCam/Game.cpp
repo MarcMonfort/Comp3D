@@ -13,6 +13,7 @@ void Game::init()
 	FMOD::Sound* sound = SoundManager::instance().createSound("sounds/eBall.mp3", FMOD_DEFAULT);
 	FMOD::Channel* channel = SoundManager::instance().playSound(sound);
 	
+	lastMousePosition = glm::vec2(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2);
 	
 	scene.init();
 }
@@ -36,6 +37,8 @@ void Game::keyPressed(int key)
 	if(key == 27) // Escape code
 		bPlay = false;
 	keys[key] = true;
+
+	scene.keyPressed(key);
 }
 
 void Game::keyReleased(int key)
@@ -55,10 +58,23 @@ void Game::specialKeyReleased(int key)
 
 void Game::mouseMove(int x, int y)
 {
+	// ¿no se actualiza al mover, sino al apretar?
+	//mousePosition = glm::vec2(x, y);
+
+	mouseOffset.x = x - SCREEN_WIDTH / 2.f;
+	mouseOffset.y = SCREEN_HEIGHT / 2.f - y; // reversed since y-coordinates range from bottom to top
+	lastMousePosition.x = x;
+	lastMousePosition.y = y;
+
+	mouseOffset *= sensitivity;
+
+	glutWarpPointer(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2);
+	//SetCursorPos(0, 0);
 }
 
 void Game::mousePress(int button)
 {
+
 }
 
 void Game::mouseRelease(int button)
@@ -73,6 +89,11 @@ bool Game::getKey(int key) const
 bool Game::getSpecialKey(int key) const
 {
 	return specialKeys[key];
+}
+
+glm::vec2 Game::getMouseOffset() const
+{
+	return mouseOffset;
 }
 
 

@@ -49,6 +49,12 @@ static void motionCallback(int x, int y)
 	Game::instance().mouseMove(x, y);
 }
 
+static void passiveMotionCallback(int x, int y)
+{
+	Game::instance().mouseMove(x, y);
+}
+
+
 // Same for mouse button presses or releases
 
 static void mouseCallback(int button, int state, int x, int y)
@@ -97,7 +103,13 @@ int main(int argc, char **argv)
 	glutSpecialFunc(specialDownCallback);
 	glutSpecialUpFunc(specialUpCallback);
 	glutMouseFunc(mouseCallback);
-	glutMotionFunc(motionCallback);
+	//glutMotionFunc(motionCallback);
+	glutPassiveMotionFunc(passiveMotionCallback);	// all the time actualizing
+
+	glutSetCursor(GLUT_CURSOR_DESTROY);	// hide the cursor  GLUT_CURSOR_NONE
+	glutWarpPointer(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2);	//move cursor
+
+
 
 	// GLEW will take care of OpenGL extension functions
 	glewExperimental = GL_TRUE;
