@@ -51,18 +51,30 @@ void Scene::update(int deltaTime)
 	}
 
 	//glm::vec3 posEntity = entity->getPosition();
-	if (Game::instance().getKey('w')) {
-		posEntity.z -= 1;
-	}
 	if (Game::instance().getKey('a')) {
-		posEntity.x -= 1;
-	}
-	if (Game::instance().getKey('s')) {
-		posEntity.z += 1;
+		angleCam += 5;
 	}
 	if (Game::instance().getKey('d')) {
-		posEntity.x += 1;
+		angleCam -= 5;
 	}
+
+	if (Game::instance().getKey('w')) {
+		posEntity.x += step * cos(angleCam / 180 * PI);
+		posEntity.z -= step * sin(angleCam / 180 * PI);
+	}
+	if (Game::instance().getKey('s')) {
+		posEntity.x -= step * cos(angleCam / 180 * PI);
+		posEntity.z += step * sin(angleCam / 180 * PI);
+	}
+	if (Game::instance().getKey('q')) {
+		posEntity.x += step * cos((angleCam + 90) / 180 * PI);
+		posEntity.z -= step * sin((angleCam + 90) / 180 * PI);
+	}
+	if (Game::instance().getKey('e')) {
+		posEntity.x -= step * cos((angleCam + 90) / 180 * PI);
+		posEntity.z += step * sin((angleCam + 90) / 180 * PI);
+	}
+	
 
 	entity->setPosition(posEntity);
 
@@ -80,7 +92,8 @@ void Scene::render()
 	switch (eCam)
 	{
 		case Camera::CAM_FPS:
-			modelview = glm::lookAt(glm::vec3(posEntity.x, posEntity.y, posEntity.z), glm::vec3(0, 0, -100), glm::vec3(0, 1, 0));
+			modelview = glm::rotate(glm::mat4(1.0f), -(angleCam-90) / 180 * PI, glm::vec3(0, 1, 0));	//el orden en la camara va al reves que el objeto.
+			modelview = glm::translate(modelview, glm::vec3(-posEntity.x, -posEntity.y, -posEntity.z)); //  Estamos rotando TODO.
 			break;
 		case Camera::CAM_FIX1:
 			modelview = glm::mat4(1.0f);
@@ -102,6 +115,7 @@ void Scene::render()
 	level->render();
 
 	modelview = glm::translate(modelview, glm::vec3(posEntity.x, posEntity.y, posEntity.z));
+	modelview = glm::rotate(modelview, (angleCam - 90) / 180 * PI, glm::vec3(0, 1, 0));
 	texProgram.setUniformMatrix4f("modelview", modelview);
 	texProgram.setUniform4f("color", 1.0f, 0.0f, 0.0f, 0.0f);
 	entity->render();

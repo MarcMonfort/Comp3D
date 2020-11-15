@@ -45,6 +45,8 @@ private:
 		CAM_FIX4
 	};
 	Camera eCam;
+	float angleCam = 90;	//start looking at -Z
+	float step = 1;
 
 	SimpleObject* entity;
 	glm::vec3 posEntity = glm::vec3(0.f);
