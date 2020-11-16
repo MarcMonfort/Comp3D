@@ -48,9 +48,19 @@ private:
 		CAM_FIX4
 	};
 	Camera eCam;
+
+	enum class Liberty
+	{
+		YAW,
+		YAW_PITCH,
+		YAW_PITCH_ROLL
+	};
+	Liberty eLiberty;
+
 	float yaw = 90;	//start looking at -Z
 	float pitch = 0;
-	float velocity = 0.1;
+	float roll = 0;
+	float velocity = 0.05;
 
 	SimpleObject* entity;
 	glm::vec3 posEntity = glm::vec3(0.f);
@@ -59,6 +69,7 @@ private:
 	glm::vec2 currentMousePosition;
 
 	bool bTest = true;
+	bool bMouse = true;
 };
 
 

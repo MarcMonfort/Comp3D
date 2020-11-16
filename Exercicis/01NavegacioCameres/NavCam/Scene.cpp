@@ -52,41 +52,57 @@ void Scene::update(int deltaTime)
 		eCam = Camera::CAM_FIX4;
 	}
 
-	/*currentMousePosition = Game::instance().getMousePosition();
-	yaw -= (currentMousePosition.x - lastMousePosition.x)/100;
-	cout << lastMousePosition.x << "   " << currentMousePosition.x << endl;
-	lastMousePosition = currentMousePosition;*/
 
-	yaw -= Game::instance().getMouseOffset().x;
-	pitch -= Game::instance().getMouseOffset().y;
-	
-	cout << Game::instance().getMouseOffset().x << endl;
 
 	//glm::vec3 posEntity = entity->getPosition();
-	if (Game::instance().getKey('a')) {
-		yaw += 5;
+	if (bMouse)
+	{
+		yaw -= Game::instance().getMouseOffset().x;
+		pitch += Game::instance().getMouseOffset().y;
+		if (Game::instance().getKey('a')) {
+			posEntity.x += (velocity * deltaTime) * cos(glm::radians(yaw + 90));
+			posEntity.z -= (velocity * deltaTime) * sin(glm::radians(yaw + 90));
+		}
+		if (Game::instance().getKey('d')) {
+			posEntity.x -= (velocity * deltaTime) * cos(glm::radians(yaw + 90));
+			posEntity.z += (velocity * deltaTime) * sin(glm::radians(yaw + 90));
+		}
+		if (Game::instance().getKey('q')) {
+			roll += 5;
+		}
+		if (Game::instance().getKey('e')) {
+			roll -= 5;
+		}
 	}
-	if (Game::instance().getKey('d')) {
-		yaw -= 5;
+	else
+	{
+		if (Game::instance().getKey('a')) {
+			yaw += 5;
+		}
+		if (Game::instance().getKey('d')) {
+			yaw -= 5;
+		}
+		if (Game::instance().getKey('q')) {
+			posEntity.x += (velocity * deltaTime) * cos(glm::radians(yaw + 90));
+			posEntity.z -= (velocity * deltaTime) * sin(glm::radians(yaw + 90));
+		}
+		if (Game::instance().getKey('e')) {
+			posEntity.x -= (velocity * deltaTime) * cos(glm::radians(yaw + 90));
+			posEntity.z += (velocity * deltaTime) * sin(glm::radians(yaw + 90));
+		}
 	}
 
 	if (Game::instance().getKey('w')) {
-		posEntity.x += (velocity*deltaTime) * cos(glm::radians(yaw));
-		posEntity.z -= (velocity*deltaTime) * sin(glm::radians(yaw));
+		posEntity.x += (velocity * deltaTime) * cos(glm::radians(yaw)) * cos(glm::radians(pitch));
+		posEntity.z -= (velocity * deltaTime) * sin(glm::radians(yaw)) * cos(glm::radians(pitch));
+		posEntity.y += (velocity * deltaTime)						   * sin(glm::radians(pitch));
 	}
 	if (Game::instance().getKey('s')) {
-		posEntity.x -= (velocity*deltaTime) * cos(glm::radians(yaw));
-		posEntity.z += (velocity*deltaTime) * sin(glm::radians(yaw));
+		posEntity.x -= (velocity * deltaTime) * cos(glm::radians(yaw)) * cos(glm::radians(pitch));
+		posEntity.z += (velocity * deltaTime) * sin(glm::radians(yaw)) * cos(glm::radians(pitch));
+		posEntity.y -= (velocity * deltaTime)						   * sin(glm::radians(pitch));
 	}
-	if (Game::instance().getKey('q')) {
-		posEntity.x += (velocity*deltaTime) * cos(glm::radians(yaw + 90));
-		posEntity.z -= (velocity*deltaTime) * sin(glm::radians(yaw + 90));
-	}
-	if (Game::instance().getKey('e')) {
-		posEntity.x -= (velocity*deltaTime) * cos(glm::radians(yaw + 90));
-		posEntity.z += (velocity*deltaTime) * sin(glm::radians(yaw + 90));
-	}
-	
+
 	entity->setPosition(posEntity);
 
 	currentTime += deltaTime;
@@ -105,9 +121,14 @@ void Scene::render()
 		case Camera::CAM_FPS:
 		{
 			if (bTest) {
-				modelview = glm::rotate(glm::mat4(1.0f), glm::radians(pitch), glm::vec3(1, 0, 0));	//  Estamos rotando TODA la escena.
-				modelview = glm::rotate(modelview, -glm::radians(yaw - 90), glm::vec3(0, 1, 0));	//el orden en la camara va al reves que el objeto.
+				modelview = glm::rotate(glm::mat4(1.0f), -glm::radians(pitch), glm::vec3(1, 0, 0));
+				modelview = glm::rotate(modelview, -glm::radians(yaw - 90), glm::vec3(0, 1, 0));
 				modelview = glm::translate(modelview, glm::vec3(-posEntity.x, -posEntity.y, -posEntity.z));
+				/*modelview = glm::rotate(glm::mat4(1.0f), -glm::radians(roll), glm::vec3(0, 0, 1));
+				modelview = glm::rotate(modelview, -(pow(sin(glm::radians(roll)),2) * glm::radians(yaw-90) + pow(cos(glm::radians(roll)),2) * glm::radians(pitch)), glm::vec3(1, 0, 0));
+				modelview = glm::rotate(modelview, -(pow(sin(glm::radians(roll)),2) * glm::radians(pitch) + pow(cos(glm::radians(roll)),2) * glm::radians(yaw-90)), glm::vec3(0, 1, 0));
+				modelview = glm::translate(modelview, glm::vec3(-posEntity.x, -posEntity.y, -posEntity.z));
+				NO FUNCIONA*/
 			}
 			else {
 				// forma alternativa usando LookAt
@@ -142,11 +163,16 @@ void Scene::render()
 	texProgram.setUniformMatrix4f("modelview", modelview);
 	level->render();
 
-	modelview = glm::translate(modelview, glm::vec3(posEntity.x, posEntity.y, posEntity.z));
-	modelview = glm::rotate(modelview, glm::radians(yaw - 90), glm::vec3(0, 1, 0));
-	texProgram.setUniformMatrix4f("modelview", modelview);
-	texProgram.setUniform4f("color", 1.0f, 0.0f, 0.0f, 0.0f);
-	entity->render();
+	if (eCam != Camera::CAM_FPS)
+	{
+		modelview = glm::translate(modelview, glm::vec3(posEntity.x, posEntity.y, posEntity.z));
+		modelview = glm::rotate(modelview, glm::radians(yaw - 90), glm::vec3(0, 1, 0));
+		modelview = glm::rotate(modelview, glm::radians(pitch), glm::vec3(1, 0, 0));
+		//modelview = glm::rotate(modelview, glm::radians(roll), glm::vec3(0, 0, 1));
+		texProgram.setUniformMatrix4f("modelview", modelview);
+		texProgram.setUniform4f("color", 1.0f, 0.0f, 0.0f, 0.0f);
+		entity->render();
+	}
 }
 
 
@@ -157,6 +183,30 @@ void Scene::keyPressed(int key)
 	if (key == 't')
 	{
 		bTest = !bTest;
+	}
+	if (key == 'm')
+	{
+		bMouse = !bMouse;
+	}
+	if (key == 'l')
+	{
+		switch (eLiberty)
+		{
+		case Liberty::YAW:
+			eLiberty = Liberty::YAW_PITCH;
+			cout << "YAW_PITCH" << endl;
+			break;
+		case Liberty::YAW_PITCH:
+			eLiberty = Liberty::YAW_PITCH_ROLL;
+			cout << "YAW_PITCH_ROLL" << endl;
+			break;
+		case Liberty::YAW_PITCH_ROLL:
+			eLiberty = Liberty::YAW;
+			cout << "YAW" << endl;
+			break;
+		default:
+			break;
+		}
 	}
 }
 

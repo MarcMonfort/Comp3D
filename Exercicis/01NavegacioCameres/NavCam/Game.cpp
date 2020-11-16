@@ -11,7 +11,7 @@ void Game::init()
 	SoundManager::instance().init();
 
 	FMOD::Sound* sound = SoundManager::instance().createSound("sounds/eBall.mp3", FMOD_DEFAULT);
-	FMOD::Channel* channel = SoundManager::instance().playSound(sound);
+	//FMOD::Channel* channel = SoundManager::instance().playSound(sound);
 	
 	lastMousePosition = glm::vec2(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2);
 	
@@ -63,8 +63,8 @@ void Game::mouseMove(int x, int y)
 
 	mouseOffset.x = x - SCREEN_WIDTH / 2.f;
 	mouseOffset.y = SCREEN_HEIGHT / 2.f - y; // reversed since y-coordinates range from bottom to top
-	lastMousePosition.x = x;
-	lastMousePosition.y = y;
+	//lastMousePosition.x = x;	// mouse is always on center, not free (so we dont use lastMousePos...)
+	//lastMousePosition.y = y;
 
 	mouseOffset *= sensitivity;
 
