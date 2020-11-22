@@ -121,8 +121,12 @@ void Scene::render()
 		case Camera::CAM_FPS:
 		{
 			if (bTest) {
-				modelview = glm::rotate(glm::mat4(1.0f), -glm::radians(pitch), glm::vec3(1, 0, 0));
+				modelview = glm::rotate(glm::mat4(1.0f), -glm::radians(roll), glm::vec3(0, 0, 1));
+				modelview = glm::rotate(modelview, -glm::radians(pitch), glm::vec3(1, 0, 0));
+
+				//modelview = glm::rotate(glm::mat4(1.0f), -glm::radians(pitch), glm::vec3(1, 0, 0));
 				modelview = glm::rotate(modelview, -glm::radians(yaw - 90), glm::vec3(0, 1, 0));
+				//modelview = glm::rotate(modelview, -glm::radians(roll), glm::vec3(0, 0, 1));
 				modelview = glm::translate(modelview, glm::vec3(-posEntity.x, -posEntity.y, -posEntity.z));
 				/*modelview = glm::rotate(glm::mat4(1.0f), -glm::radians(roll), glm::vec3(0, 0, 1));
 				modelview = glm::rotate(modelview, -(pow(sin(glm::radians(roll)),2) * glm::radians(yaw-90) + pow(cos(glm::radians(roll)),2) * glm::radians(pitch)), glm::vec3(1, 0, 0));

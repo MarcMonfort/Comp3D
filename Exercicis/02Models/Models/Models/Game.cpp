@@ -48,6 +48,11 @@ void Game::specialKeyReleased(int key)
 
 void Game::mouseMove(int x, int y)
 {
+	mouseOffset.x = x - SCREEN_WIDTH / 2.f;
+	mouseOffset.y = SCREEN_HEIGHT / 2.f - y;
+
+	mouseOffset *= sensitivity;
+	glutWarpPointer(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2);
 }
 
 void Game::mousePress(int button)
@@ -66,6 +71,11 @@ bool Game::getKey(int key) const
 bool Game::getSpecialKey(int key) const
 {
 	return specialKeys[key];
+}
+
+glm::vec2 Game::getMouseOffset() const
+{
+	return mouseOffset;
 }
 
 

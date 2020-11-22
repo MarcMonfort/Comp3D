@@ -32,10 +32,21 @@ private:
 
 private:
 	Level *level;
-	AssimpModel *model;
+	AssimpModel* model;
+	AssimpModel *model_2;
 	ShaderProgram texProgram;
 	float currentTime;
 	glm::mat4 projection;
+
+	struct Camera
+	{
+		glm::vec3 position = glm::vec3(0);
+		glm::vec3 front = glm::vec3(0.f, 0.f, -1.f);
+		float yaw = -90;
+		float pitch = 0;
+		float roll = 0;
+		float velocity = 0.05;
+	} camera;
 
 };
 
