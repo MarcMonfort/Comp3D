@@ -53,7 +53,7 @@ void TileMap::render(ShaderProgram& program) const
 			tile = map[j * mapSize.x + i];
 			if (tile != 0)
 			{
-				modelMatrix = glm::translate(glm::mat4(1.0f), glm::vec3(i*1.6,j*1.6,0.f) );
+				modelMatrix = glm::translate(glm::mat4(1.0f), glm::vec3(i,-j,0.f) );
 				program.setUniformMatrix4f("model", modelMatrix);
 				model->render(program);
 			}
@@ -94,7 +94,7 @@ bool TileMap::loadLevel(const string& levelFile, ShaderProgram& program)
 	tilesheet.setMinFilter(GL_NEAREST);
 	tilesheet.setMagFilter(GL_NEAREST);*/
 	model = new AssimpModel();
-	model->loadFromFile("models/cube16_border.obj", program);
+	model->loadFromFile(tilesheetFile, program);
 
 	getline(fin, line);
 	sstream.str(line);

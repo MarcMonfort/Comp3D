@@ -30,6 +30,9 @@ public:
 	void update(int deltaTime);
 	void render();
 
+	void keyPressed(int key);
+	void reshape(int width, int height);
+
 private:
 	void initShaders();
 
@@ -44,6 +47,28 @@ private:
 
 	//Extra
 	TileMap* map;
+
+	struct Camera
+	{
+		glm::vec3 position = glm::vec3(-0.5f, 1.f, 1.f); // 16 (half-map) * 1.6 (size-block)
+		glm::vec3 front = glm::vec3(0.f, 0.f, -1.f);
+		float yaw = -90;
+		float pitch = 0;
+		float roll = 0;
+		float velocity = 0.05;
+	} camera;
+
+	enum class CamMove
+	{
+		STATIC,
+		RIGHT,
+		LEFT,
+		UP,
+		DOWN
+	};
+	CamMove eCamMove = CamMove::STATIC;
+
+	float timeCamMove = 0.f;
 
 };
 

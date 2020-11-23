@@ -5,6 +5,7 @@
 #define GLM_FORCE_RADIANS
 #include <glm/gtc/matrix_transform.hpp>
 #include "Scene.h"
+#include "Game.h"
 
 
 #define PI 3.14159f
@@ -53,7 +54,12 @@ void Scene::init()
 	// Initialize TileMap
 	map = TileMap::createTileMap("levels/level01.txt", glm::vec2(0, 0), texProgram);
 
-	projection = glm::perspective(90.f / 180.f * PI, float(CAMERA_WIDTH) / float(CAMERA_HEIGHT), 0.1f, 100.f);
+	// Init Camera. Depends on the level. Maybe use a map->getStartPosition()...
+	camera.position.x += 10;
+	camera.position.y -= 7.5;
+	camera.position.z += 17.6;
+
+	projection = glm::perspective(glm::radians(45.f), float(CAMERA_WIDTH) / float(CAMERA_HEIGHT), 0.1f, 1000.f);
 	currentTime = 0.0f;
 }
 
@@ -75,6 +81,46 @@ void Scene::update(int deltaTime)
 	currentTime += deltaTime;
 
 	particles->update(deltaTime / 1000.f);
+
+
+	switch (eCamMove)
+	{
+		case Scene::CamMove::STATIC:
+			break;
+		case Scene::CamMove::RIGHT:
+			camera.position.x += 0.1f * deltaTime;
+			timeCamMove -= 0.1 * deltaTime;
+			if (timeCamMove <= 0.f) {
+				camera.position.x += timeCamMove;
+				eCamMove = CamMove::STATIC;
+			}
+			break;
+		case Scene::CamMove::LEFT:
+			camera.position.x -= 0.1f * deltaTime;
+			timeCamMove -= 0.1 * deltaTime;
+			if (timeCamMove <= 0.f) {
+				camera.position.x -= timeCamMove;
+				eCamMove = CamMove::STATIC;
+			}
+			break;
+		case Scene::CamMove::UP:
+			camera.position.y += 0.1f * deltaTime;
+			timeCamMove -= 0.1 * deltaTime;
+			if (timeCamMove <= 0.f) {
+				camera.position.y += timeCamMove;
+				eCamMove = CamMove::STATIC;
+			}
+			break;
+		case Scene::CamMove::DOWN:
+			camera.position.y -= 0.1f * deltaTime;
+			timeCamMove -= 0.1 * deltaTime;
+			if (timeCamMove <= 0.f) {
+				camera.position.y -= timeCamMove;
+				eCamMove = CamMove::STATIC;
+			}
+			break;
+	}
+
 }
 
 void Scene::render()
@@ -92,17 +138,17 @@ void Scene::render()
 
 	// Camera position
 	viewMatrix = glm::mat4(1.0f);
-	viewMatrix = glm::translate(viewMatrix, glm::vec3(0.f, 0.f, -10.f));
+	viewMatrix = glm::translate(viewMatrix, -camera.position);
 	texProgram.setUniformMatrix4f("view", viewMatrix);
 
 
 
 	// Render level
-	modelMatrix = glm::mat4(1.0f);
+	/*modelMatrix = glm::mat4(1.0f);
 	texProgram.setUniformMatrix4f("model", modelMatrix);
 	normalMatrix = glm::transpose(glm::inverse(glm::mat3(viewMatrix * modelMatrix)));
 	texProgram.setUniformMatrix3f("normalmatrix", normalMatrix);
-	level->render();
+	level->render();*/
 
 	// Render loaded model
 	/*float scaleFactor = 2.f / model->getHeight();
@@ -157,6 +203,46 @@ void Scene::render()
 	glDisable(GL_BLEND);
 	glDepthMask(GL_TRUE);*/
 }
+
+void Scene::keyPressed(int key)
+{
+	if (key == 'd' && eCamMove == CamMove::STATIC)
+	{
+		timeCamMove = 20;
+		eCamMove = CamMove::RIGHT;
+	}
+	if (key == 's' && eCamMove == CamMove::STATIC)
+	{
+		timeCamMove = 15;
+		eCamMove = CamMove::DOWN;
+	}
+	if (key == 'a' && eCamMove == CamMove::STATIC)
+	{
+		timeCamMove = 20;
+		eCamMove = CamMove::LEFT;
+	}
+	if (key == 'w' && eCamMove == CamMove::STATIC)
+	{
+		timeCamMove = 15;
+		eCamMove = CamMove::UP;
+	}
+}
+
+
+void Scene::reshape(int width, int height)
+{
+	float FOV = glm::radians(90.f);
+	float rav = float(width) / float(height);
+	if (rav < 1.f)
+		FOV = 2.0 * atan( tan(glm::radians(90.f/2)) / rav);
+
+	projection = glm::perspective(FOV, rav, 0.1f, 1000.f);
+}
+
+
+
+
+
 
 void Scene::initShaders()
 {

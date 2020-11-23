@@ -49,6 +49,22 @@ static void motionCallback(int x, int y)
 	Game::instance().mouseMove(x, y);
 }
 
+// Same for changes in mouse cursor position
+
+static void reshapeCallback(int width, int height)
+{
+	glViewport(0, 0, width, height);
+	if (width <= 640)
+		glutReshapeWindow(640, 480);
+	else if (width <= 960)
+		glutReshapeWindow(960, 720);
+	else if (width <= 1440)
+		glutReshapeWindow(1440, 1080);
+
+
+	//Game::instance().reshape(width, height);
+}
+
 // Same for mouse button presses or releases
 
 static void mouseCallback(int button, int state, int x, int y)
@@ -87,7 +103,7 @@ int main(int argc, char **argv)
 	glutInit(&argc, argv);
 	glutInitDisplayMode(GLUT_RGBA | GLUT_DOUBLE | GLUT_DEPTH);
 	glutInitWindowPosition(100, 100);
-	glutInitWindowSize(640, 480);
+	glutInitWindowSize(960, 720);
 
 	glutCreateWindow(argv[0]);
 	glutDisplayFunc(drawCallback);
@@ -98,6 +114,8 @@ int main(int argc, char **argv)
 	glutSpecialUpFunc(specialUpCallback);
 	glutMouseFunc(mouseCallback);
 	glutMotionFunc(motionCallback);
+	//glutReshapeFunc(reshapeCallback);
+	//glutFullScreen();
 
 	// GLEW will take care of OpenGL extension functions
 	glewExperimental = GL_TRUE;

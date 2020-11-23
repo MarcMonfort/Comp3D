@@ -35,6 +35,8 @@ void Game::keyPressed(int key)
 	if(key == 27) // Escape code
 		bPlay = false;
 	keys[key] = true;
+
+	scene.keyPressed(key);
 }
 
 void Game::keyReleased(int key)
@@ -64,6 +66,11 @@ void Game::mouseRelease(int button)
 {
 }
 
+void Game::reshape(int width, int height)
+{
+	scene.reshape(width, height);
+}
+
 bool Game::getKey(int key) const
 {
 	return keys[key];
@@ -73,6 +80,8 @@ bool Game::getSpecialKey(int key) const
 {
 	return specialKeys[key];
 }
+
+
 
 
 
