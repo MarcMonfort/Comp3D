@@ -93,12 +93,13 @@ void Scene::render()
 	// Camera position
 	viewMatrix = glm::mat4(1.0f);
 	viewMatrix = glm::translate(viewMatrix, glm::vec3(0.f, 0.f, -10.f));
+	texProgram.setUniformMatrix4f("view", viewMatrix);
 
 
 
 	// Render level
 	modelMatrix = glm::mat4(1.0f);
-	texProgram.setUniformMatrix4f("modelview", viewMatrix * modelMatrix);
+	texProgram.setUniformMatrix4f("model", modelMatrix);
 	normalMatrix = glm::transpose(glm::inverse(glm::mat3(viewMatrix * modelMatrix)));
 	texProgram.setUniformMatrix3f("normalmatrix", normalMatrix);
 	level->render();
@@ -114,7 +115,7 @@ void Scene::render()
 	modelMatrix = glm::scale(modelMatrix, glm::vec3(scaleFactor, scaleFactor, scaleFactor));
 	modelMatrix = glm::translate(modelMatrix, -centerModelBase);*/
 	modelMatrix = glm::translate(modelMatrix, model->getCenter());
-	texProgram.setUniformMatrix4f("modelview", viewMatrix * modelMatrix);
+	texProgram.setUniformMatrix4f("model", modelMatrix);
 
 	normalMatrix = glm::transpose(glm::inverse(glm::mat3(viewMatrix * modelMatrix)));
 	texProgram.setUniformMatrix3f("normalmatrix", normalMatrix);
@@ -123,10 +124,10 @@ void Scene::render()
 
 	// Render loaded model (second time & third time)
 	modelMatrix = glm::translate(modelMatrix, glm::vec3(model->getSize().x,0.f,0.f));
-	texProgram.setUniformMatrix4f("modelview", viewMatrix * modelMatrix);
+	texProgram.setUniformMatrix4f("model", modelMatrix);
 	//model->render(texProgram);
 	modelMatrix = glm::translate(modelMatrix, glm::vec3(model->getSize().x, 0.f, 0.f));
-	texProgram.setUniformMatrix4f("modelview", viewMatrix * modelMatrix);
+	texProgram.setUniformMatrix4f("model", modelMatrix);
 	//model->render(texProgram);
 
 	// Render TileMap

@@ -39,9 +39,7 @@ void TileMap::render(ShaderProgram& program) const
 	glEnableVertexAttribArray(texCoordLocation);
 	glDrawArrays(GL_TRIANGLES, 0, 6 * mapSize.x * mapSize.y);
 	glDisable(GL_TEXTURE_2D);*/
-	glm::mat4 modelMatrix, viewMatrix;
-	viewMatrix = glm::mat4(1.0f);
-	viewMatrix = glm::translate(viewMatrix, glm::vec3(0.f, 0.f, -10.f));
+	glm::mat4 modelMatrix;
 
 	modelMatrix = glm::mat4(1.0f);
 
@@ -56,7 +54,7 @@ void TileMap::render(ShaderProgram& program) const
 			if (tile != 0)
 			{
 				modelMatrix = glm::translate(glm::mat4(1.0f), glm::vec3(i*1.6,j*1.6,0.f) );
-				program.setUniformMatrix4f("modelview", viewMatrix * modelMatrix);
+				program.setUniformMatrix4f("model", modelMatrix);
 				model->render(program);
 			}
 		}
