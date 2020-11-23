@@ -1,0 +1,9 @@
+TILEMAP
+4 4 							-- Size of tile map in tiles
+16 16 							-- Tile size & block size
+models/cube16_border.obj 	-- Tilesheet
+2 2 								-- Number of tiles in tilesheet
+1111
+1  1
+1  1
+1111

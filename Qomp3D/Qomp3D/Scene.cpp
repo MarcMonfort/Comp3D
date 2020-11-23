@@ -16,6 +16,7 @@ Scene::Scene()
 	model = NULL;
 	billboard = NULL;
 	particles = NULL;
+	map = NULL;
 }
 
 Scene::~Scene()
@@ -28,6 +29,8 @@ Scene::~Scene()
 		delete billboard;
 	if (particles != NULL)
 		delete particles;
+	if (map != NULL)
+		delete map;
 }
 
 
@@ -36,7 +39,7 @@ void Scene::init()
 	initShaders();
 	level = Level::createLevel(glm::vec3(16, 4, 32), texProgram, "images/floor.png", "images/wall.png");
 	model = new AssimpModel();
-	model->loadFromFile("models/chr_knight.obj", texProgram);
+	model->loadFromFile("models/cube16_border.obj", texProgram);
 	billboard = Billboard::createBillboard(glm::vec2(1.f, 1.f), texProgram, "images/mushroom.png");
 	billboard->setType(BILLBOARD_Y_AXIS);
 
@@ -47,7 +50,10 @@ void Scene::init()
 	particles->init(glm::vec2(0.5f, 0.5f), texProgram, "images/particle.png", 2.f);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE);
 
-	projection = glm::perspective(45.f / 180.f * PI, float(CAMERA_WIDTH) / float(CAMERA_HEIGHT), 0.1f, 100.f);
+	// Initialize TileMap
+	map = TileMap::createTileMap("levels/level01.txt", glm::vec2(0, 0), texProgram);
+
+	projection = glm::perspective(90.f / 180.f * PI, float(CAMERA_WIDTH) / float(CAMERA_HEIGHT), 0.1f, 100.f);
 	currentTime = 0.0f;
 }
 
@@ -81,8 +87,14 @@ void Scene::render()
 	texProgram.setUniformMatrix4f("projection", projection);
 	texProgram.setUniform4f("color", 1.0f, 1.0f, 1.0f, 1.0f);
 
-	glm::vec3 obs = glm::vec3(8.f * sin(currentTime / 10000.f), 1.f, 8.f * cos(currentTime / 10000.f));
-	viewMatrix = glm::lookAt(obs, glm::vec3(0.f, 0.f, 0.f), glm::vec3(0.f, 1.f, 0.f));
+	/*glm::vec3 obs = glm::vec3(8.f * sin(currentTime / 10000.f), 1.f, 8.f * cos(currentTime / 10000.f));
+	viewMatrix = glm::lookAt(obs, glm::vec3(0.f, 0.f, 0.f), glm::vec3(0.f, 1.f, 0.f));*/
+
+	// Camera position
+	viewMatrix = glm::mat4(1.0f);
+	viewMatrix = glm::translate(viewMatrix, glm::vec3(0.f, 0.f, -10.f));
+
+
 
 	// Render level
 	modelMatrix = glm::mat4(1.0f);
@@ -92,24 +104,36 @@ void Scene::render()
 	level->render();
 
 	// Render loaded model
-	float scaleFactor = 2.f / model->getHeight();
-	glm::vec3 centerModelBase = model->getCenter() - glm::vec3(0.f, model->getHeight() / 2.f, 0.f);
+	/*float scaleFactor = 2.f / model->getHeight();
+	glm::vec3 centerModelBase = model->getCenter() - glm::vec3(0.f, model->getHeight() / 2.f, 0.f);*/
 
 	modelMatrix = glm::mat4(1.0f);
-	modelMatrix = glm::translate(modelMatrix, glm::vec3(0.f, 0.5f * fabs(sinf(3.f * currentTime / 1000.f)), 0.f));
+	/*modelMatrix = glm::translate(modelMatrix, glm::vec3(0.f, 0.5f * fabs(sinf(3.f * currentTime / 1000.f)), 0.f));
 	modelMatrix = glm::rotate(modelMatrix, currentTime / 1000.f, glm::vec3(0.f, 1.f, 0.f));
 	modelMatrix = glm::translate(modelMatrix, glm::vec3(0.f, -2.f, 0.f));
 	modelMatrix = glm::scale(modelMatrix, glm::vec3(scaleFactor, scaleFactor, scaleFactor));
-	modelMatrix = glm::translate(modelMatrix, -centerModelBase);
+	modelMatrix = glm::translate(modelMatrix, -centerModelBase);*/
+	modelMatrix = glm::translate(modelMatrix, model->getCenter());
 	texProgram.setUniformMatrix4f("modelview", viewMatrix * modelMatrix);
 
 	normalMatrix = glm::transpose(glm::inverse(glm::mat3(viewMatrix * modelMatrix)));
 	texProgram.setUniformMatrix3f("normalmatrix", normalMatrix);
 
-	model->render(texProgram);
+	//model->render(texProgram);
+
+	// Render loaded model (second time & third time)
+	modelMatrix = glm::translate(modelMatrix, glm::vec3(model->getSize().x,0.f,0.f));
+	texProgram.setUniformMatrix4f("modelview", viewMatrix * modelMatrix);
+	//model->render(texProgram);
+	modelMatrix = glm::translate(modelMatrix, glm::vec3(model->getSize().x, 0.f, 0.f));
+	texProgram.setUniformMatrix4f("modelview", viewMatrix * modelMatrix);
+	//model->render(texProgram);
+
+	// Render TileMap
+	map->render(texProgram);
 
 	// Render billboard
-	texProgram.setUniform1b("bLighting", false);
+	/*texProgram.setUniform1b("bLighting", false);
 	modelMatrix = glm::mat4(1.0f);
 	texProgram.setUniformMatrix4f("modelview", viewMatrix * modelMatrix);
 	normalMatrix = glm::transpose(glm::inverse(glm::mat3(viewMatrix * modelMatrix)));
@@ -117,10 +141,10 @@ void Scene::render()
 	billboard->render(glm::vec3(2.f, -1.5f, 0.f), obs);
 	billboard->render(glm::vec3(-2.f, -1.5f, 0.f), obs);
 	billboard->render(glm::vec3(0.f, -1.5f, 2.f), obs);
-	billboard->render(glm::vec3(0.f, -1.5f, -2.f), obs);
+	billboard->render(glm::vec3(0.f, -1.5f, -2.f), obs);*/
 
 	// Render particles
-	glDepthMask(GL_FALSE);
+	/*glDepthMask(GL_FALSE);
 	glEnable(GL_BLEND);
 
 	modelMatrix = glm::mat4(1.0f);
@@ -130,7 +154,7 @@ void Scene::render()
 	particles->render(obs);
 
 	glDisable(GL_BLEND);
-	glDepthMask(GL_TRUE);
+	glDepthMask(GL_TRUE);*/
 }
 
 void Scene::initShaders()

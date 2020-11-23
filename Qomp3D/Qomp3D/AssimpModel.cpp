@@ -38,6 +38,11 @@ float AssimpModel::getHeight() const
 	return height;
 }
 
+glm::vec3 AssimpModel::getSize() const
+{
+	return size;
+}
+
 glm::vec3 AssimpModel::getCenter() const
 {
 	return center;
@@ -180,6 +185,7 @@ void AssimpModel::computeBoundingBox()
 	}
 	height = bbox[1].y - bbox[0].y;
 	center = (bbox[0] + bbox[1]) / 2.f;
+	size = bbox[1] - bbox[0];
 }
 
 void AssimpModel::prepareArrays(ShaderProgram &program)

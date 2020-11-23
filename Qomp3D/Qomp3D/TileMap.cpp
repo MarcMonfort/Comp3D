@@ -3,6 +3,7 @@
 #include <sstream>
 #include <vector>
 #include "TileMap.h"
+#include <glm/gtc/matrix_transform.hpp>
 
 
 using namespace std;
@@ -18,8 +19,8 @@ TileMap* TileMap::createTileMap(const string& levelFile, const glm::vec2& minCoo
 
 TileMap::TileMap(const string& levelFile, const glm::vec2& minCoords, ShaderProgram& program)
 {
-	loadLevel(levelFile);
-	prepareArrays(minCoords, program);
+	loadLevel(levelFile, program);
+	//prepareArrays(minCoords, program); No hace falta
 }
 
 TileMap::~TileMap()
@@ -29,15 +30,37 @@ TileMap::~TileMap()
 }
 
 
-void TileMap::render() const
+void TileMap::render(ShaderProgram& program) const
 {
-	glEnable(GL_TEXTURE_2D);
+	/*glEnable(GL_TEXTURE_2D);
 	tilesheet.use();
 	glBindVertexArray(vao);
 	glEnableVertexAttribArray(posLocation);
 	glEnableVertexAttribArray(texCoordLocation);
 	glDrawArrays(GL_TRIANGLES, 0, 6 * mapSize.x * mapSize.y);
-	glDisable(GL_TEXTURE_2D);
+	glDisable(GL_TEXTURE_2D);*/
+	glm::mat4 modelMatrix, viewMatrix;
+	viewMatrix = glm::mat4(1.0f);
+	viewMatrix = glm::translate(viewMatrix, glm::vec3(0.f, 0.f, -10.f));
+
+	modelMatrix = glm::mat4(1.0f);
+
+
+	int tile;
+
+	for (int j = 0; j < mapSize.y; j++)
+	{
+		for (int i = 0; i < mapSize.x; i++)
+		{
+			tile = map[j * mapSize.x + i];
+			if (tile != 0)
+			{
+				modelMatrix = glm::translate(glm::mat4(1.0f), glm::vec3(i*1.6,j*1.6,0.f) );
+				program.setUniformMatrix4f("modelview", viewMatrix * modelMatrix);
+				model->render(program);
+			}
+		}
+	}
 }
 
 void TileMap::free()
@@ -45,7 +68,7 @@ void TileMap::free()
 	glDeleteBuffers(1, &vbo);
 }
 
-bool TileMap::loadLevel(const string& levelFile)
+bool TileMap::loadLevel(const string& levelFile, ShaderProgram& program)
 {
 	ifstream fin;
 	string line, tilesheetFile;
@@ -67,11 +90,14 @@ bool TileMap::loadLevel(const string& levelFile)
 	getline(fin, line);
 	sstream.str(line);
 	sstream >> tilesheetFile;
-	tilesheet.loadFromFile(tilesheetFile, TEXTURE_PIXEL_FORMAT_RGBA);
+	/*tilesheet.loadFromFile(tilesheetFile, TEXTURE_PIXEL_FORMAT_RGBA);
 	tilesheet.setWrapS(GL_CLAMP_TO_EDGE);
 	tilesheet.setWrapT(GL_CLAMP_TO_EDGE);
 	tilesheet.setMinFilter(GL_NEAREST);
-	tilesheet.setMagFilter(GL_NEAREST);
+	tilesheet.setMagFilter(GL_NEAREST);*/
+	model = new AssimpModel();
+	model->loadFromFile("models/cube16_border.obj", program);
+
 	getline(fin, line);
 	sstream.str(line);
 	sstream >> tilesheetSize.x >> tilesheetSize.y;

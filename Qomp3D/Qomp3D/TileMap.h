@@ -5,6 +5,7 @@
 #include <glm/glm.hpp>
 #include "Texture.h"
 #include "ShaderProgram.h"
+#include "AssimpModel.h"
 
 
 // Class Tilemap is capable of loading a tile map from a text file in a very
@@ -23,7 +24,7 @@ public:
 	TileMap(const string& levelFile, const glm::vec2& minCoords, ShaderProgram& program);
 	~TileMap();
 
-	void render() const;
+	void render(ShaderProgram& program) const;
 	void free();
 
 	int getTileSize() const { return tileSize; }
@@ -33,7 +34,7 @@ public:
 	bool collisionMoveDown(const glm::ivec2& pos, const glm::ivec2& size, int* posY) const;
 
 private:
-	bool loadLevel(const string& levelFile);
+	bool loadLevel(const string& levelFile, ShaderProgram& program);
 	void prepareArrays(const glm::vec2& minCoords, ShaderProgram& program);
 
 private:
@@ -45,6 +46,8 @@ private:
 	Texture tilesheet;
 	glm::vec2 tileTexSize;
 	int* map;
+
+	AssimpModel* model;
 
 };
 

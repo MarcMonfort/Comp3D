@@ -26,6 +26,7 @@ public:
 
 	float getHeight() const;
 	glm::vec3 getCenter() const;
+	glm::vec3 getSize() const;
 
 private:
 	void clear();
@@ -37,6 +38,7 @@ private:
 
 private:
 	float height;
+	glm::vec3 size;
 	glm::vec3 center, bbox[2];
 	vector<Mesh *> meshes;
 	vector<Texture *> textures;

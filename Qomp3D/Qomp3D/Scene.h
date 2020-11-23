@@ -8,6 +8,7 @@
 #include "AssimpModel.h"
 #include "Billboard.h"
 #include "ParticleSystem.h"
+#include "TileMap.h"
 
 
 #define CAMERA_WIDTH 640
@@ -40,6 +41,9 @@ private:
 	ShaderProgram texProgram;
 	float currentTime;
 	glm::mat4 projection;
+
+	//Extra
+	TileMap* map;
 
 };
 
