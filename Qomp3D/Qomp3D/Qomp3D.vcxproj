@@ -20,7 +20,9 @@
     <ClInclude Include="Scene.h" />
     <ClInclude Include="Shader.h" />
     <ClInclude Include="ShaderProgram.h" />
+    <ClInclude Include="SoundManager.h" />
     <ClInclude Include="Texture.h" />
+    <ClInclude Include="TileMap.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="AssimpModel.cpp" />
@@ -32,7 +34,9 @@
     <ClCompile Include="Scene.cpp" />
     <ClCompile Include="Shader.cpp" />
     <ClCompile Include="ShaderProgram.cpp" />
+    <ClCompile Include="SoundManager.cpp" />
     <ClCompile Include="Texture.cpp" />
+    <ClCompile Include="TileMap.cpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{97BFD8F2-9586-4853-A0AF-BC7EBC506B28}</ProjectGuid>
@@ -77,13 +81,13 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>..\..\libs\freeglut\include;..\..\libs\Simple OpenGL Image Library\src;..\..\libs\assimp\include;..\..\libs\glm;..\..\libs\glew-1.13.0\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\..\libs\freeglut\include;..\..\libs\Simple OpenGL Image Library\src;..\..\libs\assimp\include;..\..\libs\glm;..\..\libs\glew-1.13.0\include;..\..\libs\fmod\inc;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>..\..\libs\assimp\lib;..\..\libs\Simple OpenGL Image Library\projects\VC9\Debug;..\..\libs\glew-1.13.0\lib\Release\Win32;..\..\libs\freeglut\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>freeglut.lib;glew32.lib;SOIL.lib;assimp-vc120-mt.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>..\..\libs\assimp\lib;..\..\libs\Simple OpenGL Image Library\projects\VC9\Debug;..\..\libs\glew-1.13.0\lib\Release\Win32;..\..\libs\freeglut\lib;..\..\libs\fmod\lib\x86;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>freeglut.lib;glew32.lib;SOIL.lib;assimp-vc120-mt.lib;fmod_vc.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">

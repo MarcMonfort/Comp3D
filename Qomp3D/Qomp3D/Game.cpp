@@ -1,6 +1,7 @@
 #include <GL/glew.h>
 #include <GL/glut.h>
 #include "Game.h"
+#include "SoundManager.h"
 
 
 void Game::init()
@@ -9,11 +10,16 @@ void Game::init()
 	glEnable(GL_DEPTH_TEST);
 	glClearColor(0.f, 0.f, 0.f, 1.0f);
 	scene.init();
+	SoundManager::instance().init();
+
+	FMOD::Sound* sound = SoundManager::instance().loadSound("sounds/eBall.mp3", FMOD_DEFAULT);
+	//FMOD::Channel* channel = SoundManager::instance().playSound(sound);
 }
 
 bool Game::update(int deltaTime)
 {
 	scene.update(deltaTime);
+	SoundManager::instance().update();
 	
 	return bPlay;
 }
