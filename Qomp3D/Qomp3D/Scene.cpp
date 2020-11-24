@@ -59,6 +59,12 @@ void Scene::init()
 	camera.position.y -= 7.5;
 	camera.position.z += 17.6;
 
+	// Init Player
+	player = new Player();
+	player->init(texProgram);
+	player->setPosition(glm::vec3(3, 7, 0));
+	player->setTileMap(map);
+
 	projection = glm::perspective(glm::radians(45.f), float(CAMERA_WIDTH) / float(CAMERA_HEIGHT), 0.1f, 1000.f);
 	currentTime = 0.0f;
 }
@@ -121,6 +127,8 @@ void Scene::update(int deltaTime)
 			break;
 	}
 
+	player->update(deltaTime);
+
 }
 
 void Scene::render()
@@ -176,8 +184,7 @@ void Scene::render()
 	texProgram.setUniformMatrix4f("model", modelMatrix);
 	//model->render(texProgram);
 
-	// Render TileMap
-	map->render(texProgram);
+	
 
 	// Render billboard
 	/*texProgram.setUniform1b("bLighting", false);
@@ -202,6 +209,12 @@ void Scene::render()
 
 	glDisable(GL_BLEND);
 	glDepthMask(GL_TRUE);*/
+
+	// Render TileMap
+	map->render(texProgram);
+
+	// Render Player
+	player->render(texProgram);
 }
 
 void Scene::keyPressed(int key)

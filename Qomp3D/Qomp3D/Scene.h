@@ -9,6 +9,7 @@
 #include "Billboard.h"
 #include "ParticleSystem.h"
 #include "TileMap.h"
+#include "Player.h"
 
 
 #define CAMERA_WIDTH 640
@@ -69,6 +70,8 @@ private:
 	CamMove eCamMove = CamMove::STATIC;
 
 	float timeCamMove = 0.f;
+
+	Player* player;
 
 };
 

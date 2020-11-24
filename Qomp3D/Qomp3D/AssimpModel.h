@@ -24,7 +24,6 @@ public:
 	bool loadFromFile(const string &filename, ShaderProgram &program);
 	void render(ShaderProgram &program) const;
 
-	float getHeight() const;
 	glm::vec3 getCenter() const;
 	glm::vec3 getSize() const;
 
@@ -37,7 +36,6 @@ private:
 	void prepareArrays(ShaderProgram &program);
 
 private:
-	float height;
 	glm::vec3 size;
 	glm::vec3 center, bbox[2];
 	vector<Mesh *> meshes;
@@ -46,7 +44,6 @@ private:
 	vector<GLuint> VAOs;
 	vector<GLuint> VBOs;
 	vector<GLint> posLocations, normalLocations, texCoordLocations;
-
 };
 
 

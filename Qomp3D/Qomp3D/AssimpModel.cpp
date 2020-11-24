@@ -33,11 +33,6 @@ bool AssimpModel::loadFromFile(const string &filename, ShaderProgram &program)
 	return retCode;
 }
 
-float AssimpModel::getHeight() const
-{
-	return height;
-}
-
 glm::vec3 AssimpModel::getSize() const
 {
 	return size;
@@ -183,7 +178,6 @@ void AssimpModel::computeBoundingBox()
 			bbox[1] = glm::max(bbox[1], meshes[i]->vertices[j]);
 		}
 	}
-	height = bbox[1].y - bbox[0].y;
 	center = (bbox[0] + bbox[1]) / 2.f;
 	size = bbox[1] - bbox[0];
 }
