@@ -129,7 +129,7 @@ void Scene::render()
 	glm::mat3 normalMatrix;
 
 	texProgram.use();
-	texProgram.setUniform1b("bLighting", true);
+	texProgram.setUniform1b("bLighting", true);	//si es fals, no se ven sombras
 	texProgram.setUniformMatrix4f("projection", projection);
 	texProgram.setUniform4f("color", 1.0f, 1.0f, 1.0f, 1.0f);
 
@@ -208,22 +208,22 @@ void Scene::keyPressed(int key)
 {
 	if (key == 'd' && eCamMove == CamMove::STATIC)
 	{
-		timeCamMove = 20;
+		timeCamMove = 17;
 		eCamMove = CamMove::RIGHT;
 	}
 	if (key == 's' && eCamMove == CamMove::STATIC)
 	{
-		timeCamMove = 15;
+		timeCamMove = 14;
 		eCamMove = CamMove::DOWN;
 	}
 	if (key == 'a' && eCamMove == CamMove::STATIC)
 	{
-		timeCamMove = 20;
+		timeCamMove = 17;
 		eCamMove = CamMove::LEFT;
 	}
 	if (key == 'w' && eCamMove == CamMove::STATIC)
 	{
-		timeCamMove = 15;
+		timeCamMove = 14;
 		eCamMove = CamMove::UP;
 	}
 }

@@ -48,6 +48,8 @@ private:
 	int* map;
 
 	AssimpModel* model;
+	glm::vec3 camCenter;
+	glm::vec2 camMovement;
 
 };
 

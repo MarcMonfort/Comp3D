@@ -84,7 +84,10 @@ bool TileMap::loadLevel(const string& levelFile, ShaderProgram& program)
 	sstream >> mapSize.x >> mapSize.y;
 	getline(fin, line);
 	sstream.str(line);
-	sstream >> tileSize >> blockSize;
+	sstream >> camCenter.x >> camCenter.y >> camCenter.z;
+	getline(fin, line);
+	sstream.str(line);
+	sstream >> camMovement.x >> camMovement.y;
 	getline(fin, line);
 	sstream.str(line);
 	sstream >> tilesheetFile;
@@ -96,10 +99,6 @@ bool TileMap::loadLevel(const string& levelFile, ShaderProgram& program)
 	model = new AssimpModel();
 	model->loadFromFile(tilesheetFile, program);
 
-	getline(fin, line);
-	sstream.str(line);
-	sstream >> tilesheetSize.x >> tilesheetSize.y;
-	tileTexSize = glm::vec2(1.f / tilesheetSize.x, 1.f / tilesheetSize.y);
 
 	map = new int[mapSize.x * mapSize.y];
 	for (int j = 0; j < mapSize.y; j++)
