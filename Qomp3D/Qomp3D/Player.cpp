@@ -91,6 +91,21 @@ void Player::setPosition(const glm::vec3& position)
 	posPlayer = position;
 }
 
+void Player::setVelocity(const glm::vec3& vel)
+{
+	velocity = vel;
+}
+
+glm::vec3 Player::getPosition()
+{
+	return posPlayer;
+}
+
+glm::vec3 Player::getSize()
+{
+	return model->getSize();
+}
+
 void Player::setTileMap(TileMap* tileMap)
 {
 	map = tileMap;

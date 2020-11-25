@@ -13,8 +13,10 @@ public:
 
 	void setTileMap(TileMap* tileMap);
 	void setPosition(const glm::vec3& pos);
+	void setVelocity(const glm::vec3& vel);
 
-	glm::vec2 getPosition();
+	glm::vec3 getPosition();
+	glm::vec3 getSize();
 
 	void keyPressed(int key);
 

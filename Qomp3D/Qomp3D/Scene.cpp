@@ -88,6 +88,39 @@ void Scene::update(int deltaTime)
 
 	particles->update(deltaTime / 1000.f);
 
+	// NEW
+
+	glm::vec3 posPlayer = player->getPosition();
+	glm::vec3 sizePlayer = player->getSize();
+	// Los valores se han puesto a ojo. Si se hace resize del mapa
+	// hay que tener en cuenta tanto el tamaño del player, como la
+	// posicion inicial de la camara que esta desplazada 0.5, ya 
+	// que el centro de un bloque aparece en el centro de la base
+	if (posPlayer.x + sizePlayer.x - camera.position.x > 10.5 && eCamMove == CamMove::STATIC)
+	{
+		timeCamMove = 17;
+		eCamMove = CamMove::RIGHT;
+		//player->setVelocity(glm::vec3(0, 0, 0));
+	}
+	else if (camera.position.x - posPlayer.x > 9.5 && eCamMove == CamMove::STATIC)
+	{
+		timeCamMove = 17;
+		eCamMove = CamMove::LEFT;
+		//player->setVelocity(glm::vec3(0, 0, 0));
+	}
+
+	if (camera.position.y + posPlayer.y > 7.5 && eCamMove == CamMove::STATIC)
+	{
+		timeCamMove = 14;
+		eCamMove = CamMove::DOWN;
+		//player->setVelocity(glm::vec3(0, 0, 0));
+	}
+	else if (- posPlayer.y - camera.position.y > 6.5 && eCamMove == CamMove::STATIC)
+	{
+		timeCamMove = 14;
+		eCamMove = CamMove::UP;
+		//player->setVelocity(glm::vec3(0, 0, 0));
+	}
 
 	switch (eCamMove)
 	{
