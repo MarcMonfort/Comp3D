@@ -51,7 +51,7 @@ void TileMap::render(ShaderProgram& program) const
 		for (int i = 0; i < mapSize.x; i++)
 		{
 			tile = map[j * mapSize.x + i];
-			if (tile != 0)
+			if (tile == 1)
 			{
 				modelMatrix = glm::translate(glm::mat4(1.0f), glm::vec3(i,-j,0.f) );
 				program.setUniformMatrix4f("model", modelMatrix);
@@ -201,7 +201,6 @@ bool TileMap::collisionMoveRight(const glm::ivec3& pos, const glm::ivec3& size) 
 	{
 		if (map[y * mapSize.x + x] != 0)
 		{
-			cout << map[y * mapSize.x + x] << endl;
 			return true;
 		}
 	}
@@ -209,25 +208,35 @@ bool TileMap::collisionMoveRight(const glm::ivec3& pos, const glm::ivec3& size) 
 	return false;
 }
 
-bool TileMap::collisionMoveDown(const glm::ivec3& pos, const glm::ivec3& size, int* posY) const
+
+bool TileMap::collisionMoveDown(const glm::ivec3& pos, const glm::ivec3& size) const
 {
 	int x0, x1, y;
 
-	x0 = pos.x / tileSize;
-	x1 = (pos.x + size.x - 1) / tileSize;
-	y = (pos.y + size.y - 1) / tileSize;
+	x0 = pos.x;
+	x1 = (pos.x + size.x);
+	y = (pos.y + size.y);
 	for (int x = x0; x <= x1; x++)
 	{
 		if (map[y * mapSize.x + x] != 0)
-		{
-			if (*posY - tileSize * y + size.y <= 4)
-			{
-				*posY = tileSize * y - size.y;
-				return true;
-			}
-		}
+			return true;
 	}
 
 	return false;
 }
 
+bool TileMap::collisionMoveUp(const glm::ivec3& pos, const glm::ivec3& size) const
+{
+	int x0, x1, y;
+
+	x0 = pos.x;
+	x1 = (pos.x + size.x);
+	y = pos.y;
+	for (int x = x0; x <= x1; x++)
+	{
+		if (map[y * mapSize.x + x] != 0)
+			return true;
+	}
+
+	return false;
+}

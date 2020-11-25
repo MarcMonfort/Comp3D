@@ -16,12 +16,14 @@ public:
 
 	glm::vec2 getPosition();
 
+	void keyPressed(int key);
+
 
 private:
 	glm::vec3 posPlayer;
 	TileMap* map;
 
-	glm::vec2 velocity;
+	glm::vec3 velocity = glm::vec3(0);
 
 	const SoundManager* soundManager;
 	FMOD::Sound* sound;

@@ -31,7 +31,8 @@ public:
 
 	bool collisionMoveLeft(const glm::ivec3& pos, const glm::ivec3& size) const;
 	bool collisionMoveRight(const glm::ivec3& pos, const glm::ivec3& size) const;
-	bool collisionMoveDown(const glm::ivec3& pos, const glm::ivec3& size, int* posY) const;
+	bool collisionMoveDown(const glm::ivec3& pos, const glm::ivec3& size) const;
+	bool collisionMoveUp(const glm::ivec3& pos, const glm::ivec3& size) const;
 
 private:
 	bool loadLevel(const string& levelFile, ShaderProgram& program);

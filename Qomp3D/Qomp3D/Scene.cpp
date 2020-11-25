@@ -239,6 +239,8 @@ void Scene::keyPressed(int key)
 		timeCamMove = 14;
 		eCamMove = CamMove::UP;
 	}
+
+	player->keyPressed(key);
 }
 
 
