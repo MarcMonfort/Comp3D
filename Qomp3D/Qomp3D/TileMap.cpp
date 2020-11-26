@@ -113,6 +113,16 @@ bool TileMap::loadLevel(const string& levelFile, ShaderProgram& program)
 			fin.get(tile);
 			if (tile == ' ')
 				map[j * mapSize.x + i] = 0;
+			else if (tile == 'v')	// v for vertica wall
+			{
+				walls.push_back({ true, glm::vec2(i, j) });
+				map[j * mapSize.x + i] = 0;
+			}
+			else if (tile == 'h')	// h for horizonatl wall
+			{
+				walls.push_back({ false, glm::vec2(i, j) });
+				map[j * mapSize.x + i] = 0;
+			}
 			else
 				map[j * mapSize.x + i] = tile - int('0');
 		}
@@ -184,7 +194,7 @@ bool TileMap::collisionMoveLeft(const glm::ivec3& pos, const glm::ivec3& size) c
 
 	x = pos.x;
 	y0 = pos.y;
-	y1 = (pos.y + size.y);
+	y1 = (pos.y + size.y - 0.0001);
 	for (int y = y0; y <= y1; y++)
 	{
 		if (map[y * mapSize.x + x] != 0)
@@ -201,7 +211,7 @@ bool TileMap::collisionMoveRight(const glm::ivec3& pos, const glm::ivec3& size) 
 	// tileSize  == 1
 	x = (pos.x + size.x);
 	y0 = pos.y;
-	y1 = (pos.y + size.y);
+	y1 = (pos.y + size.y - 0.0001);
 	for (int y = y0; y <= y1; y++)
 	{
 		if (map[y * mapSize.x + x] != 0)
@@ -219,7 +229,7 @@ bool TileMap::collisionMoveDown(const glm::ivec3& pos, const glm::ivec3& size) c
 	int x0, x1, y;
 
 	x0 = pos.x;
-	x1 = (pos.x + size.x);
+	x1 = (pos.x + size.x - 0.0001);
 	y = (pos.y + size.y);
 	for (int x = x0; x <= x1; x++)
 	{
@@ -235,7 +245,7 @@ bool TileMap::collisionMoveUp(const glm::ivec3& pos, const glm::ivec3& size) con
 	int x0, x1, y;
 
 	x0 = pos.x;
-	x1 = (pos.x + size.x);
+	x1 = (pos.x + size.x - 0.0001);
 	y = pos.y;
 	for (int x = x0; x <= x1; x++)
 	{
@@ -244,4 +254,12 @@ bool TileMap::collisionMoveUp(const glm::ivec3& pos, const glm::ivec3& size) con
 	}
 
 	return false;
+}
+
+
+/// END COLLISION
+
+vector<pair<bool, glm::vec2>> TileMap::getWalls() const
+{
+	return walls;
 }

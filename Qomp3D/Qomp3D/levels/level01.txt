@@ -1,20 +1,20 @@
 TILEMAP
 71 57 							-- Size of tile map in tiles
-10 -7.5 17.6					-- Camera Center
+10 -7.5 18.1					-- Camera Center
 17 14					        -- Camera Movement
 2                               -- NumOfModels
 models/cube10.obj 	            -- Model 1
-models/cube10_border.obj        -- Model 2
+models/cube10_test.obj        -- Model 2
 11111111111111111111111111111111111110000000000000000000000000000000000
 1                                 111                                 0
 1                                  11                                 0
 1                                  11                                 0
 1                                   1                                 0
-1                                   1                                 0
+1       h                           1                                 0
 12                2                 1                                 0
+12               v2v                1                                 0
 12                2                 1                                 0
-12                2                 1                                 0
-1                                   1                                 0
+1       h                           1                                 0
 1                                   1                                 0
 1                                   1                                 0
 1                                   1                                 0

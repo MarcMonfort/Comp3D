@@ -43,7 +43,7 @@ void Scene::init()
 	initShaders();
 	level = Level::createLevel(glm::vec3(16, 4, 32), texProgram, "images/floor.png", "images/wall.png");
 	model = new AssimpModel();
-	model->loadFromFile("models/cube16_border.obj", texProgram);
+	model->loadFromFile("models/cube10_test.obj", texProgram);
 	billboard = Billboard::createBillboard(glm::vec2(1.f, 1.f), texProgram, "images/mushroom.png");
 	billboard->setType(BILLBOARD_Y_AXIS);
 
@@ -60,14 +60,32 @@ void Scene::init()
 	// Init Camera. Depends on the level. Maybe use a map->getStartPosition()...
 	camera.position.x += 10;
 	camera.position.y -= 7.5;
-	camera.position.z += 17.6;
+	camera.position.z += 18.1;
 
 	// Init Player
 	player = new Player();
 	player->init(texProgram);
-	player->setPosition(glm::vec3(3, 7, 0));
+	player->setPosition(glm::vec3(5, 6, 0));
 	player->setTileMap(map);
 
+	// Init Walls (for testing) (Maybe one class that prints all from same model)
+	wall = new Wall();
+	wall->init(texProgram, false);
+	wall->setPosition(glm::vec3(5, 7, 0));
+	wall->setTileMap(map);
+
+	// Init vector of Walls
+	vector<pair<bool, glm::vec2>> pos_walls = map->getWalls();
+	for (int i = 0; i < pos_walls.size(); ++i)  // maybe bolean to know if there is any...?
+	{ 
+		Wall* wall = new Wall();
+		wall->init(texProgram, pos_walls[i].first);
+		wall->setPosition(glm::vec3(pos_walls[i].second,0));
+		wall->setTileMap(map);
+		walls.push_back(wall);
+	}
+
+	// End Inits
 	projection = glm::perspective(glm::radians(45.f), float(CAMERA_WIDTH) / float(CAMERA_HEIGHT), 0.1f, 1000.f);
 	currentTime = 0.0f;
 }
@@ -164,6 +182,12 @@ void Scene::update(int deltaTime)
 	}
 
 	player->update(deltaTime);
+	wall->update(deltaTime);
+
+	for (int i = 0; i < walls.size(); ++i)
+	{
+		walls[i]->update(deltaTime);
+	}
 
 }
 
@@ -251,6 +275,13 @@ void Scene::render()
 
 	// Render Player
 	player->render(texProgram);
+
+	// Render Wall (for testing, should be vector)
+	wall->render(texProgram);
+	for (int i = 0; i < walls.size(); ++i)
+	{
+		walls[i]->render(texProgram);
+	}
 }
 
 void Scene::keyPressed(int key)

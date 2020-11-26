@@ -10,6 +10,7 @@
 #include "ParticleSystem.h"
 #include "TileMap.h"
 #include "Player.h"
+#include "Wall.h"
 
 
 #define CAMERA_WIDTH 640
@@ -51,7 +52,7 @@ private:
 
 	struct Camera
 	{
-		glm::vec3 position = glm::vec3(-0.5f, 1.f, 1.f); // 16 (half-map) * 1.6 (size-block)
+		glm::vec3 position = glm::vec3(0); // 16 (half-map) * 1.6 (size-block)
 		glm::vec3 front = glm::vec3(0.f, 0.f, -1.f);
 		float yaw = -90;
 		float pitch = 0;
@@ -72,6 +73,9 @@ private:
 	float timeCamMove = 0.f;
 
 	Player* player;
+
+	Wall* wall;	//for testing
+	vector<Wall*> walls;
 
 };
 

@@ -1,0 +1,101 @@
+#include "Wall.h"
+
+
+#include <iostream>
+#include "Wall.h"
+#include <glm/gtc/matrix_transform.hpp>
+
+
+void Wall::init(ShaderProgram& shaderProgram, bool bVertical)
+{
+	this->bVertical = bVertical;	//vertical or horizontal
+	model = new AssimpModel();
+	if (bVertical)
+		model->loadFromFile("models/cube40_v.obj", shaderProgram);	// vertical
+	else
+		model->loadFromFile("models/cube40_h.obj", shaderProgram);  //horizontal
+
+	velocity = 0.1;
+
+}
+
+void Wall::update(int deltaTime)
+{
+	//should collide also with player, to avoid problems???
+	if (bVertical)
+	{
+		if (map->collisionMoveUp(position, model->getSize()))
+		{
+			velocity = abs(velocity);
+		}
+		else if (map->collisionMoveDown(position, model->getSize()))
+		{
+			velocity = -abs(velocity);
+		}
+		position.y += velocity;
+	}
+	else   //horizontal
+	{
+		if (map->collisionMoveRight(position, model->getSize()))
+		{
+			velocity = -abs(velocity);
+		}
+		else if (map->collisionMoveLeft(position, model->getSize()))
+		{
+			velocity = abs(velocity);
+		}
+		position.x += velocity;
+	}
+}
+
+void Wall::render(ShaderProgram& program)
+{
+	glm::mat4 modelMatrix;
+	modelMatrix = glm::translate(glm::mat4(1.0f), glm::vec3(position.x, -position.y, 0));
+	program.setUniformMatrix4f("model", modelMatrix);
+
+	model->render(program);
+}
+
+void Wall::setPosition(const glm::vec3& pos)
+{
+	glm::vec3 size = model->getSize();
+	if (bVertical)
+	{
+		position = glm::vec3(pos.x, pos.y - (size.y/2) + 0.5, 0);
+	}
+	else
+	{
+		position = glm::vec3(pos.x - (size.x/2) + 0.5, pos.y, 0);
+	}
+}
+
+void Wall::setVelocity(float vel)
+{
+	velocity = vel;
+}
+
+glm::vec3 Wall::getPosition()
+{
+	return position;
+}
+
+glm::vec3 Wall::getSize()
+{
+	return model->getSize();
+}
+
+void Wall::setTileMap(TileMap* tileMap)
+{
+	map = tileMap;
+}
+
+
+void Wall::keyPressed(int key)
+{
+
+	if (key == ' ')
+	{
+		velocity = -velocity;
+	}
+}

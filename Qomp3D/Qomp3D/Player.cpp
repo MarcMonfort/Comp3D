@@ -8,8 +8,8 @@ void Player::init(ShaderProgram& shaderProgram)
 	model = new AssimpModel();
 	model->loadFromFile("models/cube10.obj", shaderProgram);
 
-	velocity.x = 0.1f;
-	velocity.y = 0.1f;
+	velocity.x = 0.f;
+	velocity.y = 0.f;
 
 }
 
