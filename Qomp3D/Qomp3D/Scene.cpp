@@ -68,13 +68,7 @@ void Scene::init()
 	player->setPosition(glm::vec3(5, 6, 0));
 	player->setTileMap(map);
 
-	// Init Walls (for testing) (Maybe one class that prints all from same model)
-	wall = new Wall();
-	wall->init(texProgram, false);
-	wall->setPosition(glm::vec3(5, 7, 0));
-	wall->setTileMap(map);
-
-	// Init vector of Walls
+	// Init Walls
 	vector<pair<bool, glm::vec2>> pos_walls = map->getWalls();
 	for (int i = 0; i < pos_walls.size(); ++i)  // maybe bolean to know if there is any...?
 	{ 
@@ -182,10 +176,10 @@ void Scene::update(int deltaTime)
 	}
 
 	player->update(deltaTime);
-	wall->update(deltaTime);
 
 	for (int i = 0; i < walls.size(); ++i)
 	{
+		// mes eficiente si solo hace update de los que són visibles!!!!
 		walls[i]->update(deltaTime);
 	}
 
@@ -276,8 +270,7 @@ void Scene::render()
 	// Render Player
 	player->render(texProgram);
 
-	// Render Wall (for testing, should be vector)
-	wall->render(texProgram);
+	// Render Walls
 	for (int i = 0; i < walls.size(); ++i)
 	{
 		walls[i]->render(texProgram);

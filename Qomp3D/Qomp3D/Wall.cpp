@@ -15,6 +15,7 @@ void Wall::init(ShaderProgram& shaderProgram, bool bVertical)
 	else
 		model->loadFromFile("models/cube40_h.obj", shaderProgram);  //horizontal
 
+	size = model->getSize();
 	velocity = 0.1;
 
 }
@@ -24,11 +25,12 @@ void Wall::update(int deltaTime)
 	//should collide also with player, to avoid problems???
 	if (bVertical)
 	{
-		if (map->collisionMoveUp(position, model->getSize()))
+		glm::vec3 aux_size = glm::vec3(size.x - 0.0001, size.y, size.z);
+		if (map->collisionMoveUp(position, aux_size))
 		{
 			velocity = abs(velocity);
 		}
-		else if (map->collisionMoveDown(position, model->getSize()))
+		else if (map->collisionMoveDown(position, aux_size))
 		{
 			velocity = -abs(velocity);
 		}
@@ -36,11 +38,12 @@ void Wall::update(int deltaTime)
 	}
 	else   //horizontal
 	{
-		if (map->collisionMoveRight(position, model->getSize()))
+		glm::vec3 aux_size = glm::vec3(size.x, size.y - 0.0001, size.z);
+		if (map->collisionMoveRight(position, aux_size))
 		{
 			velocity = -abs(velocity);
 		}
-		else if (map->collisionMoveLeft(position, model->getSize()))
+		else if (map->collisionMoveLeft(position, aux_size))
 		{
 			velocity = abs(velocity);
 		}
@@ -59,7 +62,6 @@ void Wall::render(ShaderProgram& program)
 
 void Wall::setPosition(const glm::vec3& pos)
 {
-	glm::vec3 size = model->getSize();
 	if (bVertical)
 	{
 		position = glm::vec3(pos.x, pos.y - (size.y/2) + 0.5, 0);
@@ -82,7 +84,7 @@ glm::vec3 Wall::getPosition()
 
 glm::vec3 Wall::getSize()
 {
-	return model->getSize();
+	return size;
 }
 
 void Wall::setTileMap(TileMap* tileMap)

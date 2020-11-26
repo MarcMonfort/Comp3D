@@ -27,6 +27,8 @@ private:
 
 	float velocity = 0;
 
+	glm::vec3 size;
+
 	const SoundManager* soundManager;
 	FMOD::Sound* sound;
 	FMOD::Channel* channel;

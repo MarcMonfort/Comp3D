@@ -194,7 +194,7 @@ bool TileMap::collisionMoveLeft(const glm::ivec3& pos, const glm::ivec3& size) c
 
 	x = pos.x;
 	y0 = pos.y;
-	y1 = (pos.y + size.y - 0.0001);
+	y1 = (pos.y + size.y);
 	for (int y = y0; y <= y1; y++)
 	{
 		if (map[y * mapSize.x + x] != 0)
@@ -211,7 +211,7 @@ bool TileMap::collisionMoveRight(const glm::ivec3& pos, const glm::ivec3& size) 
 	// tileSize  == 1
 	x = (pos.x + size.x);
 	y0 = pos.y;
-	y1 = (pos.y + size.y - 0.0001);
+	y1 = (pos.y + size.y);
 	for (int y = y0; y <= y1; y++)
 	{
 		if (map[y * mapSize.x + x] != 0)
@@ -229,7 +229,7 @@ bool TileMap::collisionMoveDown(const glm::ivec3& pos, const glm::ivec3& size) c
 	int x0, x1, y;
 
 	x0 = pos.x;
-	x1 = (pos.x + size.x - 0.0001);
+	x1 = (pos.x + size.x);
 	y = (pos.y + size.y);
 	for (int x = x0; x <= x1; x++)
 	{
@@ -245,7 +245,7 @@ bool TileMap::collisionMoveUp(const glm::ivec3& pos, const glm::ivec3& size) con
 	int x0, x1, y;
 
 	x0 = pos.x;
-	x1 = (pos.x + size.x - 0.0001);
+	x1 = (pos.x + size.x);
 	y = pos.y;
 	for (int x = x0; x <= x1; x++)
 	{

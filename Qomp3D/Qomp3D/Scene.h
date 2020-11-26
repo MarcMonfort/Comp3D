@@ -74,7 +74,6 @@ private:
 
 	Player* player;
 
-	Wall* wall;	//for testing
 	vector<Wall*> walls;
 
 };
