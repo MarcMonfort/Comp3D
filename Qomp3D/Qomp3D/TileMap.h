@@ -36,7 +36,7 @@ public:
 
 private:
 	bool loadLevel(const string& levelFile, ShaderProgram& program);
-	void prepareArrays(const glm::vec2& minCoords, ShaderProgram& program);
+	//void prepareArrays(const glm::vec2& minCoords, ShaderProgram& program);
 
 private:
 	GLuint vao;
@@ -49,6 +49,7 @@ private:
 	int* map;
 
 	AssimpModel* model;
+	vector<AssimpModel*> models;
 	glm::vec3 camCenter;
 	glm::vec2 camMovement;
 

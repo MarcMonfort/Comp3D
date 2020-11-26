@@ -18,6 +18,7 @@ Scene::Scene()
 	billboard = NULL;
 	particles = NULL;
 	map = NULL;
+	player = NULL;
 }
 
 Scene::~Scene()
@@ -32,6 +33,8 @@ Scene::~Scene()
 		delete particles;
 	if (map != NULL)
 		delete map;
+	if (player != NULL)
+		delete player;
 }
 
 
