@@ -1,6 +1,9 @@
 **/.vs
 *.log
-*.obj
+
+
+**/Debug/*.obj
+
 *.ilk
 *.exe
 *.recipe
