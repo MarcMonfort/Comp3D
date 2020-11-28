@@ -3,7 +3,11 @@
 
 
 #include "GameState.h"
+#include "MenuGameState.h"
 #include "PlayGameState.h"
+
+#define SCREEN_WIDTH 960
+#define SCREEN_HEIGHT 720
 
 
 // Game is a singleton (a class with a single instance) that represents our whole application
@@ -35,10 +39,16 @@ public:
 	void mouseMove(int x, int y);
 	void mousePress(int button);
 	void mouseRelease(int button);
+
 	//void reshape(int width, int height);
 	
 	bool getKey(int key) const;
 	bool getSpecialKey(int key) const;
+
+	void startGame();
+	void goBackToMenu();
+
+	void setBplay(bool b);
 
 private:
 	bool bPlay;                       // Continue to play game?

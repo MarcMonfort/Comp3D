@@ -1,5 +1,6 @@
 #include <iostream>
 #include "Player.h"
+#include "Game.h"
 #include <glm/gtc/matrix_transform.hpp>
 
 
@@ -114,8 +115,8 @@ void Player::setTileMap(TileMap* tileMap)
 
 void Player::keyPressed(int key)
 {
-
-	if (key == ' ')
+	bool already_pressed = Game::instance().getKey(key);
+	if (key == ' ' && !already_pressed)
 	{
 		velocity.y = -velocity.y;
 	}

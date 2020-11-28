@@ -10,7 +10,7 @@ void Game::init()
 	glEnable(GL_DEPTH_TEST);
 	glClearColor(0.f, 0.f, 0.f, 1.0f);
 
-	currentGameState = &PlayGameState::instance();
+	currentGameState = &MenuGameState::instance();
 	currentGameState->init();
 
 	SoundManager::instance().init();
@@ -33,8 +33,7 @@ void Game::render()
 
 void Game::keyPressed(int key)
 {
-	if(key == 27) // Escape code
-		bPlay = false;
+	currentGameState->keyPressed(key);
 	keys[key] = true;
 }
 
@@ -78,4 +77,19 @@ bool Game::getKey(int key) const
 bool Game::getSpecialKey(int key) const
 {
 	return specialKeys[key];
+}
+
+void Game::startGame() {
+	currentGameState = &PlayGameState::instance();
+	currentGameState->init();
+}
+
+void Game::goBackToMenu() {
+	currentGameState = &MenuGameState::instance();
+	currentGameState->init();
+}
+
+void Game::setBplay(bool b)
+{
+	bPlay = b;
 }

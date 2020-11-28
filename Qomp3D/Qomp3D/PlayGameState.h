@@ -15,6 +15,9 @@ public:
 		return P;
 	}
 
+	// Input callback methods
+	void keyPressed(int key);
+
 	void init();
 	void update(int deltaTime);
 	void render();

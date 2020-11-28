@@ -10,12 +10,8 @@ public:
 	virtual void update(int deltaTime) = 0;
 	virtual void render() = 0;
 
-	bool getKey(int key) const;
-	bool getSpecialKey(int key) const;
-
-protected:
-	bool keys[256], specialKeys[256]; // Store key states so that 
-	void resetKeys();
+	// Input callback methods
+	virtual void keyPressed(int key) = 0;
 };
 
 #endif
