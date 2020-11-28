@@ -22,12 +22,14 @@ void MenuGameState::update(int deltaTime)
 
 void MenuGameState::render()
 {
-	glm::mat4 modelview;
+	glm::mat4 modelMatrix, viewMatrix;
 	texProgram.use();
 	texProgram.setUniformMatrix4f("projection", projection);
 	texProgram.setUniform4f("color", 1.0f, 1.0f, 1.0f, 1.0f);
-	modelview = glm::mat4(1.0f);
-	texProgram.setUniformMatrix4f("modelview", modelview);
+	modelMatrix = glm::mat4(1.0f);
+	viewMatrix = glm::mat4(1.0f);
+	texProgram.setUniformMatrix4f("model", modelMatrix);
+	texProgram.setUniformMatrix4f("view", viewMatrix);
 	texProgram.setUniform2f("texCoordDispl", 0.f, 0.f);
 
 	background->render();
