@@ -35,6 +35,9 @@ void Wall::update(int deltaTime, Player* player)
 			velocity = -abs(velocity);
 		}
 		position.y += velocity;
+		if (collidePlayer(player)) {
+			position.y -= velocity;
+		}
 	}
 	else   //horizontal
 	{
@@ -48,6 +51,9 @@ void Wall::update(int deltaTime, Player* player)
 			velocity = abs(velocity);
 		}
 		position.x += velocity;
+		if (collidePlayer(player)) {
+			position.x -= velocity;
+		}
 	}
 }
 
@@ -104,18 +110,19 @@ void Wall::keyPressed(int key)
 
 void Wall::followPlayer(glm::vec3 posPlayer)
 {
+	float offset = 0.5;
 	if (bVertical)
 	{
-		if (posPlayer.y < position.y)
+		if (posPlayer.y + 1 + offset < position.y)
 			velocity = -abs(velocity);
-		else if (posPlayer.y > position.y + size.y)
+		else if (posPlayer.y - offset > position.y + size.y)
 			velocity = abs(velocity);
 	}
 	else
 	{
-		if (posPlayer.x < position.x)
+		if (posPlayer.x + 1 + offset < position.x)
 			velocity = -abs(velocity);
-		else if (posPlayer.x > position.x + size.x)
+		else if (posPlayer.x - offset > position.x + size.x)
 			velocity = abs(velocity);
 	}
 }
@@ -123,4 +130,22 @@ void Wall::followPlayer(glm::vec3 posPlayer)
 bool Wall::getOrientation()
 {
 	return bVertical;
+}
+
+bool Wall::collidePlayer(Player* player)
+{
+	glm::vec3 playerPos = player->getPosition();
+	glm::vec3 playerSize = player->getSize();
+
+	float Wxmin = position.x;
+	float Wxmax = position.x + size.x;
+	float Wymin = position.y;
+	float Wymax = position.y + size.y;
+
+	float Pxmin = playerPos.x;
+	float Pxmax = playerPos.x + playerSize.x;
+	float Pymin = playerPos.y;
+	float Pymax = playerPos.y + playerSize.y;
+
+	return ((Wxmin < Pxmax&& Pxmin < Wxmax) && (Wymin < Pymax&& Pymin < Wymax));
 }

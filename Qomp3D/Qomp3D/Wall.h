@@ -40,6 +40,7 @@ private:
 	bool bVertical;
 
 	void followPlayer(glm::vec3 posPlayer);
+	bool collidePlayer(Player* player);
 };
 
 #endif
