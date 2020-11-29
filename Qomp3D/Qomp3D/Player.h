@@ -35,7 +35,7 @@ private:
 
 	AssimpModel* model;
 
-	void collideWall(Wall* wall);
+	bool collideWall(Wall* wall);
 
 };
 

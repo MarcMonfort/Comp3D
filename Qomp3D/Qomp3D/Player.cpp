@@ -63,6 +63,13 @@ void Player::update(int deltaTime, vector<Wall*>* walls)
 		velocity.x = abs(velocity.x);
 	}
 
+	for (int i = 0; i < (*walls).size(); ++i) {
+		if (collideWall((*walls)[i])) {
+			posPlayer.x -= velocity.x;
+			velocity.x = -velocity.x;
+		}
+	}
+
 	posPlayer.y += velocity.y;
 
 	if (map->collisionMoveUp(posPlayer, model->getSize()))
@@ -76,8 +83,12 @@ void Player::update(int deltaTime, vector<Wall*>* walls)
 		velocity.y = -abs(velocity.y);
 	}
 
-	for (int i = 0; i < (*walls).size(); ++i)
-		collideWall((*walls)[i]);
+	for (int i = 0; i < (*walls).size(); ++i) {
+		if (collideWall((*walls)[i])) {
+			posPlayer.y -= velocity.y;
+			velocity.y = -velocity.y;
+		}
+	}
 }
 
 void Player::render(ShaderProgram& program)
@@ -124,7 +135,7 @@ void Player::keyPressed(int key)
 	}
 }
 
-void Player::collideWall(Wall* wall)
+bool Player::collideWall(Wall* wall)
 {
 	glm::vec3 wallPos = wall->getPosition();
 	glm::vec3 wallSize = wall->getSize();
@@ -142,10 +153,5 @@ void Player::collideWall(Wall* wall)
 	float Pymin = posPlayer.y;
 	float Pymax = posPlayer.y + playerSize.y;
 
-	if ((Wxmin < Pxmax && Pxmin < Wxmax) && (Wymin < Pymax && Pymin < Wymax)) {
-		if (bVertical)
-			velocity.x = -velocity.x;
-		else
-			velocity.y = -velocity.y;
-	}
+	return ((Wxmin < Pxmax&& Pxmin < Wxmax) && (Wymin < Pymax&& Pymin < Wymax));
 }
