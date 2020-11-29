@@ -4,8 +4,9 @@
 
 void PlayGameState::init()
 {
+	currentLevel = 1;
 	scene = Scene();
-	scene.init();
+	scene.init(currentLevel);
 }
 
 void PlayGameState::update(int deltaTime)
@@ -25,4 +26,11 @@ void PlayGameState::keyPressed(int key)
 	else {
 		scene.keyPressed(key);
 	}
+}
+
+void PlayGameState::nextLevel() {
+	//animation->restart();
+	++currentLevel;
+	scene = Scene();
+	scene.init(currentLevel);
 }

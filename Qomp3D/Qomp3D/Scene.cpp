@@ -38,7 +38,7 @@ Scene::~Scene()
 }
 
 
-void Scene::init()
+void Scene::init(int numLevel)
 {
 	initShaders();
 	level = Level::createLevel(glm::vec3(16, 4, 32), texProgram, "images/floor.png", "images/wall.png");
@@ -55,7 +55,8 @@ void Scene::init()
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE);
 
 	// Initialize TileMap
-	map = TileMap::createTileMap("levels/level01.txt", glm::vec2(0, 0), texProgram);
+	string pathLevel = "levels/level0" + to_string(numLevel) + ".txt";
+	map = TileMap::createTileMap(pathLevel, glm::vec2(0, 0), texProgram);
 
 	// Init Camera. Depends on the level. Maybe use a map->getStartPosition()...
 	camera.position.x += 10;

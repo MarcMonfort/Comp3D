@@ -29,16 +29,26 @@ public:
 
 	int getTileSize() const { return tileSize; }
 
-	bool collisionMoveLeft(const glm::ivec3& pos, const glm::ivec3& size) const;
-	bool collisionMoveRight(const glm::ivec3& pos, const glm::ivec3& size) const;
-	bool collisionMoveDown(const glm::ivec3& pos, const glm::ivec3& size) const;
-	bool collisionMoveUp(const glm::ivec3& pos, const glm::ivec3& size) const;
+	bool collisionMoveLeft(const glm::ivec3& pos, const glm::ivec3& size);
+	bool collisionMoveRight(const glm::ivec3& pos, const glm::ivec3& size);
+	bool collisionMoveDown(const glm::ivec3& pos, const glm::ivec3& size);
+	bool collisionMoveUp(const glm::ivec3& pos, const glm::ivec3& size);
+
+	enum block
+	{
+		basic,
+		end,
+		wall,
+		key,
+	};
 
 	vector<pair<bool, glm::vec2>> getWalls() const;
 
 private:
 	bool loadLevel(const string& levelFile, ShaderProgram& program);
 	//void prepareArrays(const glm::vec2& minCoords, ShaderProgram& program);
+	int checkBlock(int block);
+	bool treatCollision(int pos, int type);
 
 private:
 	GLuint vao;
@@ -55,8 +65,6 @@ private:
 	glm::vec2 camMovement;
 
 	vector<pair<bool, glm::vec2>> walls;
-
-
 };
 
 

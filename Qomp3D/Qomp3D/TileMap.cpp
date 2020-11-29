@@ -4,6 +4,7 @@
 #include <vector>
 #include "TileMap.h"
 #include <glm/gtc/matrix_transform.hpp>
+#include "PlayGameState.h"
 
 
 using namespace std;
@@ -188,7 +189,7 @@ bool TileMap::loadLevel(const string& levelFile, ShaderProgram& program)
 // Method collisionMoveDown also corrects Y coordinate if the box is
 // already intersecting a tile below.
 
-bool TileMap::collisionMoveLeft(const glm::ivec3& pos, const glm::ivec3& size) const
+bool TileMap::collisionMoveLeft(const glm::ivec3& pos, const glm::ivec3& size)
 {
 	int x, y0, y1;
 
@@ -198,13 +199,14 @@ bool TileMap::collisionMoveLeft(const glm::ivec3& pos, const glm::ivec3& size) c
 	for (int y = y0; y <= y1; y++)
 	{
 		if (map[y * mapSize.x + x] != 0)
-			return true;
+			//return true;
+			return treatCollision(y * mapSize.x + x, 0);
 	}
 
 	return false;
 }
 
-bool TileMap::collisionMoveRight(const glm::ivec3& pos, const glm::ivec3& size) const
+bool TileMap::collisionMoveRight(const glm::ivec3& pos, const glm::ivec3& size)
 {
 	int x, y0, y1;
 
@@ -215,16 +217,15 @@ bool TileMap::collisionMoveRight(const glm::ivec3& pos, const glm::ivec3& size) 
 	for (int y = y0; y <= y1; y++)
 	{
 		if (map[y * mapSize.x + x] != 0)
-		{
-			return true;
-		}
+			//return true;
+			return treatCollision(y * mapSize.x + x, 0);
 	}
 
 	return false;
 }
 
 
-bool TileMap::collisionMoveDown(const glm::ivec3& pos, const glm::ivec3& size) const
+bool TileMap::collisionMoveDown(const glm::ivec3& pos, const glm::ivec3& size)
 {
 	int x0, x1, y;
 
@@ -234,13 +235,14 @@ bool TileMap::collisionMoveDown(const glm::ivec3& pos, const glm::ivec3& size) c
 	for (int x = x0; x <= x1; x++)
 	{
 		if (map[y * mapSize.x + x] != 0)
-			return true;
+			//return true;
+			return treatCollision(y * mapSize.x + x, 0);
 	}
 
 	return false;
 }
 
-bool TileMap::collisionMoveUp(const glm::ivec3& pos, const glm::ivec3& size) const
+bool TileMap::collisionMoveUp(const glm::ivec3& pos, const glm::ivec3& size)
 {
 	int x0, x1, y;
 
@@ -250,10 +252,104 @@ bool TileMap::collisionMoveUp(const glm::ivec3& pos, const glm::ivec3& size) con
 	for (int x = x0; x <= x1; x++)
 	{
 		if (map[y * mapSize.x + x] != 0)
-			return true;
+			//return true;
+			return treatCollision(y * mapSize.x + x, 0);
 	}
 
 	return false;
+}
+
+int TileMap::checkBlock(int block)
+{
+	if (block == 1)
+		return basic;
+	else if (block == 2)
+		return end;
+	else if (block == 'v' || block == 'h')
+		return wall;
+	else if (block == 'k')
+		return key;
+}
+
+bool TileMap::treatCollision(int pos, int type)
+{
+	int block = checkBlock(map[pos]);
+
+	if (block == basic)
+	{
+		return true;
+		/*if (map[pos] % 2 == 0)
+			map[pos - 1] = 0;
+		else
+			map[pos + 1] = 0;
+		map[pos] = 0;*/
+
+		/*if (type == 0)
+			channel = soundManager->playSound(music_basic_block);
+		else {
+			channel = soundManager->playSound(drop_block2);
+			channel->setVolume(0.3f);
+		}*/
+
+		//PlayGameState::instance().addPoints(100);
+	}
+	else if (block == wall) {
+		/*if (type == 0)
+			channel = soundManager->playSound(music_wall_coin);
+		else {
+			channel = soundManager->playSound(drop_block2);
+			channel->setVolume(0.3f);
+		}*/
+		return true;
+	}
+	else if (block == key)
+	{
+		/*if (map[pos] == 23) {
+			map[pos + 1] = 0;
+			map[pos + mapSize.x] = 0;
+			map[pos + mapSize.x + 1] = 0;
+		}
+		else if (map[pos] == 24) {
+			map[pos - 1] = 0;
+			map[pos + mapSize.x] = 0;
+			map[pos + mapSize.x - 1] = 0;
+		}
+		else if (map[pos] == 39) {
+			map[pos + 1] = 0;
+			map[pos - mapSize.x] = 0;
+			map[pos - mapSize.x + 1] = 0;
+		}
+		else if (map[pos] == 40) {
+			map[pos - 1] = 0;
+			map[pos - mapSize.x] = 0;
+			map[pos - mapSize.x - 1] = 0;
+		}
+		map[pos] = 0;
+		map[8] = 21;
+		map[9] = 22;
+		map[10] = 21;
+		map[11] = 22;
+		map[12] = 21;
+		map[13] = 22;
+		map[14] = 21;
+		map[15] = 22;
+		map[pos] = 0;*/
+
+		/*if (type == 0)
+			channel = soundManager->playSound(music_wall_coin);
+		else {
+			channel = soundManager->playSound(drop_block2);
+			channel->setVolume(0.3f);
+		}*/
+		return false;
+	}
+	else if (block == end)
+	{
+		PlayGameState::instance().nextLevel();
+		return false;
+	}
+	//prepareArrays(a, b);
+	//return true;
 }
 
 

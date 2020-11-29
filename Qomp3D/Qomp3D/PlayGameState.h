@@ -22,8 +22,11 @@ public:
 	void update(int deltaTime);
 	void render();
 
+	void nextLevel();
+
 private:
 	Scene scene;
+	int currentLevel = 0;
 };
 
 #endif
