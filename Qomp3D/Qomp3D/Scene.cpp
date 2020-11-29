@@ -176,7 +176,7 @@ void Scene::update(int deltaTime)
 			break;
 	}
 
-	player->update(deltaTime);
+	player->update(deltaTime, &walls);
 
 	for (int i = 0; i < walls.size(); ++i)
 	{

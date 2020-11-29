@@ -18,6 +18,7 @@ public:
 
 	glm::vec3 getPosition();
 	glm::vec3 getSize();
+	bool getOrientation();
 
 	void keyPressed(int key);
 

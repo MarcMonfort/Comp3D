@@ -119,3 +119,8 @@ void Wall::followPlayer(glm::vec3 posPlayer)
 			velocity = abs(velocity);
 	}
 }
+
+bool Wall::getOrientation()
+{
+	return bVertical;
+}

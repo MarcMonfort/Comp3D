@@ -14,7 +14,7 @@ void Player::init(ShaderProgram& shaderProgram)
 
 }
 
-void Player::update(int deltaTime)
+void Player::update(int deltaTime, vector<Wall*>* walls)
 {
 	// puede que mejor sin deltaTime, cuando hay lag puede petar...
 	/*glm::vec3 compPosition_x = posPlayer + glm::vec3(velocity.x, 0, 0);
@@ -76,6 +76,8 @@ void Player::update(int deltaTime)
 		velocity.y = -abs(velocity.y);
 	}
 
+	for (int i = 0; i < (*walls).size(); ++i)
+		collideWall((*walls)[i]);
 }
 
 void Player::render(ShaderProgram& program)
@@ -119,5 +121,31 @@ void Player::keyPressed(int key)
 	if (key == ' ' && !already_pressed)
 	{
 		velocity.y = -velocity.y;
+	}
+}
+
+void Player::collideWall(Wall* wall)
+{
+	glm::vec3 wallPos = wall->getPosition();
+	glm::vec3 wallSize = wall->getSize();
+	bool bVertical = wall->getOrientation();
+
+	glm::vec3 playerSize = getSize();
+
+	float Wxmin = wallPos.x;
+	float Wxmax = wallPos.x + wallSize.x;
+	float Wymin = wallPos.y;
+	float Wymax = wallPos.y + wallSize.y;
+	
+	float Pxmin = posPlayer.x;
+	float Pxmax = posPlayer.x + playerSize.x;
+	float Pymin = posPlayer.y;
+	float Pymax = posPlayer.y + playerSize.y;
+
+	if ((Wxmin < Pxmax && Pxmin < Wxmax) && (Wymin < Pymax && Pymin < Wymax)) {
+		if (bVertical)
+			velocity.x = -velocity.x;
+		else
+			velocity.y = -velocity.y;
 	}
 }

@@ -4,11 +4,13 @@
 #include "TileMap.h"
 #include "SoundManager.h"
 
+class Wall;
+
 class Player
 {
 public:
 	void init(ShaderProgram& shaderProgram);
-	void update(int deltaTime);
+	void update(int deltaTime, vector<Wall*>* walls);
 	void render(ShaderProgram& program);
 
 	void setTileMap(TileMap* tileMap);
@@ -32,6 +34,8 @@ private:
 	FMOD::Channel* channel;
 
 	AssimpModel* model;
+
+	void collideWall(Wall* wall);
 
 };
 
