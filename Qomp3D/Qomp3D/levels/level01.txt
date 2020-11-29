@@ -5,12 +5,12 @@ TILEMAP
 4                               		-- NumOfModels
 1 models/cube10.obj 	                        -- Model 1
 f models/cube10_test.obj        		-- Model 2
-k models/cube10.obj 	            		-- Model for keys
-d models/cube10.obj 	            		-- Model for doors
+k models/key.obj 	            		-- Model for keys
+d models/door.obj 	            		-- Model for doors
 11111111111111111111111111111111111110000000000000000000000000000000000
 1                                 111                                 0
 1                                  11                                 0
-1          d                       11                                 0
+1                            k     11                                 0
 1                                   1                                 0
 1                                   1                                 0
 1                                   1                                 0
@@ -18,10 +18,10 @@ d models/cube10.obj 	            		-- Model for doors
 1                                   1                                 0
 1                                   1                                 0
 1                                   1                                 0
-1            k                      1                                 0
 1                                   1                                 0
 1                                   1                                 0
-1111111111111111111111          111111111111111111111111111111111111111
+1                                   1                                 0
+1111111111111111111111dddddddddd111111111111111111111111111111111111111
 1                                   1                                 1
 1                                   1                                 1
 1                                   1                                 1
