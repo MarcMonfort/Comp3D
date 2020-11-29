@@ -45,18 +45,17 @@ void TileMap::render(ShaderProgram& program)
 	modelMatrix = glm::mat4(1.0f);
 
 
-	int tile;
+	char tile;
 
 	for (int j = 0; j < mapSize.y; j++)
 	{
 		for (int i = 0; i < mapSize.x; i++)
 		{
 			tile = map[j * mapSize.x + i];
-			if (tile != 0)
+			if (tile != '0')
 			{
 				modelMatrix = glm::translate(glm::mat4(1.0f), glm::vec3(i,-j,0.f) );
 				program.setUniformMatrix4f("model", modelMatrix);
-				//models[tile-1]->render(program);
 				models[tile]->render(program);
 			}
 		}
@@ -105,36 +104,34 @@ bool TileMap::loadLevel(const string& levelFile, ShaderProgram& program)
 
 		AssimpModel* new_model = new AssimpModel();
 		new_model->loadFromFile(tilesheetFile, program);
-		//models.push_back(new_model);
-		models.insert(pair<int, AssimpModel*>((int)num, new_model));
+		models.insert(pair<int, AssimpModel*>(num, new_model));
 	}
 	
-	map = new int[mapSize.x * mapSize.y];
+	map = new char[mapSize.x * mapSize.y];
 	for (int j = 0; j < mapSize.y; j++)
 	{
 		for (int i = 0; i < mapSize.x; i++)
 		{
 			fin.get(tile);
-			if (tile == ' ' || tile == '0')
-				map[j * mapSize.x + i] = 0;
+			if (tile == ' ')
+				map[j * mapSize.x + i] = '0';
 			else if (tile == 'v')	// v for vertical wall
 			{
 				walls.push_back({ true, glm::vec2(i, j) });
-				map[j * mapSize.x + i] = 0;
+				map[j * mapSize.x + i] = '0';
 			}
 			else if (tile == 'h')	// h for horizontal wall
 			{
 				walls.push_back({ false, glm::vec2(i, j) });
-				map[j * mapSize.x + i] = 0;
+				map[j * mapSize.x + i] = '0';
 			}
-			else if (tile == 'd')	// d for door
-			{
-				doors.push_back(j * mapSize.x + i);
-				map[j * mapSize.x + i] = (int)tile;
-			}
-			else
-				//map[j * mapSize.x + i] = tile - int('0');
-				map[j * mapSize.x + i] = (int)tile;
+			else {
+				if (tile == 'd')	// d for door
+				{
+					doors.push_back(j * mapSize.x + i);
+				}
+				map[j * mapSize.x + i] = tile;
+			}				
 		}
 		fin.get(tile);
 #ifndef _WIN32
@@ -207,7 +204,7 @@ bool TileMap::collisionMoveLeft(const glm::ivec3& pos, const glm::ivec3& size)
 	y1 = (pos.y + size.y);
 	for (int y = y0; y <= y1; y++)
 	{
-		if (map[y * mapSize.x + x] != 0)
+		if (map[y * mapSize.x + x] != '0')
 			return treatCollision(y * mapSize.x + x, 0);
 	}
 
@@ -224,7 +221,7 @@ bool TileMap::collisionMoveRight(const glm::ivec3& pos, const glm::ivec3& size)
 	y1 = (pos.y + size.y);
 	for (int y = y0; y <= y1; y++)
 	{
-		if (map[y * mapSize.x + x] != 0)
+		if (map[y * mapSize.x + x] != '0')
 			return treatCollision(y * mapSize.x + x, 0);
 	}
 
@@ -241,7 +238,7 @@ bool TileMap::collisionMoveDown(const glm::ivec3& pos, const glm::ivec3& size)
 	y = (pos.y + size.y);
 	for (int x = x0; x <= x1; x++)
 	{
-		if (map[y * mapSize.x + x] != 0)
+		if (map[y * mapSize.x + x] != '0')
 			return treatCollision(y * mapSize.x + x, 0);
 	}
 
@@ -257,8 +254,7 @@ bool TileMap::collisionMoveUp(const glm::ivec3& pos, const glm::ivec3& size)
 	y = pos.y;
 	for (int x = x0; x <= x1; x++)
 	{
-		if (map[y * mapSize.x + x] != 0)
-			//return true;
+		if (map[y * mapSize.x + x] != '0')
 			return treatCollision(y * mapSize.x + x, 0);
 	}
 
@@ -293,9 +289,9 @@ bool TileMap::treatCollision(int pos, int type)
 	}
 	else if (block == key)
 	{
-		map[pos] = 0;
+		map[pos] = '0';
 		for (int i = 0; i < doors.size(); ++i) {
-			map[doors[i]] = 0;
+			map[doors[i]] = '0';
 		}
 		return false;
 	}

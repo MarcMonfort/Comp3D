@@ -60,7 +60,7 @@ private:
 	int tileSize, blockSize;
 	Texture tilesheet;
 	glm::vec2 tileTexSize;
-	int* map;
+	char* map;
 
 	std::unordered_map<int, AssimpModel*> models = {};
 	glm::vec3 camCenter;
