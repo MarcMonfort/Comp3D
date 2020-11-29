@@ -273,6 +273,8 @@ int TileMap::checkBlock(int block)
 		return key;
 	else if (block == 'd')
 		return door;
+	else if (block == 'l' || block == 'm')
+		return line;
 }
 
 bool TileMap::treatCollision(int pos, int type)
@@ -304,9 +306,29 @@ bool TileMap::treatCollision(int pos, int type)
 	{
 		return true;
 	}
+	else if (block == line)
+	{
+		return false;
+	}
 	return true;
 }
 
+bool TileMap::lineCollision(glm::vec3 pos, glm::vec3 size, bool vertical)
+{
+	int x0 = pos.x, x1 = pos.x + size.x - 0.05, y0 = pos.y, y1 = pos.y + size.y - 0.05;
+	bool c1, c2;
+
+	if (vertical) {
+		c1 = map[y0 * mapSize.x + x0] == 'm' && map[y0 * mapSize.x + x1] == 'm';
+		c2 = map[y1 * mapSize.x + x0] == 'm' && map[y1 * mapSize.x + x1] == 'm';
+	}
+	else {
+		c1 = map[y0 * mapSize.x + x0] == 'l' && map[y1 * mapSize.x + x0] == 'l';
+		c2 = map[y0 * mapSize.x + x1] == 'l' && map[y1 * mapSize.x + x1] == 'l';
+	}
+
+	return c1 || c2;
+}
 
 /// END COLLISION
 

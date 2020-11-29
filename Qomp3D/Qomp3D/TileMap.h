@@ -42,9 +42,11 @@ public:
 		key,
 		door,
 		fin,
+		line,
 	};
 
 	vector<pair<bool, glm::vec2>> getWalls() const;
+	bool lineCollision(glm::vec3 pos, glm::vec3 size, bool vertical);
 
 private:
 	bool loadLevel(const string& levelFile, ShaderProgram& program);
