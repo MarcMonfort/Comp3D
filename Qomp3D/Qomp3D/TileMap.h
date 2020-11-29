@@ -62,7 +62,7 @@ private:
 	glm::vec2 tileTexSize;
 	char* map;
 
-	std::unordered_map<int, AssimpModel*> models = {};
+	std::unordered_map<char, AssimpModel*> models = {};
 	glm::vec3 camCenter;
 	glm::vec2 camMovement;
 
