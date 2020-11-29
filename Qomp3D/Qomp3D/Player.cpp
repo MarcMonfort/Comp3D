@@ -89,6 +89,27 @@ void Player::update(int deltaTime, vector<Wall*>* walls)
 			velocity.y = -velocity.y;
 		}
 	}
+
+	if (map->lineCollision(posPlayer, model->getSize(), false)) {
+		if (lastVelocity == 0)
+			lastVelocity = velocity.y;
+		velocity.y = 0;
+	}
+	else if (map->lineCollision(posPlayer, model->getSize(), true)) {
+		if (lastVelocity == 0)
+			lastVelocity = velocity.x;
+		velocity.x = 0;
+	}
+	else {
+		if (velocity.y == 0) {
+			velocity.y = lastVelocity;
+			lastVelocity = 0;
+		}
+		if (velocity.x == 0) {
+			velocity.x = lastVelocity;
+			lastVelocity = 0;
+		}
+	}
 }
 
 void Player::render(ShaderProgram& program)

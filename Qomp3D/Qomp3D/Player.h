@@ -37,6 +37,8 @@ private:
 
 	bool collideWall(Wall* wall);
 
+	float lastVelocity = 0;
+
 };
 
 #endif
