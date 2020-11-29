@@ -31,7 +31,7 @@ TileMap::~TileMap()
 }
 
 
-void TileMap::render(ShaderProgram& program) const
+void TileMap::render(ShaderProgram& program)
 {
 	/*glEnable(GL_TEXTURE_2D);
 	tilesheet.use();
@@ -45,18 +45,18 @@ void TileMap::render(ShaderProgram& program) const
 	modelMatrix = glm::mat4(1.0f);
 
 
-	int tile;
+	char tile;
 
 	for (int j = 0; j < mapSize.y; j++)
 	{
 		for (int i = 0; i < mapSize.x; i++)
 		{
 			tile = map[j * mapSize.x + i];
-			if (tile != 0)
+			if (tile != '0')
 			{
 				modelMatrix = glm::translate(glm::mat4(1.0f), glm::vec3(i,-j,0.f) );
 				program.setUniformMatrix4f("model", modelMatrix);
-				models[tile-1]->render(program);
+				models[tile]->render(program);
 			}
 		}
 	}
@@ -95,37 +95,43 @@ bool TileMap::loadLevel(const string& levelFile, ShaderProgram& program)
 	sstream.str(line);
 	sstream >> numOfModels;
 
+	char num;
 	for (int i = 0; i < numOfModels; ++i)
 	{
 		getline(fin, line);
 		sstream.str(line);
-		sstream >> tilesheetFile;
+		sstream >> num >> tilesheetFile;
 
 		AssimpModel* new_model = new AssimpModel();
 		new_model->loadFromFile(tilesheetFile, program);
-		models.push_back(new_model);
+		models.insert(pair<int, AssimpModel*>(num, new_model));
 	}
 	
-	map = new int[mapSize.x * mapSize.y];
+	map = new char[mapSize.x * mapSize.y];
 	for (int j = 0; j < mapSize.y; j++)
 	{
 		for (int i = 0; i < mapSize.x; i++)
 		{
 			fin.get(tile);
 			if (tile == ' ')
-				map[j * mapSize.x + i] = 0;
-			else if (tile == 'v')	// v for vertica wall
+				map[j * mapSize.x + i] = '0';
+			else if (tile == 'v')	// v for vertical wall
 			{
 				walls.push_back({ true, glm::vec2(i, j) });
-				map[j * mapSize.x + i] = 0;
+				map[j * mapSize.x + i] = '0';
 			}
-			else if (tile == 'h')	// h for horizonatl wall
+			else if (tile == 'h')	// h for horizontal wall
 			{
 				walls.push_back({ false, glm::vec2(i, j) });
-				map[j * mapSize.x + i] = 0;
+				map[j * mapSize.x + i] = '0';
 			}
-			else
-				map[j * mapSize.x + i] = tile - int('0');
+			else {
+				if (tile == 'd')	// d for door
+				{
+					doors.push_back(j * mapSize.x + i);
+				}
+				map[j * mapSize.x + i] = tile;
+			}				
 		}
 		fin.get(tile);
 #ifndef _WIN32
@@ -198,8 +204,7 @@ bool TileMap::collisionMoveLeft(const glm::ivec3& pos, const glm::ivec3& size)
 	y1 = (pos.y + size.y);
 	for (int y = y0; y <= y1; y++)
 	{
-		if (map[y * mapSize.x + x] != 0)
-			//return true;
+		if (map[y * mapSize.x + x] != '0')
 			return treatCollision(y * mapSize.x + x, 0);
 	}
 
@@ -216,8 +221,7 @@ bool TileMap::collisionMoveRight(const glm::ivec3& pos, const glm::ivec3& size)
 	y1 = (pos.y + size.y);
 	for (int y = y0; y <= y1; y++)
 	{
-		if (map[y * mapSize.x + x] != 0)
-			//return true;
+		if (map[y * mapSize.x + x] != '0')
 			return treatCollision(y * mapSize.x + x, 0);
 	}
 
@@ -234,8 +238,7 @@ bool TileMap::collisionMoveDown(const glm::ivec3& pos, const glm::ivec3& size)
 	y = (pos.y + size.y);
 	for (int x = x0; x <= x1; x++)
 	{
-		if (map[y * mapSize.x + x] != 0)
-			//return true;
+		if (map[y * mapSize.x + x] != '0')
 			return treatCollision(y * mapSize.x + x, 0);
 	}
 
@@ -251,8 +254,7 @@ bool TileMap::collisionMoveUp(const glm::ivec3& pos, const glm::ivec3& size)
 	y = pos.y;
 	for (int x = x0; x <= x1; x++)
 	{
-		if (map[y * mapSize.x + x] != 0)
-			//return true;
+		if (map[y * mapSize.x + x] != '0')
 			return treatCollision(y * mapSize.x + x, 0);
 	}
 
@@ -263,12 +265,14 @@ int TileMap::checkBlock(int block)
 {
 	if (block == 1)
 		return basic;
-	else if (block == 2)
-		return end;
+	else if (block == 'f')
+		return fin;
 	else if (block == 'v' || block == 'h')
 		return wall;
 	else if (block == 'k')
 		return key;
+	else if (block == 'd')
+		return door;
 }
 
 bool TileMap::treatCollision(int pos, int type)
@@ -278,78 +282,29 @@ bool TileMap::treatCollision(int pos, int type)
 	if (block == basic)
 	{
 		return true;
-		/*if (map[pos] % 2 == 0)
-			map[pos - 1] = 0;
-		else
-			map[pos + 1] = 0;
-		map[pos] = 0;*/
-
-		/*if (type == 0)
-			channel = soundManager->playSound(music_basic_block);
-		else {
-			channel = soundManager->playSound(drop_block2);
-			channel->setVolume(0.3f);
-		}*/
-
-		//PlayGameState::instance().addPoints(100);
 	}
-	else if (block == wall) {
-		/*if (type == 0)
-			channel = soundManager->playSound(music_wall_coin);
-		else {
-			channel = soundManager->playSound(drop_block2);
-			channel->setVolume(0.3f);
-		}*/
+	else if (block == wall) 
+	{
 		return true;
 	}
 	else if (block == key)
 	{
-		/*if (map[pos] == 23) {
-			map[pos + 1] = 0;
-			map[pos + mapSize.x] = 0;
-			map[pos + mapSize.x + 1] = 0;
+		map[pos] = '0';
+		for (int i = 0; i < doors.size(); ++i) {
+			map[doors[i]] = '0';
 		}
-		else if (map[pos] == 24) {
-			map[pos - 1] = 0;
-			map[pos + mapSize.x] = 0;
-			map[pos + mapSize.x - 1] = 0;
-		}
-		else if (map[pos] == 39) {
-			map[pos + 1] = 0;
-			map[pos - mapSize.x] = 0;
-			map[pos - mapSize.x + 1] = 0;
-		}
-		else if (map[pos] == 40) {
-			map[pos - 1] = 0;
-			map[pos - mapSize.x] = 0;
-			map[pos - mapSize.x - 1] = 0;
-		}
-		map[pos] = 0;
-		map[8] = 21;
-		map[9] = 22;
-		map[10] = 21;
-		map[11] = 22;
-		map[12] = 21;
-		map[13] = 22;
-		map[14] = 21;
-		map[15] = 22;
-		map[pos] = 0;*/
-
-		/*if (type == 0)
-			channel = soundManager->playSound(music_wall_coin);
-		else {
-			channel = soundManager->playSound(drop_block2);
-			channel->setVolume(0.3f);
-		}*/
 		return false;
 	}
-	else if (block == end)
+	else if (block == fin)
 	{
 		PlayGameState::instance().finalBlockTaken();
 		return false;
 	}
-	//prepareArrays(a, b);
-	//return true;
+	else if (block == door)
+	{
+		return true;
+	}
+	return true;
 }
 
 
