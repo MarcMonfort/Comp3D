@@ -3,8 +3,8 @@ TILEMAP
 10 -7.5 18.1					-- Camera Center
 17 14					        -- Camera Movement
 2                               -- NumOfModels
-models/cube10.obj 	            -- Model 1
-models/cube10_test.obj        -- Model 2
+1 models/cube10.obj 	            -- Model 1
+f models/cube10_test.obj        -- Model 2
 11111111111111111111111111111111111110000000000000000000000000000000000
 1                                 111                                 0
 1                                  11                                 0
@@ -12,7 +12,7 @@ models/cube10_test.obj        -- Model 2
 1               1                   1                                 0
 1            1111                   1                                 0
 1            1                      1                                 0
-1v           1111                   1                2                0
+1v           1111                   1                f                0
 1                                   1                                 0
 1                                   1                                 0
 1                                   1                                 0
@@ -41,7 +41,7 @@ models/cube10_test.obj        -- Model 2
  111            111111             11               1               111
  111                                1               1                11
  111                                1               1                11
- 111                                1               1       2        11
+ 111                                1               1       f        11
  1111                               1               1                11
  111111                      v      1               11              111
  11111111                           1               11              111

@@ -3,6 +3,7 @@
 
 
 #include <glm/glm.hpp>
+#include <unordered_map>
 #include "Texture.h"
 #include "ShaderProgram.h"
 #include "AssimpModel.h"
@@ -24,7 +25,7 @@ public:
 	TileMap(const string& levelFile, const glm::vec2& minCoords, ShaderProgram& program);
 	~TileMap();
 
-	void render(ShaderProgram& program) const;
+	void render(ShaderProgram& program);
 	void free();
 
 	int getTileSize() const { return tileSize; }
@@ -37,9 +38,10 @@ public:
 	enum block
 	{
 		basic,
-		end,
 		wall,
 		key,
+		door,
+		fin,
 	};
 
 	vector<pair<bool, glm::vec2>> getWalls() const;
@@ -60,14 +62,13 @@ private:
 	glm::vec2 tileTexSize;
 	int* map;
 
-	vector<AssimpModel*> models;
+	std::unordered_map<int, AssimpModel*> models = {};
 	glm::vec3 camCenter;
 	glm::vec2 camMovement;
 
 	vector<pair<bool, glm::vec2>> walls;
+	vector<int> doors;
 };
 
 
 #endif // _TILE_MAP_INCLUDE
-
-
