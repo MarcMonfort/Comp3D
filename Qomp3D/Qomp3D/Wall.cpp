@@ -19,10 +19,8 @@ void Wall::init(ShaderProgram& shaderProgram, bool bVertical)
 
 void Wall::update(int deltaTime, Player* player)
 {
-	glm::vec3 posPlayer = player->getPosition();
-	followPlayer(posPlayer);
+	followPlayer(player);
 
-	//should collide also with player, to avoid problems???
 	if (bVertical)
 	{
 		glm::vec3 aux_size = glm::vec3(size.x - 0.0001, size.y, size.z);
@@ -108,21 +106,24 @@ void Wall::keyPressed(int key)
 	}
 }
 
-void Wall::followPlayer(glm::vec3 posPlayer)
+void Wall::followPlayer(Player* player)
 {
+	glm::vec3 playerPos = player->getPosition();
+	glm::vec3 playerSize = player->getSize();
+
 	float offset = 0.5;
 	if (bVertical)
 	{
-		if (posPlayer.y + 1 + offset < position.y)
+		if (playerPos.y + 1 + offset < position.y)
 			velocity = -abs(velocity);
-		else if (posPlayer.y - offset > position.y + size.y)
+		else if (playerPos.y - offset > position.y + size.y)
 			velocity = abs(velocity);
 	}
 	else
 	{
-		if (posPlayer.x + 1 + offset < position.x)
+		if (playerPos.x + 1 + offset < position.x)
 			velocity = -abs(velocity);
-		else if (posPlayer.x - offset > position.x + size.x)
+		else if (playerPos.x - offset > position.x + size.x)
 			velocity = abs(velocity);
 	}
 }
