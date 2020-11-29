@@ -54,9 +54,12 @@ void TileMap::render(ShaderProgram& program)
 			tile = map[j * mapSize.x + i];
 			if (tile != '0')
 			{
-				modelMatrix = glm::translate(glm::mat4(1.0f), glm::vec3(i,-j,0.f) );
-				program.setUniformMatrix4f("model", modelMatrix);
-				models[tile]->render(program);
+				unordered_map<char, AssimpModel*>::const_iterator it = models.find(tile);
+				if (it != models.end()) {
+					modelMatrix = glm::translate(glm::mat4(1.0f), glm::vec3(i, -j, 0.f));
+					program.setUniformMatrix4f("model", modelMatrix);
+					it->second->render(program);
+				}
 			}
 		}
 	}
@@ -125,13 +128,28 @@ bool TileMap::loadLevel(const string& levelFile, ShaderProgram& program)
 				walls.push_back({ false, glm::vec2(i, j) });
 				map[j * mapSize.x + i] = '0';
 			}
-			else {
-				if (tile == 'd')	// d for door
-				{
-					doors.push_back(j * mapSize.x + i);
-				}
+			else if (tile == 'd')	// d for door
+			{
 				map[j * mapSize.x + i] = tile;
-			}				
+				doors.push_back(j * mapSize.x + i);
+			}
+			else if (tile == 'b')	// button
+			{
+				buttons.push_back({ false, glm::vec2(i, j) });
+				map[j * mapSize.x + i] = '0';
+			}
+			else if (tile == 'y')	// yes swicth
+			{
+				switchs.push_back({ true, glm::vec2(i, j) });
+				map[j * mapSize.x + i] = '0';
+			}
+			else if (tile == 'n')	// no switch
+			{
+				switchs.push_back({ false, glm::vec2(i, j) });
+				map[j * mapSize.x + i] = '0';
+			}
+			else
+				map[j * mapSize.x + i] = tile;
 		}
 		fin.get(tile);
 #ifndef _WIN32
@@ -267,8 +285,6 @@ int TileMap::checkBlock(int block)
 		return basic;
 	else if (block == 'f')
 		return fin;
-	else if (block == 'v' || block == 'h')
-		return wall;
 	else if (block == 'k')
 		return key;
 	else if (block == 'd')
@@ -282,10 +298,6 @@ bool TileMap::treatCollision(int pos, int type)
 	int block = checkBlock(map[pos]);
 
 	if (block == basic)
-	{
-		return true;
-	}
-	else if (block == wall) 
 	{
 		return true;
 	}
@@ -335,4 +347,14 @@ bool TileMap::lineCollision(glm::vec3 pos, glm::vec3 size, bool vertical)
 vector<pair<bool, glm::vec2>> TileMap::getWalls() const
 {
 	return walls;
+}
+
+vector<pair<bool, glm::vec2>> TileMap::getButtons() const
+{
+	return buttons;
+}
+
+vector<pair<bool, glm::vec2>> TileMap::getSwitchs() const
+{
+	return switchs;
 }

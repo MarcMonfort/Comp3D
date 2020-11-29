@@ -38,7 +38,6 @@ public:
 	enum block
 	{
 		basic,
-		wall,
 		key,
 		door,
 		fin,
@@ -46,6 +45,9 @@ public:
 	};
 
 	vector<pair<bool, glm::vec2>> getWalls() const;
+	vector<pair<bool, glm::vec2>> getButtons() const;
+	vector<pair<bool, glm::vec2>> getSwitchs() const;
+
 	bool lineCollision(glm::vec3 pos, glm::vec3 size, bool vertical);
 
 private:
@@ -70,6 +72,8 @@ private:
 
 	vector<pair<bool, glm::vec2>> walls;
 	vector<int> doors;
+	vector<pair<bool, glm::vec2>> buttons;
+	vector<pair<bool, glm::vec2>> switchs;
 };
 
 
