@@ -2,9 +2,9 @@ TILEMAP
 71 57 						-- Size of tile map in tiles
 10 -7.5 18.1					-- Camera Center
 17 14					        -- Camera Movement
-4                               		-- NumOfModels
-1 models/cube10.obj 	                        -- Model 1
-f models/cube10_test.obj        		-- Model 2
+4                               		-- Number of models
+1 models/cube10.obj 	                        -- Model for basic block
+f models/cube10_test.obj        		-- Model for final block
 k models/key.obj 	            		-- Model for keys
 d models/door.obj 	            		-- Model for doors
 11111111111111111111111111111111111110000000000000000000000000000000000
