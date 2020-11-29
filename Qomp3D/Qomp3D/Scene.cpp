@@ -80,6 +80,28 @@ void Scene::init(int numLevel)
 		walls.push_back(wall);
 	}
 
+	// Init Buttons
+	vector<pair<bool, glm::vec2>> pos_buttons = map->getButtons();
+	for (int i = 0; i < pos_buttons.size(); ++i)  // maybe bolean to know if there is any...?
+	{
+		Button* button = new Button();
+		button->init(texProgram, pos_buttons[i].first);
+		button->setPosition(glm::vec3(pos_buttons[i].second, 0));
+		button->setTileMap(map);
+		buttons.push_back(button);
+	}
+
+	// Init Switchs
+	vector<pair<bool, glm::vec2>> pos_switchs = map->getSwitchs();
+	for (int i = 0; i < pos_switchs.size(); ++i)  // maybe bolean to know if there is any...?
+	{
+		Switch* switx = new Switch();
+		switx->init(texProgram, pos_switchs[i].first);
+		switx->setPosition(glm::vec3(pos_switchs[i].second, 0));
+		switx->setTileMap(map);
+		switchs.push_back(switx);
+	}
+
 	// End Inits
 	projection = glm::perspective(glm::radians(45.f), float(CAMERA_WIDTH) / float(CAMERA_HEIGHT), 0.1f, 1000.f);
 	currentTime = 0.0f;
@@ -176,7 +198,7 @@ void Scene::update(int deltaTime)
 			break;
 	}
 
-	player->update(deltaTime, &walls);
+	player->update(deltaTime, &walls, &buttons, &switchs);
 
 	for (int i = 0; i < walls.size(); ++i)
 	{
@@ -275,6 +297,18 @@ void Scene::render()
 	for (int i = 0; i < walls.size(); ++i)
 	{
 		walls[i]->render(texProgram);
+	}
+
+	// Render Buttons
+	for (int i = 0; i < buttons.size(); ++i)
+	{
+		buttons[i]->render(texProgram);
+	}
+
+	// Render Switchs
+	for (int i = 0; i < switchs.size(); ++i)
+	{
+		switchs[i]->render(texProgram);
 	}
 }
 
