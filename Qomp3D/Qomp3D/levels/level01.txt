@@ -7,8 +7,8 @@ TILEMAP
 f models/cube10_test.obj        		-- Model for final block
 k models/key.obj 	            		-- Model for keys
 d models/door.obj 	            		-- Model for doors
-l models/hline.obj				-- Model for horizontal lines
-m models/vline.obj				-- Model for vertical lines
+l models/hline3.obj				-- Model for horizontal lines
+m models/vline3.obj				-- Model for vertical lines
 11111111111111111111111111111111111110000000000000000000000000000000000
 1                                 111                                 0
 1                                  11                                 0
