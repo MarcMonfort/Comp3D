@@ -152,7 +152,10 @@ void Player::keyPressed(int key)
 	bool already_pressed = Game::instance().getKey(key);
 	if (key == ' ' && !already_pressed)
 	{
-		velocity.y = -velocity.y;
+		if (velocity.y == 0)
+			velocity.x = -velocity.x;
+		else
+			velocity.y = -velocity.y;
 	}
 }
 
