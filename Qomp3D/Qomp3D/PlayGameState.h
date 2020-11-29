@@ -22,11 +22,14 @@ public:
 	void update(int deltaTime);
 	void render();
 
-	void nextLevel();
+	void finalBlockTaken();
 
 private:
 	Scene scene;
 	int currentLevel = 0;
+	bool nextlevel = false;
+
+	void nextLevel();
 };
 
 #endif

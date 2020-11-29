@@ -11,6 +11,8 @@ void PlayGameState::init()
 
 void PlayGameState::update(int deltaTime)
 {
+	if (nextlevel)
+		nextLevel();
 	scene.update(deltaTime);
 }
 
@@ -28,8 +30,13 @@ void PlayGameState::keyPressed(int key)
 	}
 }
 
+void PlayGameState::finalBlockTaken() {
+	nextlevel = true;
+}
+
 void PlayGameState::nextLevel() {
 	//animation->restart();
+	nextlevel = false;
 	++currentLevel;
 	scene = Scene();
 	scene.init(currentLevel);

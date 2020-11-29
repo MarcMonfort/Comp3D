@@ -345,7 +345,7 @@ bool TileMap::treatCollision(int pos, int type)
 	}
 	else if (block == end)
 	{
-		PlayGameState::instance().nextLevel();
+		PlayGameState::instance().finalBlockTaken();
 		return false;
 	}
 	//prepareArrays(a, b);
