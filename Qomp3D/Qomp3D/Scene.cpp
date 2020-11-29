@@ -181,7 +181,7 @@ void Scene::update(int deltaTime)
 	for (int i = 0; i < walls.size(); ++i)
 	{
 		// mes eficiente si solo hace update de los que són visibles!!!!
-		walls[i]->update(deltaTime);
+		walls[i]->update(deltaTime, player);
 	}
 
 }

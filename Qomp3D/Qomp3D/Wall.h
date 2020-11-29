@@ -3,12 +3,13 @@
 
 #include "TileMap.h"
 #include "SoundManager.h"
+#include "Player.h"
 
 class Wall
 {
 public:
 	void init(ShaderProgram& shaderProgram, bool bVertical);
-	void update(int deltaTime);
+	void update(int deltaTime, Player* player);
 	void render(ShaderProgram& program);
 
 	void setTileMap(TileMap* tileMap);
@@ -36,6 +37,8 @@ private:
 	AssimpModel* model;
 
 	bool bVertical;
+
+	void followPlayer(glm::vec3 posPlayer);
 };
 
 #endif

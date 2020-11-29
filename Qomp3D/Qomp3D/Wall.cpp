@@ -1,8 +1,5 @@
 #include "Wall.h"
-
-
 #include <iostream>
-#include "Wall.h"
 #include <glm/gtc/matrix_transform.hpp>
 
 
@@ -20,8 +17,11 @@ void Wall::init(ShaderProgram& shaderProgram, bool bVertical)
 
 }
 
-void Wall::update(int deltaTime)
+void Wall::update(int deltaTime, Player* player)
 {
+	glm::vec3 posPlayer = player->getPosition();
+	followPlayer(posPlayer);
+
 	//should collide also with player, to avoid problems???
 	if (bVertical)
 	{
@@ -99,5 +99,23 @@ void Wall::keyPressed(int key)
 	if (key == ' ')
 	{
 		velocity = -velocity;
+	}
+}
+
+void Wall::followPlayer(glm::vec3 posPlayer)
+{
+	if (bVertical)
+	{
+		if (posPlayer.y < position.y)
+			velocity = -abs(velocity);
+		else if (posPlayer.y > position.y + size.y)
+			velocity = abs(velocity);
+	}
+	else
+	{
+		if (posPlayer.x < position.x)
+			velocity = -abs(velocity);
+		else if (posPlayer.x > position.x + size.x)
+			velocity = abs(velocity);
 	}
 }
