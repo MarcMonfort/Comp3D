@@ -13,7 +13,7 @@ void Wall::init(ShaderProgram& shaderProgram, bool bVertical)
 		model->loadFromFile("models/cube40_h.obj", shaderProgram);  //horizontal
 
 	size = model->getSize();
-	velocity = 0.1;
+	velocity = 0.01;
 
 }
 
@@ -36,9 +36,9 @@ void Wall::update(int deltaTime, const glm::vec3& posPlayer, const glm::vec3& si
 			{
 				velocity = -abs(velocity);
 			}
-			position.y += velocity;
+			position.y += deltaTime * velocity;
 			if (collidePlayer(posPlayer, sizePlayer)) {
-				position.y -= velocity;
+				position.y -= deltaTime * velocity;
 			}
 		}
 		else   //horizontal
@@ -52,9 +52,9 @@ void Wall::update(int deltaTime, const glm::vec3& posPlayer, const glm::vec3& si
 			{
 				velocity = abs(velocity);
 			}
-			position.x += velocity;
+			position.x += deltaTime * velocity;
 			if (collidePlayer(posPlayer, sizePlayer)) {
-				position.x -= velocity;
+				position.x -= deltaTime * velocity;
 			}
 		}
 	}
