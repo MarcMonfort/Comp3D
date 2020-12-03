@@ -26,6 +26,7 @@ public:
 	~TileMap();
 
 	void render(ShaderProgram& program);
+	void update(int deltaTime);
 	void free();
 
 	int getTileSize() const { return tileSize; }
@@ -43,10 +44,24 @@ public:
 		door,
 		fin,
 		line,
+		spike,
+		checkpoint,
+		checkpoint2,
+		x_space
 	};
 
 	vector<pair<bool, glm::vec2>> getWalls() const;
 	bool lineCollision(glm::vec3 pos, glm::vec3 size, bool vertical);
+
+	bool getPlayerDead();
+	void setPlayerDead(bool bDead);
+
+	glm::vec3 getCenterCamera();
+	glm::vec2 getMovementCamera();
+
+	glm::vec3 getCheckPointPlayer();
+	bool getNewCheckPoint();
+	void setNewCheckPoint(bool b);
 
 private:
 	bool loadLevel(const string& levelFile, ShaderProgram& program);
@@ -63,13 +78,20 @@ private:
 	Texture tilesheet;
 	glm::vec2 tileTexSize;
 	char* map;
+	float currentTime;
+
 
 	std::unordered_map<char, AssimpModel*> models = {};
-	glm::vec3 camCenter;
-	glm::vec2 camMovement;
+	glm::vec3 centerCamera;
+	glm::vec2 movementCamera;
+
+	glm::vec3 checkpointPlayer;  // puede que no se use como checkpoint, sino que lo haga el scene
 
 	vector<pair<bool, glm::vec2>> walls;
 	vector<int> doors;
+
+	bool bPlayerDead = false;
+	bool bNewCheckPoint = false;
 };
 
 

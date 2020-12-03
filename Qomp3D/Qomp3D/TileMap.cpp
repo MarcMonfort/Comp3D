@@ -13,7 +13,6 @@ using namespace std;
 TileMap* TileMap::createTileMap(const string& levelFile, const glm::vec2& minCoords, ShaderProgram& program)
 {
 	TileMap* map = new TileMap(levelFile, minCoords, program);
-
 	return map;
 }
 
@@ -21,6 +20,7 @@ TileMap* TileMap::createTileMap(const string& levelFile, const glm::vec2& minCoo
 TileMap::TileMap(const string& levelFile, const glm::vec2& minCoords, ShaderProgram& program)
 {
 	loadLevel(levelFile, program);
+	currentTime = 0.0f;
 	//prepareArrays(minCoords, program); No hace falta
 }
 
@@ -42,6 +42,7 @@ void TileMap::render(ShaderProgram& program)
 	glDisable(GL_TEXTURE_2D);*/
 
 	glm::mat4 modelMatrix;
+	//glm::mat3 normalMatrix;
 	modelMatrix = glm::mat4(1.0f);
 
 
@@ -52,7 +53,7 @@ void TileMap::render(ShaderProgram& program)
 		for (int i = 0; i < mapSize.x; i++)
 		{
 			tile = map[j * mapSize.x + i];
-			if (tile != '0')
+			if (tile != '0' && tile != 'x')   // x for activating close thing
 			{
 				modelMatrix = glm::translate(glm::mat4(1.0f), glm::vec3(i,-j,0.f) );
 				program.setUniformMatrix4f("model", modelMatrix);
@@ -60,6 +61,12 @@ void TileMap::render(ShaderProgram& program)
 			}
 		}
 	}
+}
+
+void TileMap::update(int deltaTime)
+{
+	currentTime += deltaTime;
+
 }
 
 void TileMap::free()
@@ -85,10 +92,14 @@ bool TileMap::loadLevel(const string& levelFile, ShaderProgram& program)
 	sstream >> mapSize.x >> mapSize.y;
 	getline(fin, line);
 	sstream.str(line);
-	sstream >> camCenter.x >> camCenter.y >> camCenter.z;
+	sstream >> centerCamera.x >> centerCamera.y >> centerCamera.z;
 	getline(fin, line);
 	sstream.str(line);
-	sstream >> camMovement.x >> camMovement.y;
+	sstream >> movementCamera.x >> movementCamera.y;
+	getline(fin, line);
+	sstream.str(line);
+	sstream >> checkpointPlayer.x >> checkpointPlayer.y >> checkpointPlayer.z;
+
 
 	int numOfModels;
 	getline(fin, line);
@@ -275,6 +286,14 @@ int TileMap::checkBlock(int block)
 		return door;
 	else if (block == 'l' || block == 'm')
 		return line;
+	else if (block == 's')
+		return spike;
+	else if (block == 'c')
+		return checkpoint;
+	else if (block == 'C')
+		return checkpoint2;
+	else if (block == 'x')
+		return x_space;
 }
 
 bool TileMap::treatCollision(int pos, int type)
@@ -304,12 +323,64 @@ bool TileMap::treatCollision(int pos, int type)
 	}
 	else if (block == door)
 	{
+		//sonido
 		return true;
 	}
 	else if (block == line)
 	{
 		return false;
 	}
+	else if (block == spike)
+	{
+		bPlayerDead = true;
+		return false;
+	}
+	else if (block == checkpoint)
+	{
+		bNewCheckPoint = true;
+		for (int j = 0; j < mapSize.y; j++)
+			for (int i = 0; i < mapSize.x; i++)
+				if (map[j * mapSize.x + i] == 'C')
+					map[j * mapSize.x + i] = '0';
+
+		map[pos] = 'C';
+
+		checkpointPlayer.y = pos / mapSize.x;
+		checkpointPlayer.x = pos % mapSize.x;
+
+		return false;
+	}
+	else if (block == checkpoint2)
+	{
+		return false;
+	}
+	else if (block == x_space)
+	{
+		if (map[pos + 1] == 'c')
+			return treatCollision(pos + 1, type);
+		else if (map[pos - 1] == 'c')
+			return treatCollision(pos - 1, type);
+
+		if (map[pos + mapSize.x] == 'c')
+			return treatCollision(pos + mapSize.x, type);
+		else if (map[pos + mapSize.x + 1] == 'c')
+			return treatCollision(pos + mapSize.x + 1, type);
+		else if (map[pos + mapSize.x - 1] == 'c')
+			return treatCollision(pos + mapSize.x - 1, type);
+
+		else if (map[pos - mapSize.x] == 'c')
+			return treatCollision(pos - mapSize.x, type);
+		else if (map[pos - mapSize.x + 1] == 'c')
+			return treatCollision(pos - mapSize.x + 1, type);
+		else if (map[pos - mapSize.x - 1] == 'c')
+			return treatCollision(pos - mapSize.x - 1, type);
+
+		else
+			map[pos] = '0';
+		return false;
+	}
+
+
 	return true;
 }
 
@@ -335,4 +406,41 @@ bool TileMap::lineCollision(glm::vec3 pos, glm::vec3 size, bool vertical)
 vector<pair<bool, glm::vec2>> TileMap::getWalls() const
 {
 	return walls;
+}
+
+
+bool TileMap::getPlayerDead()
+{
+	return bPlayerDead;
+}
+
+void TileMap::setPlayerDead(bool bDead)
+{
+	bPlayerDead = bDead;
+}
+
+
+glm::vec3 TileMap::getCenterCamera()
+{
+	return centerCamera;
+}
+
+glm::vec2 TileMap::getMovementCamera()
+{
+	return movementCamera;
+}
+
+glm::vec3 TileMap::getCheckPointPlayer()
+{
+	return checkpointPlayer;
+}
+
+bool TileMap::getNewCheckPoint()
+{
+	return bNewCheckPoint;
+}
+
+void TileMap::setNewCheckPoint(bool b)
+{
+	bNewCheckPoint = b;
 }
