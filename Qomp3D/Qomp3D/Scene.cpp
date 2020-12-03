@@ -58,6 +58,8 @@ void Scene::init(int numLevel)
 	string pathLevel = "levels/level0" + to_string(numLevel) + ".txt";
 	map = TileMap::createTileMap(pathLevel, glm::vec2(0, 0), texProgram);
 
+	roomSize = map->getRoomSize();
+
 	// Init Camera. Depends on the level. Maybe use a map->getStartPosition()...
 	camera.position = map->getCenterCamera();
 	camera.movement = map->getMovementCamera();
@@ -129,26 +131,26 @@ void Scene::update(int deltaTime)
 	// hay que tener en cuenta tanto el tamaño del player, como la
 	// posicion inicial de la camara que esta desplazada 0.5, ya 
 	// que el centro de un bloque aparece en el centro de la base
-	if (posPlayer.x + sizePlayer.x - camera.position.x > 10.5 && eCamMove == CamMove::STATIC)
+	if (posPlayer.x + sizePlayer.x - camera.position.x > (roomSize.x/2) && eCamMove == CamMove::STATIC)
 	{
 		timeCamMove = camera.movement.x;
 		eCamMove = CamMove::RIGHT;
 		//player->setVelocity(glm::vec3(0, 0, 0));
 	}
-	else if (camera.position.x - posPlayer.x > 9.5 && eCamMove == CamMove::STATIC)
+	else if (camera.position.x - posPlayer.x > (roomSize.x / 2) && eCamMove == CamMove::STATIC)
 	{
 		timeCamMove = camera.movement.x;
 		eCamMove = CamMove::LEFT;
 		//player->setVelocity(glm::vec3(0, 0, 0));
 	}
 
-	if (camera.position.y + posPlayer.y > 7.5 && eCamMove == CamMove::STATIC)
+	if (camera.position.y + (posPlayer.y + sizePlayer.y) > (roomSize.y / 2) && eCamMove == CamMove::STATIC)
 	{
 		timeCamMove = camera.movement.y;
 		eCamMove = CamMove::DOWN;
 		//player->setVelocity(glm::vec3(0, 0, 0));
 	}
-	else if (- posPlayer.y - camera.position.y > 6.5 && eCamMove == CamMove::STATIC)
+	else if (- posPlayer.y - camera.position.y > (roomSize.y / 2) && eCamMove == CamMove::STATIC)
 	{
 		timeCamMove = camera.movement.y;
 		eCamMove = CamMove::UP;

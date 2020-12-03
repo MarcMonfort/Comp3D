@@ -1,11 +1,19 @@
 TILEMAP
 71 57                           -- Size of tile map in tiles
-20 15                            -- Size of room
-10 -7.5 18.1                    -- Camera Center
-17 14                           -- Camera Movement
+20 -15 36.2                     -- Camera Center
+34 28                           -- Camera Movement
 5 6 0                           -- Player First CheckPoint
-1                              -- Number of models
-1 models/cube10.obj 	    -- Model
+10                              -- Number of models
+1 models/cube10.obj             -- Model for basic block
+f models/cube10_test.obj        -- Model for final block
+k models/key.obj                -- Model for keys
+d models/door.obj               -- Model for doors
+l models/hline3.obj             -- Model for horizontal lines
+m models/vline3.obj             -- Model for vertical lines
+s models/template_spike.obj     -- Model for spike
+o models/test.obj         -- Model for ball spike
+c models/checkpoint.obj         -- Model for checkpoint
+C models/checkpoint2.obj        -- Model for checkpoint 2
 11111111111111111111111111111111111111111111111111111111111111111111111
 1                1 1              1 1              1 1                1
 1                1 1              1 1              1 1                1

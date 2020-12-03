@@ -77,6 +77,8 @@ private:
 		glm::vec3 posCamera;
 	} checkpoint;
 
+
+	glm::vec2 roomSize;
 };
 
 

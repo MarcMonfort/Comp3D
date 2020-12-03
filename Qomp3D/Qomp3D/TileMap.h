@@ -70,6 +70,8 @@ public:
 	bool getNewCheckPoint();
 	void setNewCheckPoint(bool b);
 
+	glm::vec2 getRoomSize();
+
 private:
 	bool loadLevel(const string& levelFile, ShaderProgram& program);
 	//void prepareArrays(const glm::vec2& minCoords, ShaderProgram& program);
@@ -87,6 +89,7 @@ private:
 	char* map;
 	float currentTime;
 
+	glm::vec2 roomSize;
 
 	std::unordered_map<char, AssimpModel*> models = {};
 	glm::vec3 centerCamera;

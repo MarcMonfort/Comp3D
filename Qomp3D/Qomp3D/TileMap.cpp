@@ -92,6 +92,9 @@ bool TileMap::loadLevel(const string& levelFile, ShaderProgram& program)
 	sstream >> mapSize.x >> mapSize.y;
 	getline(fin, line);
 	sstream.str(line);
+	sstream >> roomSize.x >> roomSize.y;
+	getline(fin, line);
+	sstream.str(line);
 	sstream >> centerCamera.x >> centerCamera.y >> centerCamera.z;
 	getline(fin, line);
 	sstream.str(line);
@@ -487,4 +490,10 @@ bool TileMap::getNewCheckPoint()
 void TileMap::setNewCheckPoint(bool b)
 {
 	bNewCheckPoint = b;
+}
+
+
+glm::vec2 TileMap::getRoomSize()
+{
+	return roomSize;
 }
