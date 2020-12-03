@@ -17,51 +17,61 @@ void Wall::init(ShaderProgram& shaderProgram, bool bVertical)
 
 }
 
-void Wall::update(int deltaTime, Player* player)
+void Wall::update(int deltaTime, const glm::vec3& posPlayer, const glm::vec3& sizePlayer)
 {
-	followPlayer(player);
+	int distX = abs(posPlayer.x - position.x);
+	int distY = abs(posPlayer.y - position.y);
+	if (distX < map->getMovementCamera().x && distY < map->getMovementCamera().y)
+	{
+		followPlayer(posPlayer, sizePlayer);
 
-	if (bVertical)
-	{
-		glm::vec3 aux_size = glm::vec3(size.x - 0.0001, size.y, size.z);
-		if (map->collisionMoveUp(position, aux_size))
+		if (bVertical)
 		{
-			velocity = abs(velocity);
+			glm::vec3 aux_size = glm::vec3(size.x - 0.0001, size.y, size.z);
+			if (map->collisionMoveUp(position, aux_size))
+			{
+				velocity = abs(velocity);
+			}
+			else if (map->collisionMoveDown(position, aux_size))
+			{
+				velocity = -abs(velocity);
+			}
+			position.y += velocity;
+			if (collidePlayer(posPlayer, sizePlayer)) {
+				position.y -= velocity;
+			}
 		}
-		else if (map->collisionMoveDown(position, aux_size))
+		else   //horizontal
 		{
-			velocity = -abs(velocity);
-		}
-		position.y += velocity;
-		if (collidePlayer(player)) {
-			position.y -= velocity;
-		}
-	}
-	else   //horizontal
-	{
-		glm::vec3 aux_size = glm::vec3(size.x, size.y - 0.0001, size.z);
-		if (map->collisionMoveRight(position, aux_size))
-		{
-			velocity = -abs(velocity);
-		}
-		else if (map->collisionMoveLeft(position, aux_size))
-		{
-			velocity = abs(velocity);
-		}
-		position.x += velocity;
-		if (collidePlayer(player)) {
-			position.x -= velocity;
+			glm::vec3 aux_size = glm::vec3(size.x, size.y - 0.0001, size.z);
+			if (map->collisionMoveRight(position, aux_size))
+			{
+				velocity = -abs(velocity);
+			}
+			else if (map->collisionMoveLeft(position, aux_size))
+			{
+				velocity = abs(velocity);
+			}
+			position.x += velocity;
+			if (collidePlayer(posPlayer, sizePlayer)) {
+				position.x -= velocity;
+			}
 		}
 	}
 }
 
-void Wall::render(ShaderProgram& program)
+void Wall::render(ShaderProgram& program, const glm::vec3& posPlayer)
 {
-	glm::mat4 modelMatrix;
-	modelMatrix = glm::translate(glm::mat4(1.0f), glm::vec3(position.x, -position.y, 0));
-	program.setUniformMatrix4f("model", modelMatrix);
+	int distX = abs(posPlayer.x - position.x);
+	int distY = abs(posPlayer.y - position.y);
+	if (distX < map->getMovementCamera().x+2 && distY < map->getMovementCamera().y+2)
+	{
+		glm::mat4 modelMatrix;
+		modelMatrix = glm::translate(glm::mat4(1.0f), glm::vec3(position.x, -position.y, 0));
+		program.setUniformMatrix4f("model", modelMatrix);
 
-	model->render(program);
+		model->render(program);
+	}
 }
 
 void Wall::setPosition(const glm::vec3& pos)
@@ -106,24 +116,22 @@ void Wall::keyPressed(int key)
 	}
 }
 
-void Wall::followPlayer(Player* player)
+void Wall::followPlayer(const glm::vec3& posPlayer, const glm::vec3& sizePlayer)
 {
-	glm::vec3 playerPos = player->getPosition();
-	glm::vec3 playerSize = player->getSize();
 
 	float offset = 0.5;
 	if (bVertical)
 	{
-		if (playerPos.y + 1 + offset < position.y)
+		if (posPlayer.y + 1 + offset < position.y)
 			velocity = -abs(velocity);
-		else if (playerPos.y - offset > position.y + size.y)
+		else if (posPlayer.y - offset > position.y + size.y)
 			velocity = abs(velocity);
 	}
 	else
 	{
-		if (playerPos.x + 1 + offset < position.x)
+		if (posPlayer.x + 1 + offset < position.x)
 			velocity = -abs(velocity);
-		else if (playerPos.x - offset > position.x + size.x)
+		else if (posPlayer.x - offset > position.x + size.x)
 			velocity = abs(velocity);
 	}
 }
@@ -133,20 +141,17 @@ bool Wall::getOrientation()
 	return bVertical;
 }
 
-bool Wall::collidePlayer(Player* player)
+bool Wall::collidePlayer(const glm::vec3& posPlayer, const glm::vec3& sizePlayer)
 {
-	glm::vec3 playerPos = player->getPosition();
-	glm::vec3 playerSize = player->getSize();
-
 	float Wxmin = position.x;
 	float Wxmax = position.x + size.x;
 	float Wymin = position.y;
 	float Wymax = position.y + size.y;
 
-	float Pxmin = playerPos.x;
-	float Pxmax = playerPos.x + playerSize.x;
-	float Pymin = playerPos.y;
-	float Pymax = playerPos.y + playerSize.y;
+	float Pxmin = posPlayer.x;
+	float Pxmax = posPlayer.x + sizePlayer.x;
+	float Pymin = posPlayer.y;
+	float Pymax = posPlayer.y + sizePlayer.y;
 
-	return ((Wxmin < Pxmax&& Pxmin < Wxmax) && (Wymin < Pymax&& Pymin < Wymax));
+	return ((Wxmin < Pxmax && Pxmin < Wxmax) && (Wymin < Pymax && Pymin < Wymax));
 }

@@ -3,14 +3,13 @@
 
 #include "TileMap.h"
 #include "SoundManager.h"
-#include "Player.h"
 
 class Wall
 {
 public:
 	void init(ShaderProgram& shaderProgram, bool bVertical);
-	void update(int deltaTime, Player* player);
-	void render(ShaderProgram& program);
+	void update(int deltaTime, const glm::vec3& posPlayer, const glm::vec3& sizePlayer);
+	void render(ShaderProgram& program, const glm::vec3& posPlayer);
 
 	void setTileMap(TileMap* tileMap);
 	void setPosition(const glm::vec3& pos);
@@ -39,8 +38,8 @@ private:
 
 	bool bVertical;
 
-	void followPlayer(Player* player);
-	bool collidePlayer(Player* player);
+	void followPlayer(const glm::vec3& posPlayer, const glm::vec3& sizePlayer);
+	bool collidePlayer(const glm::vec3& posPlayer, const glm::vec3& sizePlayer);
 };
 
 #endif

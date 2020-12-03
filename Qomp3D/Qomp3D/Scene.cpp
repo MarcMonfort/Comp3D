@@ -108,7 +108,7 @@ void Scene::update(int deltaTime)
 	particles->update(deltaTime / 1000.f);
 	//NEW
 
-	if (map->getNewCheckPoint())
+	if (map->getNewCheckPoint() && eCamMove == CamMove::STATIC)
 	{
 		checkpoint.posPlayer = map->getCheckPointPlayer();
 		checkpoint.posCamera = camera.position;
@@ -198,7 +198,7 @@ void Scene::update(int deltaTime)
 	for (int i = 0; i < walls.size(); ++i)
 	{
 		// mes eficiente si solo hace update de los que són visibles!!!!
-		walls[i]->update(deltaTime, player);
+		walls[i]->update(deltaTime, player->getPosition(), player->getSize());
 	}
 
 	map->update(deltaTime);
@@ -263,7 +263,7 @@ void Scene::render()
 	// Render Walls
 	for (int i = 0; i < walls.size(); ++i)
 	{
-		walls[i]->render(texProgram);
+		walls[i]->render(texProgram, player->getPosition());
 	}
 }
 
