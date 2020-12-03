@@ -3,7 +3,7 @@
 #include <glm/gtc/matrix_transform.hpp>
 
 
-void Wall::init(ShaderProgram& shaderProgram, bool bVertical)
+void Wall::init(ShaderProgram& shaderProgram, bool bVertical, Type type)
 {
 	this->bVertical = bVertical;	//vertical or horizontal
 	model = new AssimpModel();
@@ -13,28 +13,86 @@ void Wall::init(ShaderProgram& shaderProgram, bool bVertical)
 		model->loadFromFile("models/cube40_h.obj", shaderProgram);  //horizontal
 
 	size = model->getSize();
-	velocity = 0.01;
+	velocity = 0.005;
+
+	switch (type)
+	{
+	case Type::EASY:
+		followDist = 4;
+		break;
+	case Type::HARD:
+		followDist = 6;
+		break;
+	case Type::IMPOSSIBLE:
+		followDist = 8;
+		break;
+	default:
+		break;
+	}
 
 }
 
 void Wall::update(int deltaTime, const glm::vec3& posPlayer, const glm::vec3& sizePlayer)
 {
-	int distX = abs(posPlayer.x - position.x);
-	int distY = abs(posPlayer.y - position.y);
-	if (distX < map->getMovementCamera().x && distY < map->getMovementCamera().y)
+	glm::vec2 centerPlayer = glm::vec2(posPlayer.x + sizePlayer.x / 2, posPlayer.y + sizePlayer.y / 2);
+	glm::vec2 centerWall = glm::vec2(position.x + size.x / 2, position.y + size.y / 2);
+
+	int distX = abs(centerPlayer.x - centerWall.x);
+	int distY = abs(centerPlayer.y - centerWall.y);
+
+	int distPlayer = (bVertical) ? distX : distY;
+
+	if (distX > map->getMovementCamera().x + 2 || distY > map->getMovementCamera().y + 2)
 	{
-		followPlayer(posPlayer, sizePlayer);
+		state = State::OUT;
+	}
+	else if (distPlayer > followDist)
+	{
+		switch (state)
+		{
+		case State::FOLLOW:
+			velocity *= 0.5;
+			break;
+		case State::OUT:
+			velocity = 0.005;
+			break;
+		}
+		state = State::STATIC;
+	}
+	else
+	{
+		switch (state)
+		{
+		case State::STATIC:
+			velocity *= 2;
+			break;
+		case State::OUT:
+			velocity = 0.01;
+			break;
+		}
+		state = State::FOLLOW;
+	}
+
+
+	
+	if (state != State::OUT)
+	{
+		followPlayer(centerPlayer);
 
 		if (bVertical)
 		{
 			glm::vec3 aux_size = glm::vec3(size.x - 0.0001, size.y, size.z);
 			if (map->collisionMoveUp(position, aux_size))
 			{
-				velocity = abs(velocity);
+				position.y += ceil(position.y)-position.y ;
+				if (state == State::STATIC)
+					velocity = abs(velocity);
 			}
 			else if (map->collisionMoveDown(position, aux_size))
 			{
-				velocity = -abs(velocity);
+				position.y -= (position.y + size.y) - floor(position.y + size.y);
+				if (state == State::STATIC)
+					velocity = -abs(velocity);
 			}
 			position.y += deltaTime * velocity;
 			if (collidePlayer(posPlayer, sizePlayer)) {
@@ -46,11 +104,15 @@ void Wall::update(int deltaTime, const glm::vec3& posPlayer, const glm::vec3& si
 			glm::vec3 aux_size = glm::vec3(size.x, size.y - 0.0001, size.z);
 			if (map->collisionMoveRight(position, aux_size))
 			{
-				velocity = -abs(velocity);
+				position.x -= (position.x + size.x) - floor(position.x + size.x);
+				if (state == State::STATIC)
+					velocity = -abs(velocity);
 			}
 			else if (map->collisionMoveLeft(position, aux_size))
 			{
-				velocity = abs(velocity);
+				position.x += ceil(position.x) - position.x;
+				if (state == State::STATIC)
+					velocity = abs(velocity);
 			}
 			position.x += deltaTime * velocity;
 			if (collidePlayer(posPlayer, sizePlayer)) {
@@ -62,9 +124,8 @@ void Wall::update(int deltaTime, const glm::vec3& posPlayer, const glm::vec3& si
 
 void Wall::render(ShaderProgram& program, const glm::vec3& posPlayer)
 {
-	int distX = abs(posPlayer.x - position.x);
-	int distY = abs(posPlayer.y - position.y);
-	if (distX < map->getMovementCamera().x+2 && distY < map->getMovementCamera().y+2)
+
+	if (state != State::OUT)
 	{
 		glm::mat4 modelMatrix;
 		modelMatrix = glm::translate(glm::mat4(1.0f), glm::vec3(position.x, -position.y, 0));
@@ -116,23 +177,28 @@ void Wall::keyPressed(int key)
 	}
 }
 
-void Wall::followPlayer(const glm::vec3& posPlayer, const glm::vec3& sizePlayer)
+void Wall::followPlayer(const glm::vec2& centerPlayer)
 {
 
-	float offset = 0.5;
-	if (bVertical)
+	glm::vec2 centerWall = glm::vec2(position.x + size.x / 2, position.y + size.y / 2);
+
+	if (state == State::FOLLOW)
 	{
-		if (posPlayer.y + 1 + offset < position.y)
-			velocity = -abs(velocity);
-		else if (posPlayer.y - offset > position.y + size.y)
-			velocity = abs(velocity);
-	}
-	else
-	{
-		if (posPlayer.x + 1 + offset < position.x)
-			velocity = -abs(velocity);
-		else if (posPlayer.x - offset > position.x + size.x)
-			velocity = abs(velocity);
+
+		if (bVertical)
+		{
+			if (centerPlayer.y < centerWall.y)
+				velocity = -abs(velocity);
+			else
+				velocity = abs(velocity);
+		}
+		else
+		{
+			if (centerPlayer.x < centerWall.x)
+				velocity = -abs(velocity);
+			else
+				velocity = abs(velocity);
+		}
 	}
 }
 

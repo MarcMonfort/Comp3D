@@ -126,14 +126,58 @@ bool TileMap::loadLevel(const string& levelFile, ShaderProgram& program)
 			fin.get(tile);
 			if (tile == ' ')
 				map[j * mapSize.x + i] = '0';
-			else if (tile == 'v')	// v for vertical wall
+			else if (tile == 'v')	// v for easy vertical wall
 			{
-				walls.push_back({ true, glm::vec2(i, j) });
+				Wall wall;
+				wall.position = glm::vec2(i, j);
+				wall.bVertical = true;
+				wall.type = 0;
+				walls.push_back(wall);
 				map[j * mapSize.x + i] = '0';
 			}
-			else if (tile == 'h')	// h for horizontal wall
+			else if (tile == 'V')	// v for hard vertical wall
 			{
-				walls.push_back({ false, glm::vec2(i, j) });
+				Wall wall;
+				wall.position = glm::vec2(i, j);
+				wall.bVertical = true;
+				wall.type = 1;
+				walls.push_back(wall);
+				map[j * mapSize.x + i] = '0';
+			}
+			else if (tile == '|')	// v for impossible vertical wall
+			{
+				Wall wall;
+				wall.position = glm::vec2(i, j);
+				wall.bVertical = true;
+				wall.type = 2;
+				walls.push_back(wall);
+				map[j * mapSize.x + i] = '0';
+			}
+			else if (tile == 'h')	// h for easy horizontal wall
+			{
+				Wall wall;
+				wall.position = glm::vec2(i, j);
+				wall.bVertical = false;
+				wall.type = 0;
+				walls.push_back(wall);
+				map[j * mapSize.x + i] = '0';
+			}
+			else if (tile == 'H')	// h for hard horizontal wall
+			{
+				Wall wall;
+				wall.position = glm::vec2(i, j);
+				wall.bVertical = false;
+				wall.type = 1;
+				walls.push_back(wall);
+				map[j * mapSize.x + i] = '0';
+			}
+			else if (tile == '-')	// h for impossible horizontal wall
+			{
+				Wall wall;
+				wall.position = glm::vec2(i, j);
+				wall.bVertical = false;
+				wall.type = 2;
+				walls.push_back(wall);
 				map[j * mapSize.x + i] = '0';
 			}
 			else {
@@ -403,7 +447,7 @@ bool TileMap::lineCollision(glm::vec3 pos, glm::vec3 size, bool vertical)
 
 /// END COLLISION
 
-vector<pair<bool, glm::vec2>> TileMap::getWalls() const
+vector<TileMap::Wall> TileMap::getWalls()
 {
 	return walls;
 }

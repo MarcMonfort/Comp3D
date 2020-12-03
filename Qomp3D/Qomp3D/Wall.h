@@ -7,7 +7,15 @@
 class Wall
 {
 public:
-	void init(ShaderProgram& shaderProgram, bool bVertical);
+	enum class Type
+	{
+		EASY = 0,
+		HARD = 1,
+		IMPOSSIBLE = 2
+	};
+
+
+	void init(ShaderProgram& shaderProgram, bool bVertical, Type type);
 	void update(int deltaTime, const glm::vec3& posPlayer, const glm::vec3& sizePlayer);
 	void render(ShaderProgram& program, const glm::vec3& posPlayer);
 
@@ -20,7 +28,6 @@ public:
 	bool getOrientation();
 
 	void keyPressed(int key);
-
 
 private:
 	glm::vec3 position;
@@ -38,8 +45,20 @@ private:
 
 	bool bVertical;
 
-	void followPlayer(const glm::vec3& posPlayer, const glm::vec3& sizePlayer);
+	void followPlayer(const glm::vec2& centerPlayer);
 	bool collidePlayer(const glm::vec3& posPlayer, const glm::vec3& sizePlayer);
+
+	bool follow = false;
+	float followDist = 0.f;
+
+	enum class State
+	{
+		STATIC,
+		FOLLOW,
+		OUT
+	};
+
+	State state = State::STATIC;
 };
 
 #endif

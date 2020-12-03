@@ -73,12 +73,12 @@ void Scene::init(int numLevel)
 	checkpoint.posPlayer = map->getCheckPointPlayer();
 
 	// Init Walls
-	vector<pair<bool, glm::vec2>> pos_walls = map->getWalls();
+	vector<TileMap::Wall> pos_walls = map->getWalls();	// error wall struct
 	for (int i = 0; i < pos_walls.size(); ++i)  // maybe bolean to know if there is any...?
 	{ 
 		Wall* wall = new Wall();
-		wall->init(texProgram, pos_walls[i].first);
-		wall->setPosition(glm::vec3(pos_walls[i].second,0));
+		wall->init(texProgram, pos_walls[i].bVertical, static_cast<Wall::Type>(pos_walls[i].type));
+		wall->setPosition(glm::vec3(pos_walls[i].position,0));
 		wall->setTileMap(map);
 		walls.push_back(wall);
 	}

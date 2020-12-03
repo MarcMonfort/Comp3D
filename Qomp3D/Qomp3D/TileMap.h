@@ -19,6 +19,13 @@ class TileMap
 {
 
 public:
+
+	struct Wall {
+		glm::vec2 position;
+		bool bVertical;
+		int type;
+	};
+
 	// Tile maps can only be created inside an OpenGL context
 	static TileMap* createTileMap(const string& levelFile, const glm::vec2& minCoords, ShaderProgram& program);
 
@@ -50,7 +57,7 @@ public:
 		x_space
 	};
 
-	vector<pair<bool, glm::vec2>> getWalls() const;
+	vector<TileMap::Wall> getWalls();
 	bool lineCollision(glm::vec3 pos, glm::vec3 size, bool vertical);
 
 	bool getPlayerDead();
@@ -87,7 +94,9 @@ private:
 
 	glm::vec3 checkpointPlayer;  // puede que no se use como checkpoint, sino que lo haga el scene
 
-	vector<pair<bool, glm::vec2>> walls;
+	
+
+	vector<TileMap::Wall> walls;
 	vector<int> doors;
 
 	bool bPlayerDead = false;
