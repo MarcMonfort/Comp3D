@@ -11,6 +11,8 @@
 #include "TileMap.h"
 #include "Player.h"
 #include "Wall.h"
+#include "Button.h"
+#include "Switch.h"
 
 
 #define CAMERA_WIDTH 640
@@ -70,6 +72,8 @@ private:
 
 	Player* player;
 	vector<Wall*> walls;
+	vector<Button*> buttons;
+	vector<Switch*> switchs;
 
 	struct CheckPoint
 	{

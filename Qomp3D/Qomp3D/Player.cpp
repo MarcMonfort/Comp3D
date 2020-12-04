@@ -14,42 +14,8 @@ void Player::init(ShaderProgram& shaderProgram)
 
 }
 
-void Player::update(int deltaTime, vector<Wall*>* walls)
+void Player::update(int deltaTime, vector<Wall*>* walls, vector<Button*>* buttons, vector<Switch*>* switchs)
 {
-	// puede que mejor sin deltaTime, cuando hay lag puede petar...
-	/*glm::vec3 compPosition_x = posPlayer + glm::vec3(velocity.x, 0, 0); 
-	glm::vec3 compPosition_y = posPlayer + glm::vec3(0,velocity.y,0);
-	posPlayer += velocity;
-
-	if (map->collisionMoveRight(posPlayer, model->getSize()))
-	{
-		if (map->collisionMoveRight(compPosition_x, model->getSize()))
-		{
-			velocity.x = -velocity.x;
-		}
-	}
-	else if (map->collisionMoveLeft(posPlayer, model->getSize()))
-	{
-		if (map->collisionMoveLeft(compPosition_x, model->getSize()))
-		{
-			velocity.x = -velocity.x;
-		}
-	}
-
-	if (map->collisionMoveUp(posPlayer, model->getSize()))
-	{
-		if (map->collisionMoveUp(compPosition_y, model->getSize()))
-		{
-			velocity.y = -velocity.y;
-		}
-	}
-	else if (map->collisionMoveDown(posPlayer, model->getSize()))
-	{
-		if (map->collisionMoveDown(compPosition_y, model->getSize()))
-		{
-			velocity.y = -velocity.y;
-		}
-	}*/
 	posPlayer.x += deltaTime * velocity.x;
 
 	if (map->collisionMoveRight(posPlayer, model->getSize()))
@@ -70,6 +36,22 @@ void Player::update(int deltaTime, vector<Wall*>* walls)
 		}
 	}
 
+	for (int i = 0; i < (*buttons).size(); ++i) {
+		Button* button = (*buttons)[i];
+		if (collideButton(button)) {
+			posPlayer.x -= velocity.x;
+			velocity.x = -velocity.x;
+		}
+	}
+
+	for (int i = 0; i < (*switchs).size(); ++i) {
+		if (collideSwitch((*switchs)[i])) {
+			posPlayer.x -= velocity.x;
+			velocity.x = -velocity.x;
+		}
+	}
+
+	
 	posPlayer.y += deltaTime * velocity.y;
 
 	if (map->collisionMoveUp(posPlayer, model->getSize()))
@@ -86,6 +68,25 @@ void Player::update(int deltaTime, vector<Wall*>* walls)
 	for (int i = 0; i < (*walls).size(); ++i) {
 		if (collideWall((*walls)[i])) {
 			posPlayer.y -= deltaTime * velocity.y;
+			velocity.y = -velocity.y;
+		}
+	}
+
+	for (int i = 0; i < (*buttons).size(); ++i) {
+		Button* button = (*buttons)[i];
+		if (collideButton(button)) {
+			posPlayer.y -= velocity.y;
+			velocity.y = -velocity.y;
+			if (!button->getPressed()) {
+				button->setPressed(true);
+				switchAllSwitchs(switchs);
+			}
+		}
+	}
+
+	for (int i = 0; i < (*switchs).size(); ++i) {
+		if (collideSwitch((*switchs)[i])) {
+			posPlayer.y -= velocity.y;
 			velocity.y = -velocity.y;
 		}
 	}
@@ -178,4 +179,53 @@ bool Player::collideWall(Wall* wall)
 	float Pymax = posPlayer.y + playerSize.y;
 
 	return ((Wxmin < Pxmax&& Pxmin < Wxmax) && (Wymin < Pymax&& Pymin < Wymax));
+}
+
+bool Player::collideButton(Button* button)
+{
+	glm::vec3 buttonPos = button->getPosition();
+	glm::vec3 buttonSize = button->getSize();
+
+	glm::vec3 playerSize = getSize();
+
+	float Bxmin = buttonPos.x;
+	float Bxmax = buttonPos.x + buttonSize.x;
+	float Bymin = buttonPos.y;
+	float Bymax = buttonPos.y + buttonSize.y;
+
+	float Pxmin = posPlayer.x;
+	float Pxmax = posPlayer.x + playerSize.x;
+	float Pymin = posPlayer.y;
+	float Pymax = posPlayer.y + playerSize.y;
+
+	return ((Bxmin < Pxmax&& Pxmin < Bxmax) && (Bymin < Pymax&& Pymin < Bymax));
+}
+
+bool Player::collideSwitch(Switch* switx)
+{
+	if (switx->getActivated()) {
+		glm::vec3 switchPos = switx->getPosition();
+		glm::vec3 switchSize = switx->getSize();
+
+		glm::vec3 playerSize = getSize();
+
+		float Sxmin = switchPos.x;
+		float Sxmax = switchPos.x + switchSize.x;
+		float Symin = switchPos.y;
+		float Symax = switchPos.y + switchSize.y;
+
+		float Pxmin = posPlayer.x;
+		float Pxmax = posPlayer.x + playerSize.x;
+		float Pymin = posPlayer.y;
+		float Pymax = posPlayer.y + playerSize.y;
+
+		return ((Sxmin < Pxmax&& Pxmin < Sxmax) && (Symin < Pymax&& Pymin < Symax));
+	}
+	else return false;
+}
+
+void Player::switchAllSwitchs(vector<Switch*>* switchs) {
+	for (int i = 0; i < (*switchs).size(); ++i) {
+		(*switchs)[i]->toggle();
+	}
 }

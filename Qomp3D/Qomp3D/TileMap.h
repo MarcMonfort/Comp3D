@@ -46,7 +46,6 @@ public:
 	enum block
 	{
 		basic,
-		wall,
 		key,
 		door,
 		fin,
@@ -57,7 +56,11 @@ public:
 		x_space
 	};
 
+	vector<pair<bool, glm::vec2>> getButtons() const;
+	vector<pair<bool, glm::vec2>> getSwitchs() const;
+
 	vector<TileMap::Wall> getWalls();
+
 	bool lineCollision(glm::vec3 pos, glm::vec3 size, bool vertical);
 
 	bool getPlayerDead();
@@ -101,6 +104,9 @@ private:
 
 	vector<TileMap::Wall> walls;
 	vector<int> doors;
+  
+	vector<pair<bool, glm::vec2>> buttons;
+	vector<pair<bool, glm::vec2>> switchs;
 
 	bool bPlayerDead = false;
 	bool bNewCheckPoint = false;

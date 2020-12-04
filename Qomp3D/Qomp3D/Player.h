@@ -3,6 +3,8 @@
 
 #include "TileMap.h"
 #include "SoundManager.h"
+#include "Button.h"
+#include "Switch.h"
 
 class Wall;
 
@@ -10,7 +12,7 @@ class Player
 {
 public:
 	void init(ShaderProgram& shaderProgram);
-	void update(int deltaTime, vector<Wall*>* walls);
+	void update(int deltaTime, vector<Wall*>* walls, vector<Button*>* buttons, vector<Switch*>* switchs);
 	void render(ShaderProgram& program);
 
 	void setTileMap(TileMap* tileMap);
@@ -36,8 +38,12 @@ private:
 	AssimpModel* model;
 
 	bool collideWall(Wall* wall);
+	bool collideButton(Button* button);
+	bool collideSwitch(Switch* switx);
 
 	float lastVelocity = 0;
+
+	void switchAllSwitchs(vector<Switch*>* switchs);
 
 };
 
