@@ -24,12 +24,17 @@ public:
 
 	void finalBlockTaken();
 
+	bool getGodMode();
+	void setGodMode(bool b);
+
 private:
 	Scene scene;
 	int currentLevel = 0;
 	bool nextlevel = false;
 
 	void nextLevel();
+
+	bool bGodMode = false;
 };
 
 #endif

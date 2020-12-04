@@ -27,19 +27,35 @@ void PlayGameState::keyPressed(int key)
 		Game::instance().goBackToMenu();
 	if (key == 'n')
 		finalBlockTaken();
+	if (key == 'g' || key == 'G')
+	{
+		bGodMode = !bGodMode;
+	}
 	else {
 		scene.keyPressed(key);
 	}
 }
 
-void PlayGameState::finalBlockTaken() {
+void PlayGameState::finalBlockTaken() 
+{
 	nextlevel = true;
 }
 
-void PlayGameState::nextLevel() {
+void PlayGameState::nextLevel() 
+{
 	//animation->restart();
 	nextlevel = false;
 	++currentLevel;
 	scene = Scene();
 	scene.init(currentLevel);
+}
+
+bool PlayGameState::getGodMode()
+{
+	return bGodMode;
+}
+
+void PlayGameState::setGodMode(bool b)
+{
+	bGodMode = b;
 }

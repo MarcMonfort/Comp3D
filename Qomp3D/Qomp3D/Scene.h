@@ -13,6 +13,8 @@
 #include "Wall.h"
 #include "Button.h"
 #include "Switch.h"
+#include "Sprite.h"
+
 
 
 #define CAMERA_WIDTH 640
@@ -83,6 +85,12 @@ private:
 
 
 	glm::vec2 roomSize;
+
+	Texture godMode_spritesheet;
+	Sprite* godMode_sprite;
+
+
+
 };
 
 

@@ -391,8 +391,11 @@ bool TileMap::treatCollision(int pos, int type)
 	}
 	else if (block == spike)
 	{
-		bPlayerDead = true;
-		return false;
+		if (!PlayGameState::instance().getGodMode())
+		{
+			bPlayerDead = true;
+			return false;
+		}	
 	}
 	else if (block == checkpoint)
 	{

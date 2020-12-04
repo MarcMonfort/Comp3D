@@ -107,6 +107,11 @@ void Scene::init(int numLevel)
 		switchs.push_back(switx);
 	}
 
+	// Init God Mode Sprite
+	godMode_spritesheet.loadFromFile("images/godmode.png", TEXTURE_PIXEL_FORMAT_RGBA);
+	godMode_sprite = Sprite::createSprite(glm::ivec2(128, 16), glm::vec2(1.f, 1.f), &godMode_spritesheet, &texProgram);
+	godMode_sprite->setPosition(glm::vec2(50, 690));
+
 	// End Inits
 	projection = glm::perspective(glm::radians(45.f), float(CAMERA_WIDTH) / float(CAMERA_HEIGHT), 0.1f, 1000.f);
 	currentTime = 0.0f;
@@ -300,6 +305,19 @@ void Scene::render()
 	for (int i = 0; i < switchs.size(); ++i)
 	{
 		switchs[i]->render(texProgram);
+	}
+
+
+	// LO ULTIMO (2D)
+	if (PlayGameState::instance().getGodMode()) {
+		texProgram.setUniformMatrix4f("projection", glm::ortho(0.f, float(SCREEN_WIDTH - 1), float(SCREEN_HEIGHT - 1), 0.f));
+		//texProgram.setUniform4f("color", 1.0f, 1.0f, 1.0f, 1.0f);
+		modelMatrix = glm::mat4(1.0f);
+		//texProgram.setUniformMatrix4f("model", modelMatrix);
+		texProgram.setUniformMatrix4f("view", glm::mat4(1.0f));
+		texProgram.setUniform2f("texCoordDispl", 0.f, 0.f);
+		texProgram.setUniform1b("bLighting", false);
+		godMode_sprite->render();
 	}
 }
 

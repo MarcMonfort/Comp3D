@@ -29,6 +29,8 @@ public:
 
 	void keyPressed(int key);
 
+	int getType();
+
 private:
 	glm::vec3 position;
 	TileMap* map;
@@ -59,6 +61,8 @@ private:
 	};
 
 	State state = State::STATIC;
+
+	int type;
 };
 
 #endif

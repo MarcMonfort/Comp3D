@@ -16,6 +16,8 @@ void Player::init(ShaderProgram& shaderProgram)
 
 void Player::update(int deltaTime, vector<Wall*>* walls, vector<Button*>* buttons, vector<Switch*>* switchs)
 {
+
+	// X direction
 	posPlayer.x += deltaTime * velocity.x;
 
 	if (map->collisionMoveRight(posPlayer, model->getSize()))
@@ -30,10 +32,11 @@ void Player::update(int deltaTime, vector<Wall*>* walls, vector<Button*>* button
 	}
 
 	for (int i = 0; i < (*walls).size(); ++i) {
-		if (collideWall((*walls)[i])) {
-			posPlayer.x -= deltaTime * velocity.x;
-			velocity.x = -velocity.x;
-		}
+		if (!PlayGameState::instance().getGodMode() || (*walls)[i]->getType() == 2)
+			if (collideWall((*walls)[i])) {
+				posPlayer.x -= deltaTime * velocity.x;
+				velocity.x = -velocity.x;
+			}
 	}
 
 	for (int i = 0; i < (*buttons).size(); ++i) {
@@ -51,7 +54,7 @@ void Player::update(int deltaTime, vector<Wall*>* walls, vector<Button*>* button
 		}
 	}
 
-	
+	// Y direction
 	posPlayer.y += deltaTime * velocity.y;
 
 	if (map->collisionMoveUp(posPlayer, model->getSize()))
@@ -59,6 +62,7 @@ void Player::update(int deltaTime, vector<Wall*>* walls, vector<Button*>* button
 		posPlayer.y -= deltaTime * velocity.y;
 		velocity.y = abs(velocity.y);
 	}
+
 	else if (map->collisionMoveDown(posPlayer, model->getSize()))
 	{
 		posPlayer.y -= deltaTime * velocity.y;
@@ -66,10 +70,11 @@ void Player::update(int deltaTime, vector<Wall*>* walls, vector<Button*>* button
 	}
 
 	for (int i = 0; i < (*walls).size(); ++i) {
-		if (collideWall((*walls)[i])) {
-			posPlayer.y -= deltaTime * velocity.y;
-			velocity.y = -velocity.y;
-		}
+		if (!PlayGameState::instance().getGodMode() || (*walls)[i]->getType() == 2)
+			if (collideWall((*walls)[i])) {
+				posPlayer.y -= deltaTime * velocity.y;
+				velocity.y = -velocity.y;
+			}
 	}
 
 	for (int i = 0; i < (*buttons).size(); ++i) {

@@ -15,6 +15,8 @@ void Wall::init(ShaderProgram& shaderProgram, bool bVertical, Type type)
 	size = model->getSize();
 	velocity = 0.005;
 
+	this->type = static_cast<int>(type);
+
 	switch (type)
 	{
 	case Type::EASY:
@@ -220,4 +222,10 @@ bool Wall::collidePlayer(const glm::vec3& posPlayer, const glm::vec3& sizePlayer
 	float Pymax = posPlayer.y + sizePlayer.y;
 
 	return ((Wxmin < Pxmax && Pxmin < Wxmax) && (Wymin < Pymax && Pymin < Wymax));
+}
+
+
+int Wall::getType()
+{
+	return type;
 }
