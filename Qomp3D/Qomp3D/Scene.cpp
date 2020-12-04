@@ -58,24 +58,29 @@ void Scene::init(int numLevel)
 	string pathLevel = "levels/level0" + to_string(numLevel) + ".txt";
 	map = TileMap::createTileMap(pathLevel, glm::vec2(0, 0), texProgram);
 
+	roomSize = map->getRoomSize();
+
 	// Init Camera. Depends on the level. Maybe use a map->getStartPosition()...
-	camera.position.x += 10;
-	camera.position.y -= 7.5;
-	camera.position.z += 18.1;
+	camera.position = map->getCenterCamera();
+	camera.movement = map->getMovementCamera();
 
 	// Init Player
 	player = new Player();
 	player->init(texProgram);
-	player->setPosition(glm::vec3(5, 6, 0));
+	player->setPosition(map->getCheckPointPlayer());
 	player->setTileMap(map);
 
+	// Init CheckPoint (player/camera)
+	checkpoint.posCamera = map->getCenterCamera();
+	checkpoint.posPlayer = map->getCheckPointPlayer();
+
 	// Init Walls
-	vector<pair<bool, glm::vec2>> pos_walls = map->getWalls();
+	vector<TileMap::Wall> pos_walls = map->getWalls();	// error wall struct
 	for (int i = 0; i < pos_walls.size(); ++i)  // maybe bolean to know if there is any...?
 	{ 
 		Wall* wall = new Wall();
-		wall->init(texProgram, pos_walls[i].first);
-		wall->setPosition(glm::vec3(pos_walls[i].second,0));
+		wall->init(texProgram, pos_walls[i].bVertical, static_cast<Wall::Type>(pos_walls[i].type));
+		wall->setPosition(glm::vec3(pos_walls[i].position,0));
 		wall->setTileMap(map);
 		walls.push_back(wall);
 	}
@@ -125,8 +130,22 @@ void Scene::update(int deltaTime)
 	currentTime += deltaTime;
 
 	particles->update(deltaTime / 1000.f);
+	//NEW
 
-	// NEW
+	if (map->getNewCheckPoint() && eCamMove == CamMove::STATIC)
+	{
+		checkpoint.posPlayer = map->getCheckPointPlayer();
+		checkpoint.posCamera = camera.position;
+		map->setNewCheckPoint(false);
+	}
+
+	if (map->getPlayerDead())
+	{
+		player->setPosition(checkpoint.posPlayer);
+		camera.position = checkpoint.posCamera;
+		eCamMove = CamMove::STATIC;
+		map->setPlayerDead(false);
+	}
 
 	glm::vec3 posPlayer = player->getPosition();
 	glm::vec3 sizePlayer = player->getSize();
@@ -134,28 +153,28 @@ void Scene::update(int deltaTime)
 	// hay que tener en cuenta tanto el tamaño del player, como la
 	// posicion inicial de la camara que esta desplazada 0.5, ya 
 	// que el centro de un bloque aparece en el centro de la base
-	if (posPlayer.x + sizePlayer.x - camera.position.x > 10.5 && eCamMove == CamMove::STATIC)
+	if (posPlayer.x + sizePlayer.x - camera.position.x > (roomSize.x/2) && eCamMove == CamMove::STATIC)
 	{
-		timeCamMove = 17;
+		timeCamMove = camera.movement.x;
 		eCamMove = CamMove::RIGHT;
 		//player->setVelocity(glm::vec3(0, 0, 0));
 	}
-	else if (camera.position.x - posPlayer.x > 9.5 && eCamMove == CamMove::STATIC)
+	else if (camera.position.x - posPlayer.x > (roomSize.x / 2) && eCamMove == CamMove::STATIC)
 	{
-		timeCamMove = 17;
+		timeCamMove = camera.movement.x;
 		eCamMove = CamMove::LEFT;
 		//player->setVelocity(glm::vec3(0, 0, 0));
 	}
 
-	if (camera.position.y + posPlayer.y > 7.5 && eCamMove == CamMove::STATIC)
+	if (camera.position.y + (posPlayer.y + sizePlayer.y) > (roomSize.y / 2) && eCamMove == CamMove::STATIC)
 	{
-		timeCamMove = 14;
+		timeCamMove = camera.movement.y;
 		eCamMove = CamMove::DOWN;
 		//player->setVelocity(glm::vec3(0, 0, 0));
 	}
-	else if (- posPlayer.y - camera.position.y > 6.5 && eCamMove == CamMove::STATIC)
+	else if (- posPlayer.y - camera.position.y > (roomSize.y / 2) && eCamMove == CamMove::STATIC)
 	{
-		timeCamMove = 14;
+		timeCamMove = camera.movement.y;
 		eCamMove = CamMove::UP;
 		//player->setVelocity(glm::vec3(0, 0, 0));
 	}
@@ -165,32 +184,32 @@ void Scene::update(int deltaTime)
 		case Scene::CamMove::STATIC:
 			break;
 		case Scene::CamMove::RIGHT:
-			camera.position.x += 0.1f * deltaTime;
-			timeCamMove -= 0.1 * deltaTime;
+			camera.position.x += camera.velocity * deltaTime;
+			timeCamMove -= camera.velocity * deltaTime;
 			if (timeCamMove <= 0.f) {
 				camera.position.x += timeCamMove;
 				eCamMove = CamMove::STATIC;
 			}
 			break;
 		case Scene::CamMove::LEFT:
-			camera.position.x -= 0.1f * deltaTime;
-			timeCamMove -= 0.1 * deltaTime;
+			camera.position.x -= camera.velocity * deltaTime;
+			timeCamMove -= camera.velocity * deltaTime;
 			if (timeCamMove <= 0.f) {
 				camera.position.x -= timeCamMove;
 				eCamMove = CamMove::STATIC;
 			}
 			break;
 		case Scene::CamMove::UP:
-			camera.position.y += 0.1f * deltaTime;
-			timeCamMove -= 0.1 * deltaTime;
+			camera.position.y += camera.velocity * deltaTime;
+			timeCamMove -= camera.velocity * deltaTime;
 			if (timeCamMove <= 0.f) {
 				camera.position.y += timeCamMove;
 				eCamMove = CamMove::STATIC;
 			}
 			break;
 		case Scene::CamMove::DOWN:
-			camera.position.y -= 0.1f * deltaTime;
-			timeCamMove -= 0.1 * deltaTime;
+			camera.position.y -= camera.velocity * deltaTime;
+			timeCamMove -= camera.velocity * deltaTime;
 			if (timeCamMove <= 0.f) {
 				camera.position.y -= timeCamMove;
 				eCamMove = CamMove::STATIC;
@@ -203,8 +222,10 @@ void Scene::update(int deltaTime)
 	for (int i = 0; i < walls.size(); ++i)
 	{
 		// mes eficiente si solo hace update de los que són visibles!!!!
-		walls[i]->update(deltaTime, player);
+		walls[i]->update(deltaTime, player->getPosition(), player->getSize());
 	}
+
+	map->update(deltaTime);
 
 }
 
@@ -218,8 +239,6 @@ void Scene::render()
 	texProgram.setUniformMatrix4f("projection", projection);
 	texProgram.setUniform4f("color", 1.0f, 1.0f, 1.0f, 1.0f);
 
-	/*glm::vec3 obs = glm::vec3(8.f * sin(currentTime / 10000.f), 1.f, 8.f * cos(currentTime / 10000.f));
-	viewMatrix = glm::lookAt(obs, glm::vec3(0.f, 0.f, 0.f), glm::vec3(0.f, 1.f, 0.f));*/
 
 	// Camera position
 	viewMatrix = glm::mat4(1.0f);
@@ -227,39 +246,11 @@ void Scene::render()
 	texProgram.setUniformMatrix4f("view", viewMatrix);
 
 
-
-	// Render level
-	/*modelMatrix = glm::mat4(1.0f);
-	texProgram.setUniformMatrix4f("model", modelMatrix);
-	normalMatrix = glm::transpose(glm::inverse(glm::mat3(viewMatrix * modelMatrix)));
-	texProgram.setUniformMatrix3f("normalmatrix", normalMatrix);
-	level->render();*/
-
-	// Render loaded model
-	/*float scaleFactor = 2.f / model->getHeight();
-	glm::vec3 centerModelBase = model->getCenter() - glm::vec3(0.f, model->getHeight() / 2.f, 0.f);*/
-
+	// Init matrix
 	modelMatrix = glm::mat4(1.0f);
-	/*modelMatrix = glm::translate(modelMatrix, glm::vec3(0.f, 0.5f * fabs(sinf(3.f * currentTime / 1000.f)), 0.f));
-	modelMatrix = glm::rotate(modelMatrix, currentTime / 1000.f, glm::vec3(0.f, 1.f, 0.f));
-	modelMatrix = glm::translate(modelMatrix, glm::vec3(0.f, -2.f, 0.f));
-	modelMatrix = glm::scale(modelMatrix, glm::vec3(scaleFactor, scaleFactor, scaleFactor));
-	modelMatrix = glm::translate(modelMatrix, -centerModelBase);*/
-	modelMatrix = glm::translate(modelMatrix, model->getCenter());
-	texProgram.setUniformMatrix4f("model", modelMatrix);
-
 	normalMatrix = glm::transpose(glm::inverse(glm::mat3(viewMatrix * modelMatrix)));
 	texProgram.setUniformMatrix3f("normalmatrix", normalMatrix);
 
-	//model->render(texProgram);
-
-	// Render loaded model (second time & third time)
-	modelMatrix = glm::translate(modelMatrix, glm::vec3(model->getSize().x,0.f,0.f));
-	texProgram.setUniformMatrix4f("model", modelMatrix);
-	//model->render(texProgram);
-	modelMatrix = glm::translate(modelMatrix, glm::vec3(model->getSize().x, 0.f, 0.f));
-	texProgram.setUniformMatrix4f("model", modelMatrix);
-	//model->render(texProgram);
 
 	
 
@@ -296,7 +287,7 @@ void Scene::render()
 	// Render Walls
 	for (int i = 0; i < walls.size(); ++i)
 	{
-		walls[i]->render(texProgram);
+		walls[i]->render(texProgram, player->getPosition());
 	}
 
 	// Render Buttons

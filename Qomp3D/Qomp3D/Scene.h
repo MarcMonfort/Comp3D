@@ -55,11 +55,8 @@ private:
 	struct Camera
 	{
 		glm::vec3 position = glm::vec3(0); // 16 (half-map) * 1.6 (size-block)
-		glm::vec3 front = glm::vec3(0.f, 0.f, -1.f);
-		float yaw = -90;
-		float pitch = 0;
-		float roll = 0;
-		float velocity = 0.05;
+		float velocity = 0.1;
+		glm::vec2 movement;
 	} camera;
 
 	enum class CamMove
@@ -71,15 +68,21 @@ private:
 		DOWN
 	};
 	CamMove eCamMove = CamMove::STATIC;
-
 	float timeCamMove = 0.f;
 
 	Player* player;
-
 	vector<Wall*> walls;
 	vector<Button*> buttons;
 	vector<Switch*> switchs;
 
+	struct CheckPoint
+	{
+		glm::vec3 posPlayer;
+		glm::vec3 posCamera;
+	} checkpoint;
+
+
+	glm::vec2 roomSize;
 };
 
 

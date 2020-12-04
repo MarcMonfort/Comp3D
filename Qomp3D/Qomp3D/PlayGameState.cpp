@@ -25,6 +25,8 @@ void PlayGameState::keyPressed(int key)
 {
 	if (key == 27) // Escape code
 		Game::instance().goBackToMenu();
+	if (key == 'n')
+		finalBlockTaken();
 	else {
 		scene.keyPressed(key);
 	}

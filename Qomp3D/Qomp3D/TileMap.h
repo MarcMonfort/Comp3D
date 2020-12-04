@@ -19,6 +19,13 @@ class TileMap
 {
 
 public:
+
+	struct Wall {
+		glm::vec2 position;
+		bool bVertical;
+		int type;
+	};
+
 	// Tile maps can only be created inside an OpenGL context
 	static TileMap* createTileMap(const string& levelFile, const glm::vec2& minCoords, ShaderProgram& program);
 
@@ -26,6 +33,7 @@ public:
 	~TileMap();
 
 	void render(ShaderProgram& program);
+	void update(int deltaTime);
 	void free();
 
 	int getTileSize() const { return tileSize; }
@@ -42,13 +50,30 @@ public:
 		door,
 		fin,
 		line,
+		spike,
+		checkpoint,
+		checkpoint2,
+		x_space
 	};
 
-	vector<pair<bool, glm::vec2>> getWalls() const;
 	vector<pair<bool, glm::vec2>> getButtons() const;
 	vector<pair<bool, glm::vec2>> getSwitchs() const;
 
+	vector<TileMap::Wall> getWalls();
+
 	bool lineCollision(glm::vec3 pos, glm::vec3 size, bool vertical);
+
+	bool getPlayerDead();
+	void setPlayerDead(bool bDead);
+
+	glm::vec3 getCenterCamera();
+	glm::vec2 getMovementCamera();
+
+	glm::vec3 getCheckPointPlayer();
+	bool getNewCheckPoint();
+	void setNewCheckPoint(bool b);
+
+	glm::vec2 getRoomSize();
 
 private:
 	bool loadLevel(const string& levelFile, ShaderProgram& program);
@@ -65,15 +90,26 @@ private:
 	Texture tilesheet;
 	glm::vec2 tileTexSize;
 	char* map;
+	float currentTime;
+
+	glm::vec2 roomSize;
 
 	std::unordered_map<char, AssimpModel*> models = {};
-	glm::vec3 camCenter;
-	glm::vec2 camMovement;
+	glm::vec3 centerCamera;
+	glm::vec2 movementCamera;
 
-	vector<pair<bool, glm::vec2>> walls;
+	glm::vec3 checkpointPlayer;  // puede que no se use como checkpoint, sino que lo haga el scene
+
+	
+
+	vector<TileMap::Wall> walls;
 	vector<int> doors;
+  
 	vector<pair<bool, glm::vec2>> buttons;
 	vector<pair<bool, glm::vec2>> switchs;
+
+	bool bPlayerDead = false;
+	bool bNewCheckPoint = false;
 };
 
 
