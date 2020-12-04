@@ -31,15 +31,8 @@ TileMap::~TileMap()
 }
 
 
-void TileMap::render(ShaderProgram& program)
+void TileMap::render(ShaderProgram& program, const glm::ivec3& posPlayer)
 {
-	/*glEnable(GL_TEXTURE_2D);
-	tilesheet.use();
-	glBindVertexArray(vao);
-	glEnableVertexAttribArray(posLocation);
-	glEnableVertexAttribArray(texCoordLocation);
-	glDrawArrays(GL_TRIANGLES, 0, 6 * mapSize.x * mapSize.y);
-	glDisable(GL_TEXTURE_2D);*/
 
 	glm::mat4 modelMatrix;
 	//glm::mat3 normalMatrix;
@@ -52,14 +45,18 @@ void TileMap::render(ShaderProgram& program)
 	{
 		for (int i = 0; i < mapSize.x; i++)
 		{
-			tile = map[j * mapSize.x + i];
-			if (tile != '0' && tile != 'x')   // x for activating close thing
+			if (abs(i - posPlayer.x) <= movementCamera.x+2 && abs(j - posPlayer.y) <= movementCamera.y+2)
 			{
-				unordered_map<char, AssimpModel*>::const_iterator it = models.find(tile);
-				if (it != models.end()) {
-					modelMatrix = glm::translate(glm::mat4(1.0f), glm::vec3(i, -j, 0.f));
-					program.setUniformMatrix4f("model", modelMatrix);
-					it->second->render(program);
+
+				tile = map[j * mapSize.x + i];
+				if (tile != '0')
+				{
+					unordered_map<char, AssimpModel*>::const_iterator it = models.find(tile);
+					if (it != models.end()) {
+						modelMatrix = glm::translate(glm::mat4(1.0f), glm::vec3(i, -j, 0.f));
+						program.setUniformMatrix4f("model", modelMatrix);
+						it->second->render(program);
+					}
 				}
 			}
 		}
@@ -186,6 +183,16 @@ bool TileMap::loadLevel(const string& levelFile, ShaderProgram& program)
 				walls.push_back(wall);
 				map[j * mapSize.x + i] = '0';
 			}
+			else if (tile == 'o')	// o for easy vertical ballSpike
+			{
+				ballSpikes.push_back({ true, glm::vec2(i, j) });
+				map[j * mapSize.x + i] = '0';
+			}
+			else if (tile == 'O')	// O for horizontal ballSpike
+			{
+				ballSpikes.push_back({ false, glm::vec2(i, j) });
+				map[j * mapSize.x + i] = '0';
+			}
 			else if (tile == 'd')	// d for door
 			{
 				map[j * mapSize.x + i] = tile;
@@ -219,53 +226,6 @@ bool TileMap::loadLevel(const string& levelFile, ShaderProgram& program)
 	return true;
 }
 
-//void TileMap::prepareArrays(const glm::vec2& minCoords, ShaderProgram& program)
-//{
-//	int tile, nTiles = 0;
-//	glm::vec2 posTile, texCoordTile[2], halfTexel;
-//	vector<float> vertices;
-//
-//	halfTexel = glm::vec2(0.5f / tilesheet.width(), 0.5f / tilesheet.height());
-//	for (int j = 0; j < mapSize.y; j++)
-//	{
-//		for (int i = 0; i < mapSize.x; i++)
-//		{
-//			tile = map[j * mapSize.x + i];
-//			if (tile != 0)
-//			{
-//				// Non-empty tile
-//				nTiles++;
-//				posTile = glm::vec2(minCoords.x + i * tileSize, minCoords.y + j * tileSize);
-//				texCoordTile[0] = glm::vec2(float((tile - 1) % 2) / tilesheetSize.x, float((tile - 1) / 2) / tilesheetSize.y);
-//				texCoordTile[1] = texCoordTile[0] + tileTexSize;
-//				//texCoordTile[0] += halfTexel;
-//				texCoordTile[1] -= halfTexel;
-//				// First triangle
-//				vertices.push_back(posTile.x); vertices.push_back(posTile.y);
-//				vertices.push_back(texCoordTile[0].x); vertices.push_back(texCoordTile[0].y);
-//				vertices.push_back(posTile.x + blockSize); vertices.push_back(posTile.y);
-//				vertices.push_back(texCoordTile[1].x); vertices.push_back(texCoordTile[0].y);
-//				vertices.push_back(posTile.x + blockSize); vertices.push_back(posTile.y + blockSize);
-//				vertices.push_back(texCoordTile[1].x); vertices.push_back(texCoordTile[1].y);
-//				// Second triangle
-//				vertices.push_back(posTile.x); vertices.push_back(posTile.y);
-//				vertices.push_back(texCoordTile[0].x); vertices.push_back(texCoordTile[0].y);
-//				vertices.push_back(posTile.x + blockSize); vertices.push_back(posTile.y + blockSize);
-//				vertices.push_back(texCoordTile[1].x); vertices.push_back(texCoordTile[1].y);
-//				vertices.push_back(posTile.x); vertices.push_back(posTile.y + blockSize);
-//				vertices.push_back(texCoordTile[0].x); vertices.push_back(texCoordTile[1].y);
-//			}
-//		}
-//	}
-//
-//	glGenVertexArrays(1, &vao);
-//	glBindVertexArray(vao);
-//	glGenBuffers(1, &vbo);
-//	glBindBuffer(GL_ARRAY_BUFFER, vbo);
-//	glBufferData(GL_ARRAY_BUFFER, 24 * nTiles * sizeof(float), &vertices[0], GL_STATIC_DRAW);
-//	posLocation = program.bindVertexAttribute("position", 2, 4 * sizeof(float), 0);
-//	texCoordLocation = program.bindVertexAttribute("texCoord", 2, 4 * sizeof(float), (void*)(2 * sizeof(float)));
-//}
 
 // Collision tests for axis aligned bounding boxes.
 // Method collisionMoveDown also corrects Y coordinate if the box is
@@ -478,6 +438,11 @@ vector<pair<bool, glm::vec2>> TileMap::getButtons() const
 vector<pair<bool, glm::vec2>> TileMap::getSwitchs() const
 {
 	return switchs;
+}
+
+vector<pair<bool, glm::vec2>> TileMap::getBallSpikes() const
+{
+	return ballSpikes;
 }
 
 bool TileMap::getPlayerDead()

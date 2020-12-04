@@ -1,10 +1,10 @@
-#ifndef _WALL_INCLUDE
-#define _WALL_INCLUDE
+#ifndef _BALLSPIKE_INCLUDE
+#define _BALLSPIKE_INCLUDE
 
 #include "TileMap.h"
 #include "SoundManager.h"
 
-class Wall
+class BallSpike
 {
 public:
 	enum class Type
@@ -15,9 +15,9 @@ public:
 	};
 
 
-	void init(ShaderProgram& shaderProgram, bool bVertical, Type type);
-	void update(int deltaTime, const glm::vec3& posPlayer, const glm::vec3& sizePlayer);
-	void render(ShaderProgram& program, const glm::vec3& posPlayer);
+	void init(ShaderProgram& shaderProgram, bool bVertical);
+	void update(int deltaTime, const glm::vec3& posPlayer);
+	void render(ShaderProgram& program, const glm::vec3& posPlayer, glm::mat4& viewMatrix);
 
 	void setTileMap(TileMap* tileMap);
 	void setPosition(const glm::vec3& pos);
@@ -27,11 +27,11 @@ public:
 	glm::vec3 getSize();
 	bool getOrientation();
 
-	int getType();
-
 private:
 	glm::vec3 position;
 	TileMap* map;
+
+	float currentTime;
 
 	float velocity = 0;
 
@@ -45,22 +45,13 @@ private:
 
 	bool bVertical;
 
-	void followPlayer(const glm::vec2& centerPlayer);
-	bool collidePlayer(const glm::vec3& posPlayer, const glm::vec3& sizePlayer);
-
-	bool follow = false;
-	float followDist = 0.f;
-
 	enum class State
 	{
 		STATIC,
-		FOLLOW,
 		OUT
 	};
 
 	State state = State::STATIC;
-
-	int type;
 };
 
 #endif

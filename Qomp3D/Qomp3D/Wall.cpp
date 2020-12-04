@@ -169,16 +169,6 @@ void Wall::setTileMap(TileMap* tileMap)
 	map = tileMap;
 }
 
-
-void Wall::keyPressed(int key)
-{
-
-	if (key == ' ')
-	{
-		velocity = -velocity;
-	}
-}
-
 void Wall::followPlayer(const glm::vec2& centerPlayer)
 {
 

@@ -32,7 +32,7 @@ public:
 	TileMap(const string& levelFile, const glm::vec2& minCoords, ShaderProgram& program);
 	~TileMap();
 
-	void render(ShaderProgram& program);
+	void render(ShaderProgram& program, const glm::ivec3& posPlayer);
 	void update(int deltaTime);
 	void free();
 
@@ -58,7 +58,7 @@ public:
 
 	vector<pair<bool, glm::vec2>> getButtons() const;
 	vector<pair<bool, glm::vec2>> getSwitchs() const;
-
+	vector<pair<bool, glm::vec2>> getBallSpikes() const;
 	vector<TileMap::Wall> getWalls();
 
 	bool lineCollision(glm::vec3 pos, glm::vec3 size, bool vertical);
@@ -103,6 +103,8 @@ private:
 	
 
 	vector<TileMap::Wall> walls;
+	vector<pair<bool, glm::vec2>> ballSpikes;
+
 	vector<int> doors;
   
 	vector<pair<bool, glm::vec2>> buttons;

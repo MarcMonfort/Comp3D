@@ -13,8 +13,8 @@
 
 Scene::Scene()
 {
-	level = NULL;
-	model = NULL;
+	//level = NULL;
+	//model = NULL;
 	billboard = NULL;
 	particles = NULL;
 	map = NULL;
@@ -23,10 +23,10 @@ Scene::Scene()
 
 Scene::~Scene()
 {
-	if (level != NULL)
+	/*if (level != NULL)
 		delete level;
 	if (model != NULL)
-		delete model;
+		delete model;*/
 	if (billboard != NULL)
 		delete billboard;
 	if (particles != NULL)
@@ -41,9 +41,9 @@ Scene::~Scene()
 void Scene::init(int numLevel)
 {
 	initShaders();
-	level = Level::createLevel(glm::vec3(16, 4, 32), texProgram, "images/floor.png", "images/wall.png");
-	model = new AssimpModel();
-	model->loadFromFile("models/cube10_test.obj", texProgram);
+	//level = Level::createLevel(glm::vec3(16, 4, 32), texProgram, "images/floor.png", "images/wall.png");
+	//model = new AssimpModel();
+	//model->loadFromFile("models/cube10_test.obj", texProgram);
 	billboard = Billboard::createBillboard(glm::vec2(1.f, 1.f), texProgram, "images/mushroom.png");
 	billboard->setType(BILLBOARD_Y_AXIS);
 
@@ -57,7 +57,6 @@ void Scene::init(int numLevel)
 	// Initialize TileMap
 	string pathLevel = "levels/level0" + to_string(numLevel) + ".txt";
 	map = TileMap::createTileMap(pathLevel, glm::vec2(0, 0), texProgram);
-
 	roomSize = map->getRoomSize();
 
 	// Init Camera. Depends on the level. Maybe use a map->getStartPosition()...
@@ -75,14 +74,25 @@ void Scene::init(int numLevel)
 	checkpoint.posPlayer = map->getCheckPointPlayer();
 
 	// Init Walls
-	vector<TileMap::Wall> pos_walls = map->getWalls();	// error wall struct
-	for (int i = 0; i < pos_walls.size(); ++i)  // maybe bolean to know if there is any...?
+	vector<TileMap::Wall> pos_walls = map->getWalls();
+	for (int i = 0; i < pos_walls.size(); ++i)
 	{ 
 		Wall* wall = new Wall();
 		wall->init(texProgram, pos_walls[i].bVertical, static_cast<Wall::Type>(pos_walls[i].type));
 		wall->setPosition(glm::vec3(pos_walls[i].position,0));
 		wall->setTileMap(map);
 		walls.push_back(wall);
+	}
+
+	// Init BallSpikes
+	vector<pair<bool, glm::vec2>> pos_ballSpikes = map->getBallSpikes();
+	for (int i = 0; i < pos_ballSpikes.size(); ++i)  // maybe bolean to know if there is any...?
+	{
+		BallSpike* ballSpike = new BallSpike();
+		ballSpike->init(texProgram, pos_ballSpikes[i].first);
+		ballSpike->setPosition(glm::vec3(pos_ballSpikes[i].second, 0));
+		ballSpike->setTileMap(map);
+		ballSpikes.push_back(ballSpike);
 	}
 
 	// Init Buttons
@@ -226,8 +236,13 @@ void Scene::update(int deltaTime)
 
 	for (int i = 0; i < walls.size(); ++i)
 	{
-		// mes eficiente si solo hace update de los que són visibles!!!!
 		walls[i]->update(deltaTime, player->getPosition(), player->getSize());
+	}
+
+	//update BallSpikes
+	for (int i = 0; i < ballSpikes.size(); ++i)
+	{
+		ballSpikes[i]->update(deltaTime, player->getPosition());
 	}
 
 	map->update(deltaTime);
@@ -284,7 +299,7 @@ void Scene::render()
 	glDepthMask(GL_TRUE);*/
 
 	// Render TileMap
-	map->render(texProgram);
+	map->render(texProgram, player->getPosition());
 
 	// Render Player
 	player->render(texProgram);
@@ -293,6 +308,17 @@ void Scene::render()
 	for (int i = 0; i < walls.size(); ++i)
 	{
 		walls[i]->render(texProgram, player->getPosition());
+	}
+
+	// Render BlockSpikes
+	for (int i = 0; i < ballSpikes.size(); ++i)
+	{
+		ballSpikes[i]->render(texProgram, player->getPosition(), viewMatrix);
+
+		//se podria poner al final...
+		normalMatrix = glm::transpose(glm::inverse(glm::mat3(viewMatrix * modelMatrix)));
+		texProgram.setUniformMatrix3f("normalmatrix", normalMatrix);
+		//se podria poner al final...
 	}
 
 	// Render Buttons

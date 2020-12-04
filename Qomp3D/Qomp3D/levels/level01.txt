@@ -5,7 +5,7 @@ TILEMAP
 17 14                           -- Camera Movement
 5 6 0                           -- Player First CheckPoint
 10                              -- Number of models
-1 models/cube10.obj             -- Model for basic block
+1 models/cube10_yellow_blue.obj             -- Model for basic block
 f models/cube10_test.obj        -- Model for final block
 k models/key.obj                -- Model for keys
 d models/door.obj               -- Model for doors
@@ -20,12 +20,12 @@ C models/checkpoint2.obj        -- Model for checkpoint 2
                                    11                                 0
          o                   k     11                                 0
                                     1                                 0
-                                    1                                 0
+      O                             1                                 0
                                     1                                 0
  |                v                 1                                 0
                                     1                                 0
          xxx           xxx          1                                 0
-         xcx           xcx          1                                 0
+       O xcx           xcx          1                                 0
          xxx           xxx          1                                 0
           o                         1                                 0
                        ssss         1                                 0

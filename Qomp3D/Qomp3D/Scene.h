@@ -11,6 +11,7 @@
 #include "TileMap.h"
 #include "Player.h"
 #include "Wall.h"
+#include "BallSpike.h"
 #include "Button.h"
 #include "Switch.h"
 #include "Sprite.h"
@@ -74,6 +75,7 @@ private:
 
 	Player* player;
 	vector<Wall*> walls;
+	vector<BallSpike*> ballSpikes;
 	vector<Button*> buttons;
 	vector<Switch*> switchs;
 
