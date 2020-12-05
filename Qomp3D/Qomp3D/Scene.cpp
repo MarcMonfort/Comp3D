@@ -96,12 +96,13 @@ void Scene::init(int numLevel)
 	}
 
 	// Init Buttons
-	vector<pair<bool, glm::vec2>> pos_buttons = map->getButtons();
+	vector<tuple<bool, glm::vec2, int>> pos_buttons = map->getButtons();
 	for (int i = 0; i < pos_buttons.size(); ++i)  // maybe bolean to know if there is any...?
 	{
 		Button* button = new Button();
-		button->init(texProgram, pos_buttons[i].first);
-		button->setPosition(glm::vec3(pos_buttons[i].second, 0));
+		button->init(texProgram, get<0>(pos_buttons[i]));
+		button->setPosition(glm::vec3(get<1>(pos_buttons[i]), 0));
+		button->setOrientation(get<2>(pos_buttons[i]));
 		button->setTileMap(map);
 		buttons.push_back(button);
 	}

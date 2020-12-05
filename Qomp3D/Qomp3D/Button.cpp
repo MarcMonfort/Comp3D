@@ -2,6 +2,7 @@
 #include <iostream>
 #include <glm/gtc/matrix_transform.hpp>
 
+# define M_PI           3.14159265358979323846  /* pi */
 
 void Button::init(ShaderProgram& shaderProgram, bool press)
 {
@@ -23,6 +24,9 @@ void Button::render(ShaderProgram& program)
 {
 	glm::mat4 modelMatrix;
 	modelMatrix = glm::translate(glm::mat4(1.0f), glm::vec3(position.x, -position.y, 0));
+	modelMatrix = glm::translate(modelMatrix, glm::vec3(0.5, -0.5, 0.5));
+	modelMatrix = glm::rotate(modelMatrix, float((M_PI/2.0f)*orientation), glm::vec3(0, 0, 1));
+	modelMatrix = glm::translate(modelMatrix, glm::vec3(-0.5, 0.5, -0.5));
 	program.setUniformMatrix4f("model", modelMatrix);
 
 	if (pressed)
@@ -59,4 +63,9 @@ void Button::setPressed(bool press)
 bool Button::getPressed()
 {
 	return pressed;
+}
+
+void Button::setOrientation(int orient)
+{
+	orientation = orient;
 }
