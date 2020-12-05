@@ -325,7 +325,7 @@ int TileMap::checkBlock(int block)
 		return door;
 	else if (block == 'l' || block == 'm')
 		return line;
-	else if (block == 's')
+	else if (block == 'r' || block == 's' || block == 't' || block == 'u')
 		return spike;
 	else if (block == 'c')
 		return checkpoint;
