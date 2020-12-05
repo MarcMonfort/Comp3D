@@ -52,16 +52,25 @@ void TileMap::render(ShaderProgram& program, const glm::ivec3& posPlayer)
 			{
 
 				tile = map[j * mapSize.x + i];
-				if (tile != '0')
+				if (tile != '0' && tile != 'x')
 				{
 					unordered_map<char, AssimpModel*>::const_iterator it = models.find(tile);
-					if (it != models.end()) {
-						modelMatrix = glm::translate(glm::mat4(1.0f), glm::vec3(i, -j, 0.f));
-						if (it->first == 'j' || it->first == 'q')
-							modelMatrix = glm::rotate(modelMatrix, float((M_PI / 4.0f)), glm::vec3(-1, 0, 0));
-						program.setUniformMatrix4f("model", modelMatrix);
-						it->second->render(program);
+
+					// Si el model encara no ha estat creat
+					if (it == models.end()) {
+						AssimpModel* new_model = new AssimpModel();
+						string path = (paths.find(tile))->second;
+						new_model->loadFromFile(path, program);
+						models.insert(pair<char, AssimpModel*>(tile, new_model));
+						it = models.find(tile);
 					}
+
+					// Es renderitza el model a la posició corresponent
+					modelMatrix = glm::translate(glm::mat4(1.0f), glm::vec3(i, -j, 0.f));
+					if (it->first == 'j' || it->first == 'q')
+						modelMatrix = glm::rotate(modelMatrix, float((M_PI / 4.0f)), glm::vec3(-1, 0, 0));
+					program.setUniformMatrix4f("model", modelMatrix);
+					it->second->render(program);
 				}
 			}
 		}
@@ -107,24 +116,6 @@ bool TileMap::loadLevel(const string& levelFile, ShaderProgram& program)
 	getline(fin, line);
 	sstream.str(line);
 	sstream >> checkpointPlayer.x >> checkpointPlayer.y >> checkpointPlayer.z;
-
-
-	int numOfModels;
-	getline(fin, line);
-	sstream.str(line);
-	sstream >> numOfModels;
-
-	char num;
-	for (int i = 0; i < numOfModels; ++i)
-	{
-		getline(fin, line);
-		sstream.str(line);
-		sstream >> num >> tilesheetFile;
-
-		AssimpModel* new_model = new AssimpModel();
-		new_model->loadFromFile(tilesheetFile, program);
-		models.insert(pair<int, AssimpModel*>(num, new_model));
-	}
 	
 	map = new char[mapSize.x * mapSize.y];
 	for (int j = 0; j < mapSize.y; j++)

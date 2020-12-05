@@ -104,6 +104,27 @@ private:
 	glm::vec2 roomSize;
 
 	std::unordered_map<char, AssimpModel*> models = {};
+
+	std::unordered_map<char, string> paths =
+	{
+		{'1', "models/cube10_yellow_blue.obj"},
+		{'f', "models/cube10_test.obj"},
+		{'k', "models/key.obj"},
+		{'d', "models/door.obj"},
+		{'l', "models/hline3.obj"},
+		{'m', "models/vline3.obj"},
+		{'r', "models/spike_up.obj"},
+		{'s', "models/spike_down.obj"},
+		{'t', "models/spike_left.obj"},
+		{'u', "models/spike_right.obj"},
+		{'o', "models/test.obj"},
+		{'c', "models/checkpoint.obj"},
+		{'C', "models/checkpoint2.obj"},
+		{'j', "models/chain.obj"},
+		{'q', "models/lock.obj"}
+	};
+
+
 	glm::vec3 centerCamera;
 	glm::vec2 movementCamera;
 
