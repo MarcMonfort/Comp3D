@@ -14,6 +14,12 @@ void BallSpike::init(ShaderProgram& shaderProgram, bool bVertical)
 	velocity = 0.005;
 
 	currentTime = 0;
+	stopTime = 0;
+
+	if (bVertical)
+		axis = glm::vec3(1, 0, 0);
+	else
+		axis = glm::vec3(0, 1, 0);
 
 }
 
@@ -27,25 +33,32 @@ void BallSpike::update(int deltaTime, const glm::vec3& posPlayer)
 	{
 		state = State::OUT;
 	}
+	else if (stopTime >= 0)
+	{
+		stopTime -= deltaTime;
+		state = State::STATIC;
+	}
 	else
 	{
-		state = State::STATIC;
+		state = State::MOVE;
 	}
 
 
-	if (state != State::OUT)
+	if (state == State::MOVE)
 	{
 
 		if (bVertical)
 		{
-			glm::vec3 aux_size = glm::vec3(size.x - 0.0001, size.y, size.z);
+			glm::vec3 aux_size = glm::vec3(1);
 			if (map->collisionMoveUp(position, aux_size))
 			{
+				stopTime = 2000;
 				position.y += ceil(position.y) - position.y;
 				velocity = abs(velocity);
 			}
 			else if (map->collisionMoveDown(position, aux_size))
 			{
+				stopTime = 2000;
 				position.y -= (position.y + size.y) - floor(position.y + size.y);
 				velocity = -abs(velocity);
 			}
@@ -54,14 +67,16 @@ void BallSpike::update(int deltaTime, const glm::vec3& posPlayer)
 		}
 		else   //horizontal
 		{
-			glm::vec3 aux_size = glm::vec3(size.x, size.y - 0.0001, size.z);
+			glm::vec3 aux_size = glm::vec3(1);
 			if (map->collisionMoveRight(position, aux_size))
 			{
+				stopTime = 2000;
 				position.x -= (position.x + size.x) - floor(position.x + size.x);
 				velocity = -abs(velocity);
 			}
 			else if (map->collisionMoveLeft(position, aux_size))
 			{
+				stopTime = 2000;
 				position.x += ceil(position.x) - position.x;
 				velocity = abs(velocity);
 			}
@@ -78,11 +93,15 @@ void BallSpike::render(ShaderProgram& program, const glm::vec3& posPlayer, glm::
 		glm::mat4 modelMatrix;
 		glm::mat3 normalMatrix;
 		modelMatrix = glm::translate(glm::mat4(1.0f), glm::vec3(position.x, -position.y, 0));
-		modelMatrix = glm::translate(modelMatrix, glm::vec3(model->getCenter()));
-		modelMatrix = glm::rotate(modelMatrix, currentTime*0.01f, glm::vec3(0,1,0));
-		modelMatrix = glm::translate(modelMatrix, glm::vec3(-model->getCenter()));
-		normalMatrix = glm::transpose(glm::inverse(glm::mat3(viewMatrix * modelMatrix)));
-		program.setUniformMatrix3f("normalmatrix", normalMatrix);
+
+		if (state == State::MOVE)
+		{
+			modelMatrix = glm::translate(modelMatrix, glm::vec3(model->getCenter()));
+			modelMatrix = glm::rotate(modelMatrix, (currentTime * 0.01f), axis);
+			modelMatrix = glm::translate(modelMatrix, glm::vec3(-model->getCenter()));
+			normalMatrix = glm::transpose(glm::inverse(glm::mat3(viewMatrix * modelMatrix)));
+			program.setUniformMatrix3f("normalmatrix", normalMatrix);
+		}
 		program.setUniformMatrix4f("model", modelMatrix);
 
 		model->render(program);

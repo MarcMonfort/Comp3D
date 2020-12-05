@@ -14,7 +14,7 @@ void Player::init(ShaderProgram& shaderProgram)
 
 }
 
-void Player::update(int deltaTime, vector<Wall*>* walls, vector<Button*>* buttons, vector<Switch*>* switchs)
+void Player::update(int deltaTime, vector<Wall*>* walls, vector<BallSpike*>* ballSpike, vector<Button*>* buttons, vector<Switch*>* switchs)
 {
 
 	// X direction
@@ -169,22 +169,67 @@ bool Player::collideWall(Wall* wall)
 {
 	glm::vec3 wallPos = wall->getPosition();
 	glm::vec3 wallSize = wall->getSize();
-	bool bVertical = wall->getOrientation();
 
-	glm::vec3 playerSize = getSize();
+	int distX = abs(posPlayer.x - wallPos.x);
+	int distY = abs(posPlayer.y - wallPos.y);
 
-	float Wxmin = wallPos.x;
-	float Wxmax = wallPos.x + wallSize.x;
-	float Wymin = wallPos.y;
-	float Wymax = wallPos.y + wallSize.y;
-	
-	float Pxmin = posPlayer.x;
-	float Pxmax = posPlayer.x + playerSize.x;
-	float Pymin = posPlayer.y;
-	float Pymax = posPlayer.y + playerSize.y;
 
-	return ((Wxmin < Pxmax&& Pxmin < Wxmax) && (Wymin < Pymax&& Pymin < Wymax));
+	if (distX > wallSize.x+1 || distY > wallSize.y+1)
+		return false;
+	else
+	{
+		bool bVertical = wall->getOrientation();
+
+		glm::vec3 playerSize = getSize();
+
+		float Wxmin = wallPos.x;
+		float Wxmax = wallPos.x + wallSize.x;
+		float Wymin = wallPos.y;
+		float Wymax = wallPos.y + wallSize.y;
+
+		float Pxmin = posPlayer.x;
+		float Pxmax = posPlayer.x + playerSize.x;
+		float Pymin = posPlayer.y;
+		float Pymax = posPlayer.y + playerSize.y;
+
+		return ((Wxmin < Pxmax&& Pxmin < Wxmax) && (Wymin < Pymax&& Pymin < Wymax));
+	}
 }
+
+
+bool Player::collideBallSpike(BallSpike* ballSpike)
+{
+	glm::vec3 ballSpikePos = ballSpike->getPosition();
+	glm::vec3 ballSpikeSize = ballSpike->getSize();
+
+	int distX = abs(posPlayer.x - ballSpikePos.x);
+	int distY = abs(posPlayer.y - ballSpikePos.y);
+
+
+	if (distX > map->getMovementCamera().x || distY > map->getMovementCamera().y)
+	{
+		return false;
+	}
+	else
+	{
+		bool bVertical = ballSpike->getOrientation();
+
+		glm::vec3 playerSize = getSize();
+
+		float Wxmin = ballSpikePos.x;
+		float Wxmax = ballSpikePos.x + ballSpikeSize.x;
+		float Wymin = ballSpikePos.y;
+		float Wymax = ballSpikePos.y + ballSpikeSize.y;
+
+		float Pxmin = posPlayer.x;
+		float Pxmax = posPlayer.x + playerSize.x;
+		float Pymin = posPlayer.y;
+		float Pymax = posPlayer.y + playerSize.y;
+
+		return ((Wxmin < Pxmax&& Pxmin < Wxmax) && (Wymin < Pymax&& Pymin < Wymax));
+	}
+}
+
 
 bool Player::collideButton(Button* button)
 {

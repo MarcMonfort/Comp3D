@@ -48,10 +48,15 @@ private:
 	enum class State
 	{
 		STATIC,
+		MOVE,
 		OUT
 	};
 
 	State state = State::STATIC;
+
+	float stopTime;
+
+	glm::vec3 axis;
 };
 
 #endif
