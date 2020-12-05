@@ -61,7 +61,7 @@ public:
 	vector<pair<bool, glm::vec2>> getBallSpikes() const;
 	vector<TileMap::Wall> getWalls();
 
-	bool lineCollision(glm::vec3 pos, glm::vec3 size, bool vertical);
+	bool lineCollision(glm::vec3 &pos, glm::vec3 size, bool vertical);
 
 	bool getPlayerDead();
 	void setPlayerDead(bool bDead);

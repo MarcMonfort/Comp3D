@@ -5,6 +5,7 @@
 #include "TileMap.h"
 #include <glm/gtc/matrix_transform.hpp>
 #include "PlayGameState.h"
+#include <math.h>
 
 
 using namespace std;
@@ -406,18 +407,22 @@ bool TileMap::treatCollision(int pos, int type)
 	return true;
 }
 
-bool TileMap::lineCollision(glm::vec3 pos, glm::vec3 size, bool vertical)
+bool TileMap::lineCollision(glm::vec3 &pos, glm::vec3 size, bool vertical)
 {
-	int x0 = pos.x, x1 = pos.x + size.x - 0.05, y0 = pos.y, y1 = pos.y + size.y - 0.05;
+	int x0 = pos.x + 0.1, x1 = pos.x + size.x - 0.1, y0 = pos.y + 0.1, y1 = pos.y + size.y - 0.1;
 	bool c1, c2;
 
 	if (vertical) {
 		c1 = map[y0 * mapSize.x + x0] == 'm' && map[y0 * mapSize.x + x1] == 'm';
 		c2 = map[y1 * mapSize.x + x0] == 'm' && map[y1 * mapSize.x + x1] == 'm';
+		if (c1 || c2)
+			pos = glm::vec3(floor(x0), pos.y, pos.z);
 	}
 	else {
 		c1 = map[y0 * mapSize.x + x0] == 'l' && map[y1 * mapSize.x + x0] == 'l';
 		c2 = map[y0 * mapSize.x + x1] == 'l' && map[y1 * mapSize.x + x1] == 'l';
+		if (c1 || c2)
+			pos = glm::vec3(pos.x, floor(y0), pos.z);
 	}
 
 	return c1 || c2;
