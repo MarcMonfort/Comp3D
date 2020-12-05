@@ -10,6 +10,8 @@
 
 using namespace std;
 
+# define M_PI           3.14159265358979323846  /* pi */
+
 
 TileMap* TileMap::createTileMap(const string& levelFile, const glm::vec2& minCoords, ShaderProgram& program)
 {
@@ -55,6 +57,8 @@ void TileMap::render(ShaderProgram& program, const glm::ivec3& posPlayer)
 					unordered_map<char, AssimpModel*>::const_iterator it = models.find(tile);
 					if (it != models.end()) {
 						modelMatrix = glm::translate(glm::mat4(1.0f), glm::vec3(i, -j, 0.f));
+						if (it->first == 'j' || it->first == 'q')
+							modelMatrix = glm::rotate(modelMatrix, float((M_PI / 4.0f)), glm::vec3(-1, 0, 0));
 						program.setUniformMatrix4f("model", modelMatrix);
 						it->second->render(program);
 					}
@@ -194,7 +198,7 @@ bool TileMap::loadLevel(const string& levelFile, ShaderProgram& program)
 				ballSpikes.push_back({ false, glm::vec2(i, j) });
 				map[j * mapSize.x + i] = '0';
 			}
-			else if (tile == 'd')	// d for door
+			else if (tile == 'd' || tile == 'j' || tile == 'q')	// d for door
 			{
 				map[j * mapSize.x + i] = tile;
 				doors.push_back(j * mapSize.x + i);
