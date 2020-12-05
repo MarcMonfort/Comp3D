@@ -7,6 +7,7 @@
 #include "Texture.h"
 #include "ShaderProgram.h"
 #include "AssimpModel.h"
+#include <tuple>
 
 
 // Class Tilemap is capable of loading a tile map from a text file in a very
@@ -56,7 +57,15 @@ public:
 		x_space
 	};
 
-	vector<pair<bool, glm::vec2>> getButtons() const;
+	enum orientation
+	{
+		up,
+		left,
+		down,
+		right
+	};
+
+	vector<tuple<bool, glm::vec2, int>> getButtons() const;
 	vector<pair<bool, glm::vec2>> getSwitchs() const;
 	vector<pair<bool, glm::vec2>> getBallSpikes() const;
 	vector<TileMap::Wall> getWalls();
@@ -107,7 +116,7 @@ private:
 
 	vector<int> doors;
   
-	vector<pair<bool, glm::vec2>> buttons;
+	vector<tuple<bool, glm::vec2, int>> buttons;
 	vector<pair<bool, glm::vec2>> switchs;
 
 	bool bPlayerDead = false;

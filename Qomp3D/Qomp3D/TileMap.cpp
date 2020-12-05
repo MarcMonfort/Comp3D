@@ -199,9 +199,24 @@ bool TileMap::loadLevel(const string& levelFile, ShaderProgram& program)
 				map[j * mapSize.x + i] = tile;
 				doors.push_back(j * mapSize.x + i);
 			}
-			else if (tile == 'b')	// button
+			else if (tile == 'U')	// button up
 			{
-				buttons.push_back({ false, glm::vec2(i, j) });
+				buttons.push_back({ false, glm::vec2(i, j), up});
+				map[j * mapSize.x + i] = '0';
+			}
+			else if (tile == 'D')	// button down
+			{
+				buttons.push_back({ false, glm::vec2(i, j), down});
+				map[j * mapSize.x + i] = '0';
+			}
+			else if (tile == 'R')	// button right
+			{
+				buttons.push_back({ false, glm::vec2(i, j), right});
+				map[j * mapSize.x + i] = '0';
+			}
+			else if (tile == 'L')	// button left
+			{
+				buttons.push_back({ false, glm::vec2(i, j), left});
 				map[j * mapSize.x + i] = '0';
 			}
 			else if (tile == 'y')	// yes swicth
@@ -310,7 +325,7 @@ int TileMap::checkBlock(int block)
 		return door;
 	else if (block == 'l' || block == 'm')
 		return line;
-	else if (block == 's')
+	else if (block == 'r' || block == 's' || block == 't' || block == 'u')
 		return spike;
 	else if (block == 'c')
 		return checkpoint;
@@ -435,7 +450,7 @@ vector<TileMap::Wall> TileMap::getWalls()
 	return walls;
 }
 
-vector<pair<bool, glm::vec2>> TileMap::getButtons() const
+vector<tuple<bool, glm::vec2, int>> TileMap::getButtons() const
 {
 	return buttons;
 }

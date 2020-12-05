@@ -20,6 +20,9 @@ public:
 	void setPressed(bool press);
 	bool getPressed();
 
+	void setOrientation(int orient);
+	int getOrientation();
+
 private:
 	glm::vec3 position;
 	TileMap* map;
@@ -34,6 +37,8 @@ private:
 	AssimpModel* model_not_pressed;
 
 	bool pressed = false;
+
+	int orientation = 0;
 };
 
 #endif
