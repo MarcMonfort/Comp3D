@@ -233,7 +233,7 @@ void Scene::update(int deltaTime)
 			break;
 	}
 
-	player->update(deltaTime, &walls, &buttons, &switchs);
+	player->update(deltaTime, &walls, &ballSpikes, &buttons, &switchs);
 
 	for (int i = 0; i < walls.size(); ++i)
 	{

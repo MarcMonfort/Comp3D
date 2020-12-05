@@ -5,6 +5,8 @@
 #include "SoundManager.h"
 #include "Button.h"
 #include "Switch.h"
+#include "Wall.h"
+#include "BallSpike.h"
 
 enum orientation
 {
@@ -20,7 +22,7 @@ class Player
 {
 public:
 	void init(ShaderProgram& shaderProgram);
-	void update(int deltaTime, vector<Wall*>* walls, vector<Button*>* buttons, vector<Switch*>* switchs);
+	void update(int deltaTime, vector<Wall*>* walls, vector<BallSpike*>* ballSpike, vector<Button*>* buttons, vector<Switch*>* switchs);
 	void render(ShaderProgram& program);
 
 	void setTileMap(TileMap* tileMap);
@@ -46,6 +48,7 @@ private:
 	AssimpModel* model;
 
 	bool collideWall(Wall* wall);
+	bool collideBallSpike(BallSpike* blockSpike);
 	bool collideButton(Button* button);
 	bool collideSwitch(Switch* switx);
 
