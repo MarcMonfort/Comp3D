@@ -42,14 +42,19 @@ void Player::update(int deltaTime, vector<Wall*>* walls, vector<Button*>* button
 	for (int i = 0; i < (*buttons).size(); ++i) {
 		Button* button = (*buttons)[i];
 		if (collideButton(button)) {
-			posPlayer.x -= velocity.x;
+			posPlayer.x -= deltaTime * velocity.x;
 			velocity.x = -velocity.x;
+			if (!button->getPressed() && (button->getOrientation() == orientation::right || button->getOrientation() == orientation::left)) {
+				unpressAllButtons(buttons);
+				button->setPressed(true);
+				switchAllSwitchs(switchs);
+			}
 		}
 	}
 
 	for (int i = 0; i < (*switchs).size(); ++i) {
 		if (collideSwitch((*switchs)[i])) {
-			posPlayer.x -= velocity.x;
+			posPlayer.x -= deltaTime * velocity.x;
 			velocity.x = -velocity.x;
 		}
 	}
@@ -80,9 +85,10 @@ void Player::update(int deltaTime, vector<Wall*>* walls, vector<Button*>* button
 	for (int i = 0; i < (*buttons).size(); ++i) {
 		Button* button = (*buttons)[i];
 		if (collideButton(button)) {
-			posPlayer.y -= velocity.y;
+			posPlayer.y -= deltaTime * velocity.y;
 			velocity.y = -velocity.y;
-			if (!button->getPressed()) {
+			if (!button->getPressed() && (button->getOrientation() == up || button->getOrientation() == down)) {
+				unpressAllButtons(buttons);
 				button->setPressed(true);
 				switchAllSwitchs(switchs);
 			}
@@ -91,7 +97,7 @@ void Player::update(int deltaTime, vector<Wall*>* walls, vector<Button*>* button
 
 	for (int i = 0; i < (*switchs).size(); ++i) {
 		if (collideSwitch((*switchs)[i])) {
-			posPlayer.y -= velocity.y;
+			posPlayer.y -= deltaTime * velocity.y;
 			velocity.y = -velocity.y;
 		}
 	}
@@ -232,5 +238,11 @@ bool Player::collideSwitch(Switch* switx)
 void Player::switchAllSwitchs(vector<Switch*>* switchs) {
 	for (int i = 0; i < (*switchs).size(); ++i) {
 		(*switchs)[i]->toggle();
+	}
+}
+
+void Player::unpressAllButtons(vector<Button*>* buttons) {
+	for (int i = 0; i < (*buttons).size(); ++i) {
+		(*buttons)[i]->setPressed(false);
 	}
 }

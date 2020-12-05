@@ -21,6 +21,7 @@ public:
 	bool getPressed();
 
 	void setOrientation(int orient);
+	int getOrientation();
 
 private:
 	glm::vec3 position;

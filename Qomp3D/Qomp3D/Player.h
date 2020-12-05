@@ -6,6 +6,14 @@
 #include "Button.h"
 #include "Switch.h"
 
+enum orientation
+{
+	up,
+	left,
+	down,
+	right,
+};
+
 class Wall;
 
 class Player
@@ -44,6 +52,7 @@ private:
 	float lastVelocity = 0;
 
 	void switchAllSwitchs(vector<Switch*>* switchs);
+	void unpressAllButtons(vector<Button*>* buttons);
 
 };
 

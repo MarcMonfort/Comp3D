@@ -69,3 +69,8 @@ void Button::setOrientation(int orient)
 {
 	orientation = orient;
 }
+
+int Button::getOrientation()
+{
+	return orientation;
+}
