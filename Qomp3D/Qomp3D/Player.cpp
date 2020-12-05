@@ -8,6 +8,7 @@ void Player::init(ShaderProgram& shaderProgram)
 {
 	model = new AssimpModel();
 	model->loadFromFile("models/cube10.obj", shaderProgram);
+	size = model->getSize();
 
 	velocity.x = 0.01f;
 	velocity.y = 0.01f;
@@ -37,6 +38,14 @@ void Player::update(int deltaTime, vector<Wall*>* walls, vector<BallSpike*>* bal
 				posPlayer.x -= deltaTime * velocity.x;
 				velocity.x = -velocity.x;
 			}
+	}
+	if (!PlayGameState::instance().getGodMode())
+	{
+		for (int i = 0; i < (*ballSpike).size(); ++i) {
+			if (collideBallSpike((*ballSpike)[i])) {
+				map->setPlayerDead(true);
+			}
+		}
 	}
 
 	for (int i = 0; i < (*buttons).size(); ++i) {
@@ -80,6 +89,15 @@ void Player::update(int deltaTime, vector<Wall*>* walls, vector<BallSpike*>* bal
 				posPlayer.y -= deltaTime * velocity.y;
 				velocity.y = -velocity.y;
 			}
+	}
+
+	if (!PlayGameState::instance().getGodMode())
+	{
+		for (int i = 0; i < (*ballSpike).size(); ++i) {
+			if (collideBallSpike((*ballSpike)[i])) {
+				map->setPlayerDead(true);
+			}
+		}
 	}
 
 	for (int i = 0; i < (*buttons).size(); ++i) {
@@ -184,19 +202,15 @@ bool Player::collideWall(Wall* wall)
 		return false;
 	else
 	{
-		bool bVertical = wall->getOrientation();
-
-		glm::vec3 playerSize = getSize();
-
 		float Wxmin = wallPos.x;
 		float Wxmax = wallPos.x + wallSize.x;
 		float Wymin = wallPos.y;
 		float Wymax = wallPos.y + wallSize.y;
 
 		float Pxmin = posPlayer.x;
-		float Pxmax = posPlayer.x + playerSize.x;
+		float Pxmax = posPlayer.x + size.x;
 		float Pymin = posPlayer.y;
-		float Pymax = posPlayer.y + playerSize.y;
+		float Pymax = posPlayer.y + size.y;
 
 		return ((Wxmin < Pxmax&& Pxmin < Wxmax) && (Wymin < Pymax&& Pymin < Wymax));
 	}
@@ -206,7 +220,6 @@ bool Player::collideWall(Wall* wall)
 bool Player::collideBallSpike(BallSpike* ballSpike)
 {
 	glm::vec3 ballSpikePos = ballSpike->getPosition();
-	glm::vec3 ballSpikeSize = ballSpike->getSize();
 
 	int distX = abs(posPlayer.x - ballSpikePos.x);
 	int distY = abs(posPlayer.y - ballSpikePos.y);
@@ -218,21 +231,18 @@ bool Player::collideBallSpike(BallSpike* ballSpike)
 	}
 	else
 	{
-		bool bVertical = ballSpike->getOrientation();
-
-		glm::vec3 playerSize = getSize();
-
-		float Wxmin = ballSpikePos.x;
-		float Wxmax = ballSpikePos.x + ballSpikeSize.x;
-		float Wymin = ballSpikePos.y;
-		float Wymax = ballSpikePos.y + ballSpikeSize.y;
+		glm::vec3 ballSpikeSize = ballSpike->getSize();
+		float Wxmin = (ballSpikePos.x-0.5);
+		float Wxmax = (ballSpikePos.x-0.5) + ballSpikeSize.x;
+		float Wymin = (ballSpikePos.y-0.5);
+		float Wymax = (ballSpikePos.y-0.5) + ballSpikeSize.y;
 
 		float Pxmin = posPlayer.x;
-		float Pxmax = posPlayer.x + playerSize.x;
+		float Pxmax = posPlayer.x + size.x;
 		float Pymin = posPlayer.y;
-		float Pymax = posPlayer.y + playerSize.y;
+		float Pymax = posPlayer.y + size.y;
 
-		return ((Wxmin < Pxmax&& Pxmin < Wxmax) && (Wymin < Pymax&& Pymin < Wymax));
+		return ((Wxmin < Pxmax && Pxmin < Wxmax) && (Wymin < Pymax && Pymin < Wymax));
 	}
 }
 

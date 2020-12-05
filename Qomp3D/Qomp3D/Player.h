@@ -37,6 +37,7 @@ public:
 
 private:
 	glm::vec3 posPlayer;
+	glm::vec3 size;
 	TileMap* map;
 
 	glm::vec3 velocity = glm::vec3(0);
