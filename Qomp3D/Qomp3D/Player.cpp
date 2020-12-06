@@ -3,22 +3,69 @@
 #include "Game.h"
 #include <glm/gtc/matrix_transform.hpp>
 
+#define PI 3.14159f
+
 
 void Player::init(ShaderProgram& shaderProgram)
 {
+	// Init Model
 	model = new AssimpModel();
 	model->loadFromFile("models/cube10.obj", shaderProgram);
 	size = model->getSize();
 
+	// Init particle system
+	ParticleSystem::Particle particle;
+	particle.lifetime = 1e10f;
+	particles = new ParticleSystem();
+	particles->init(glm::vec2(0.5f, 0.5f), shaderProgram, "images/smoke_1.png", 0.f);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE);
+
+	// Init Player
 	velocity.x = 0.01f;
 	velocity.y = 0.01f;
 
+	currentTime = 0.0f;
 }
 
 void Player::update(int deltaTime, vector<Wall*>* walls, vector<BallSpike*>* ballSpike, vector<Button*>* buttons, vector<Switch*>* switchs)
 {
 
-	// X direction
+	// Update Particles
+	//int nParticlesToSpawn = 20 * (int((currentTime + deltaTime) / 100.f) - int(currentTime / 100.f));
+	if (bSpace)
+	{
+		int nParticlesToSpawn = 20;
+		ParticleSystem::Particle particle;
+		float angle;
+
+		particle.lifetime = 1.5f;
+
+		int dirX = (velocity.x > 0) - (velocity.x < 0);
+		int dirY = (velocity.y > 0) - (velocity.y < 0);
+
+		glm::vec3 direction = glm::vec3(-(posPlayer.x + 0.5) - dirX, (posPlayer.y + 0.5) + dirY, 0.f);
+
+		for (int i = 0; i < nParticlesToSpawn; i++)
+		{
+			angle = 2.f * PI * (i + float(rand()) / RAND_MAX) / nParticlesToSpawn;
+			//angle = glm::radians(angle);
+			particle.position = glm::vec3(cos(angle) * 0.25 + (posPlayer.x+0.5), sin(angle) * 0.25 - (posPlayer.y+0.5), 0.f);
+
+			particle.speed = 5.f * glm::vec3(glm::normalize(particle.position + direction));
+
+			particles->addParticle(particle);
+		}
+
+
+
+		bSpace = false;
+	}
+	particles->update(deltaTime / 1000.f);
+	currentTime += deltaTime;
+	// End Update Particles
+
+
+	// Update X direction
 	posPlayer.x += deltaTime * velocity.x;
 
 	if (map->collisionMoveRight(posPlayer, model->getSize()))
@@ -68,7 +115,7 @@ void Player::update(int deltaTime, vector<Wall*>* walls, vector<BallSpike*>* bal
 		}
 	}
 
-	// Y direction
+	// Update Y direction
 	posPlayer.y += deltaTime * velocity.y;
 
 	if (map->collisionMoveUp(posPlayer, model->getSize()))
@@ -142,13 +189,28 @@ void Player::update(int deltaTime, vector<Wall*>* walls, vector<BallSpike*>* bal
 	}
 }
 
-void Player::render(ShaderProgram& program)
+void Player::render(ShaderProgram& program, const glm::vec3& eye)
 {
 	glm::mat4 modelMatrix;
 	modelMatrix = glm::translate(glm::mat4(1.0f), glm::vec3(posPlayer.x, -posPlayer.y, 0));
 	program.setUniformMatrix4f("model", modelMatrix);
 
 	model->render(program);
+
+	// Render particles
+	glDepthMask(GL_FALSE);
+	glEnable(GL_BLEND);
+
+	modelMatrix = glm::mat4(1.0f);
+	program.setUniformMatrix4f("model", modelMatrix);
+	//normalMatrix = glm::transpose(glm::inverse(glm::mat3(viewMatrix * modelMatrix)));
+	//texProgram.setUniformMatrix3f("normalmatrix", normalMatrix);
+	//modelMatrix = glm::translate(modelMatrix, glm::vec3(5, 0, 10));
+	//program.setUniformMatrix4f("model", modelMatrix);
+
+	particles->render(eye);
+	glDisable(GL_BLEND);
+	glDepthMask(GL_TRUE);
 }
 
 void Player::setPosition(const glm::vec3& position)
@@ -186,6 +248,7 @@ void Player::keyPressed(int key)
 			velocity.x = -velocity.x;
 		else
 			velocity.y = -velocity.y;
+		bSpace = true;
 	}
 }
 
