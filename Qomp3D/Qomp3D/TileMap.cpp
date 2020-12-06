@@ -52,16 +52,25 @@ void TileMap::render(ShaderProgram& program, const glm::ivec3& posPlayer)
 			{
 
 				tile = map[j * mapSize.x + i];
-				if (tile != '0')
+				if (tile != ' ' && tile != 'x')
 				{
 					unordered_map<char, AssimpModel*>::const_iterator it = models.find(tile);
-					if (it != models.end()) {
-						modelMatrix = glm::translate(glm::mat4(1.0f), glm::vec3(i, -j, 0.f));
-						if (it->first == 'j' || it->first == 'q')
-							modelMatrix = glm::rotate(modelMatrix, float((M_PI / 4.0f)), glm::vec3(-1, 0, 0));
-						program.setUniformMatrix4f("model", modelMatrix);
-						it->second->render(program);
+
+					// Si el model encara no ha estat creat
+					if (it == models.end()) {
+						AssimpModel* new_model = new AssimpModel();
+						string path = (paths.find(tile))->second;
+						new_model->loadFromFile(path, program);
+						models.insert(pair<char, AssimpModel*>(tile, new_model));
+						it = models.find(tile);
 					}
+
+					// Es renderitza el model a la posició corresponent
+					modelMatrix = glm::translate(glm::mat4(1.0f), glm::vec3(i, -j, 0.f));
+					if (it->first == 'j' || it->first == 'q')
+						modelMatrix = glm::rotate(modelMatrix, float((M_PI / 4.0f)), glm::vec3(-1, 0, 0));
+					program.setUniformMatrix4f("model", modelMatrix);
+					it->second->render(program);
 				}
 			}
 		}
@@ -107,24 +116,6 @@ bool TileMap::loadLevel(const string& levelFile, ShaderProgram& program)
 	getline(fin, line);
 	sstream.str(line);
 	sstream >> checkpointPlayer.x >> checkpointPlayer.y >> checkpointPlayer.z;
-
-
-	int numOfModels;
-	getline(fin, line);
-	sstream.str(line);
-	sstream >> numOfModels;
-
-	char num;
-	for (int i = 0; i < numOfModels; ++i)
-	{
-		getline(fin, line);
-		sstream.str(line);
-		sstream >> num >> tilesheetFile;
-
-		AssimpModel* new_model = new AssimpModel();
-		new_model->loadFromFile(tilesheetFile, program);
-		models.insert(pair<int, AssimpModel*>(num, new_model));
-	}
 	
 	map = new char[mapSize.x * mapSize.y];
 	for (int j = 0; j < mapSize.y; j++)
@@ -132,109 +123,118 @@ bool TileMap::loadLevel(const string& levelFile, ShaderProgram& program)
 		for (int i = 0; i < mapSize.x; i++)
 		{
 			fin.get(tile);
-			if (tile == ' ')
-				map[j * mapSize.x + i] = '0';
-			else if (tile == 'v')	// v for easy vertical wall
-			{
-				Wall wall;
-				wall.position = glm::vec2(i, j);
-				wall.bVertical = true;
-				wall.type = 0;
-				walls.push_back(wall);
-				map[j * mapSize.x + i] = '0';
+
+			switch (tile) {
+
+				case('0'):
+					map[j * mapSize.x + i] = ' ';
+					break;
+
+				case('v'): {		// easy vertical wall
+					Wall wall;
+					wall.position = glm::vec2(i, j);
+					wall.bVertical = true;
+					wall.type = 0;
+					walls.push_back(wall);
+					map[j * mapSize.x + i] = ' ';
+					break; }
+
+				case('V'): {		// hard vertical wall
+					Wall wall;
+					wall.position = glm::vec2(i, j);
+					wall.bVertical = true;
+					wall.type = 1;
+					walls.push_back(wall);
+					map[j * mapSize.x + i] = ' ';
+					break; }
+
+				case('|'): {		// impossible vertical wall
+					Wall wall;
+					wall.position = glm::vec2(i, j);
+					wall.bVertical = true;
+					wall.type = 2;
+					walls.push_back(wall);
+					map[j * mapSize.x + i] = ' ';
+					break; }
+
+				case('h'): {		// easy horizontal wall
+					Wall wall;
+					wall.position = glm::vec2(i, j);
+					wall.bVertical = false;
+					wall.type = 0;
+					walls.push_back(wall);
+					map[j * mapSize.x + i] = ' ';
+					break; }
+
+				case('H'): {		// hard horizontal wall
+					Wall wall;
+					wall.position = glm::vec2(i, j);
+					wall.bVertical = false;
+					wall.type = 1;
+					walls.push_back(wall);
+					map[j * mapSize.x + i] = ' ';
+					break; }
+
+				case('-'): {		// impossible horizontal wall
+					Wall wall;
+					wall.position = glm::vec2(i, j);
+					wall.bVertical = false;
+					wall.type = 2;
+					walls.push_back(wall);
+					map[j * mapSize.x + i] = ' ';
+					break; }
+
+				case('o'):			// easy vertical ballSpike
+					ballSpikes.push_back({ true, glm::vec2(i, j) });
+					map[j * mapSize.x + i] = ' ';
+					break;
+
+				case('O'):			// horizontal ballSpike
+					ballSpikes.push_back({ false, glm::vec2(i, j) });
+					map[j * mapSize.x + i] = ' ';
+					break;
+
+				case('d'):		// door
+				case('j'):		// chain
+				case('q'):		// lock
+					map[j * mapSize.x + i] = tile;
+					doors.push_back(j * mapSize.x + i);
+					break;
+
+				case('U'):		// button up
+					buttons.push_back({ false, glm::vec2(i, j), up });
+					map[j * mapSize.x + i] = ' ';
+					break;
+
+				case('D'):		// button down
+					buttons.push_back({ false, glm::vec2(i, j), down });
+					map[j * mapSize.x + i] = ' ';
+					break;
+
+				case('R'):		// button right
+					buttons.push_back({ false, glm::vec2(i, j), right });
+					map[j * mapSize.x + i] = ' ';
+					break;
+
+				case('L'):		// button left
+					buttons.push_back({ false, glm::vec2(i, j), left });
+					map[j * mapSize.x + i] = ' ';
+					break;
+
+				case('y'):		// yes swicth
+					switchs.push_back({ true, glm::vec2(i, j) });
+					map[j * mapSize.x + i] = ' ';
+					break;
+
+				case('n'):		// no switch
+					switchs.push_back({ false, glm::vec2(i, j) });
+					map[j * mapSize.x + i] = ' ';
+					break;
+
+				default:
+					map[j * mapSize.x + i] = tile;
+					break;
 			}
-			else if (tile == 'V')	// v for hard vertical wall
-			{
-				Wall wall;
-				wall.position = glm::vec2(i, j);
-				wall.bVertical = true;
-				wall.type = 1;
-				walls.push_back(wall);
-				map[j * mapSize.x + i] = '0';
-			}
-			else if (tile == '|')	// v for impossible vertical wall
-			{
-				Wall wall;
-				wall.position = glm::vec2(i, j);
-				wall.bVertical = true;
-				wall.type = 2;
-				walls.push_back(wall);
-				map[j * mapSize.x + i] = '0';
-			}
-			else if (tile == 'h')	// h for easy horizontal wall
-			{
-				Wall wall;
-				wall.position = glm::vec2(i, j);
-				wall.bVertical = false;
-				wall.type = 0;
-				walls.push_back(wall);
-				map[j * mapSize.x + i] = '0';
-			}
-			else if (tile == 'H')	// h for hard horizontal wall
-			{
-				Wall wall;
-				wall.position = glm::vec2(i, j);
-				wall.bVertical = false;
-				wall.type = 1;
-				walls.push_back(wall);
-				map[j * mapSize.x + i] = '0';
-			}
-			else if (tile == '-')	// h for impossible horizontal wall
-			{
-				Wall wall;
-				wall.position = glm::vec2(i, j);
-				wall.bVertical = false;
-				wall.type = 2;
-				walls.push_back(wall);
-				map[j * mapSize.x + i] = '0';
-			}
-			else if (tile == 'o')	// o for easy vertical ballSpike
-			{
-				ballSpikes.push_back({ true, glm::vec2(i, j) });
-				map[j * mapSize.x + i] = '0';
-			}
-			else if (tile == 'O')	// O for horizontal ballSpike
-			{
-				ballSpikes.push_back({ false, glm::vec2(i, j) });
-				map[j * mapSize.x + i] = '0';
-			}
-			else if (tile == 'd' || tile == 'j' || tile == 'q')	// d for door
-			{
-				map[j * mapSize.x + i] = tile;
-				doors.push_back(j * mapSize.x + i);
-			}
-			else if (tile == 'U')	// button up
-			{
-				buttons.push_back({ false, glm::vec2(i, j), up});
-				map[j * mapSize.x + i] = '0';
-			}
-			else if (tile == 'D')	// button down
-			{
-				buttons.push_back({ false, glm::vec2(i, j), down});
-				map[j * mapSize.x + i] = '0';
-			}
-			else if (tile == 'R')	// button right
-			{
-				buttons.push_back({ false, glm::vec2(i, j), right});
-				map[j * mapSize.x + i] = '0';
-			}
-			else if (tile == 'L')	// button left
-			{
-				buttons.push_back({ false, glm::vec2(i, j), left});
-				map[j * mapSize.x + i] = '0';
-			}
-			else if (tile == 'y')	// yes swicth
-			{
-				switchs.push_back({ true, glm::vec2(i, j) });
-				map[j * mapSize.x + i] = '0';
-			}
-			else if (tile == 'n')	// no switch
-			{
-				switchs.push_back({ false, glm::vec2(i, j) });
-				map[j * mapSize.x + i] = '0';
-			}
-			else
-				map[j * mapSize.x + i] = tile;
 		}
 		fin.get(tile);
 #ifndef _WIN32
@@ -260,7 +260,7 @@ bool TileMap::collisionMoveLeft(const glm::ivec3& pos, const glm::ivec3& size)
 	y1 = (pos.y + size.y);
 	for (int y = y0; y <= y1; y++)
 	{
-		if (map[y * mapSize.x + x] != '0')
+		if (map[y * mapSize.x + x] != ' ')
 			return treatCollision(y * mapSize.x + x, 0);
 	}
 
@@ -277,7 +277,7 @@ bool TileMap::collisionMoveRight(const glm::ivec3& pos, const glm::ivec3& size)
 	y1 = (pos.y + size.y);
 	for (int y = y0; y <= y1; y++)
 	{
-		if (map[y * mapSize.x + x] != '0')
+		if (map[y * mapSize.x + x] != ' ')
 			return treatCollision(y * mapSize.x + x, 0);
 	}
 
@@ -294,7 +294,7 @@ bool TileMap::collisionMoveDown(const glm::ivec3& pos, const glm::ivec3& size)
 	y = (pos.y + size.y);
 	for (int x = x0; x <= x1; x++)
 	{
-		if (map[y * mapSize.x + x] != '0')
+		if (map[y * mapSize.x + x] != ' ')
 			return treatCollision(y * mapSize.x + x, 0);
 	}
 
@@ -310,7 +310,7 @@ bool TileMap::collisionMoveUp(const glm::ivec3& pos, const glm::ivec3& size)
 	y = pos.y;
 	for (int x = x0; x <= x1; x++)
 	{
-		if (map[y * mapSize.x + x] != '0')
+		if (map[y * mapSize.x + x] != ' ')
 			return treatCollision(y * mapSize.x + x, 0);
 	}
 
@@ -349,9 +349,9 @@ bool TileMap::treatCollision(int pos, int type)
 	}
 	else if (block == key)
 	{
-		map[pos] = '0';
+		map[pos] = ' ';
 		for (int i = 0; i < doors.size(); ++i) {
-			map[doors[i]] = '0';
+			map[doors[i]] = ' ';
 		}
 		return false;
 	}
@@ -383,7 +383,7 @@ bool TileMap::treatCollision(int pos, int type)
 		for (int j = 0; j < mapSize.y; j++)
 			for (int i = 0; i < mapSize.x; i++)
 				if (map[j * mapSize.x + i] == 'C')
-					map[j * mapSize.x + i] = '0';
+					map[j * mapSize.x + i] = ' ';
 
 		map[pos] = 'C';
 
@@ -418,7 +418,7 @@ bool TileMap::treatCollision(int pos, int type)
 			return treatCollision(pos - mapSize.x - 1, type);
 
 		else
-			map[pos] = '0';
+			map[pos] = ' ';
 		return false;
 	}
 

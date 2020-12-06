@@ -4,36 +4,20 @@ TILEMAP
 10 -7.5 18.1                    -- Camera Center
 17 14                           -- Camera Movement
 5 6 0                           -- Player First CheckPoint
-15                              -- Number of models
-1 models/cube10_yellow_blue.obj -- Model for basic block
-f models/cube10_test.obj        -- Model for final block
-k models/key.obj                -- Model for keys
-d models/door.obj               -- Model for doors
-l models/hline3.obj             -- Model for horizontal lines
-m models/vline3.obj             -- Model for vertical lines
-r models/spike_up.obj		-- Model for spike up
-s models/spike_down.obj     	-- Model for spike down
-t models/spike_left.obj		-- Model for spike left
-u models/spike_right.obj	-- Model for spike right
-o models/test.obj         	-- Model for ball spike
-c models/checkpoint.obj         -- Model for checkpoint
-C models/checkpoint2.obj        -- Model for checkpoint 2
-j models/chain.obj		-- Model for chains
-q models/lock.obj		-- Model for locks
 11111111111111111111111111111111111111111111111111111111111111111111111
-1          s                        1                                 1
-1                                   1                                 1
-1                                   1                                 1
-1     k                             1                                 1
-1                                   1                                 1
-1                                   1                                 1
-1u       jjjjqjjjjj                 1                                 1
-1                                  t1                                 1
-1                                   1                                 1
-1                                   1                                 1
-1                                   1                                 1
-1                                   1                                 1
-1                r                  1                                 1
+1      D          n                 1                                 1
+1                 n                 1                                 1
+1                 n                 1                                 1
+1                 n                 1                                 1
+1                 n                 1                                 1
+1                 n                 1                                 1
+1R                n                L1                                 1
+1                 y                 1                                 1
+1                 y                 1                                 1
+1                 y                 1                                 1
+1                 y                 1                                 1
+1                 y                 1                                 1
+1                 y    U            1                                 1
 11111111111111111111111111111111111111111111111111111111111111111111111
                                     1                                 1
                                     1                                 1
