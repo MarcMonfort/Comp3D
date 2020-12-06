@@ -7,6 +7,8 @@
 #include "Switch.h"
 #include "Wall.h"
 #include "BallSpike.h"
+#include "ParticleSystem.h"
+
 
 enum orientation
 {
@@ -16,14 +18,13 @@ enum orientation
 	right,
 };
 
-class Wall;
 
 class Player
 {
 public:
 	void init(ShaderProgram& shaderProgram);
 	void update(int deltaTime, vector<Wall*>* walls, vector<BallSpike*>* ballSpike, vector<Button*>* buttons, vector<Switch*>* switchs);
-	void render(ShaderProgram& program);
+	void render(ShaderProgram& program, const glm::vec3& eye);
 
 	void setTileMap(TileMap* tileMap);
 	void setPosition(const glm::vec3& pos);
@@ -34,29 +35,32 @@ public:
 
 	void keyPressed(int key);
 
-
 private:
-	glm::vec3 posPlayer;
-	glm::vec3 size;
-	TileMap* map;
-
-	glm::vec3 velocity = glm::vec3(0);
-
-	const SoundManager* soundManager;
-	FMOD::Sound* sound;
-	FMOD::Channel* channel;
-
-	AssimpModel* model;
-
 	bool collideWall(Wall* wall);
 	bool collideBallSpike(BallSpike* blockSpike);
 	bool collideButton(Button* button);
 	bool collideSwitch(Switch* switx);
 
-	float lastVelocity = 0;
-
 	void switchAllSwitchs(vector<Switch*>* switchs);
 	void unpressAllButtons(vector<Button*>* buttons);
+
+private:
+	glm::vec3 posPlayer;
+	glm::vec3 size;
+	glm::vec3 velocity = glm::vec3(0);
+	float currentTime;
+
+	TileMap* map;
+	AssimpModel* model;
+	ParticleSystem* particles;
+
+	const SoundManager* soundManager;
+	FMOD::Sound* sound;
+	FMOD::Channel* channel;
+
+	float lastVelocity = 0;
+
+	bool bSpace = false;
 
 };
 

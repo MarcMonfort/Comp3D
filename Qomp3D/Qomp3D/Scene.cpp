@@ -130,23 +130,8 @@ void Scene::init(int numLevel)
 
 void Scene::update(int deltaTime)
 {
-	int nParticlesToSpawn = 20 * (int((currentTime + deltaTime) / 100.f) - int(currentTime / 100.f));
-	ParticleSystem::Particle particle;
-	float angle;
-
-	particle.lifetime = 1.4f;
-	for (int i = 0; i < nParticlesToSpawn; i++)
-	{
-		angle = 2.f * PI * (i + float(rand()) / RAND_MAX) / nParticlesToSpawn;
-		particle.position = glm::vec3(cos(angle), -1.75f, sin(angle));
-		particle.speed = 1.5f * glm::normalize(0.5f * particle.position + glm::vec3(0.f, 3.f, 0.f));
-		particles->addParticle(particle);
-	}
 
 	currentTime += deltaTime;
-
-	particles->update(deltaTime / 1000.f);
-	//NEW
 
 	if (map->getNewCheckPoint() && eCamMove == CamMove::STATIC)
 	{
@@ -165,10 +150,7 @@ void Scene::update(int deltaTime)
 
 	glm::vec3 posPlayer = player->getPosition();
 	glm::vec3 sizePlayer = player->getSize();
-	// Los valores se han puesto a ojo. Si se hace resize del mapa
-	// hay que tener en cuenta tanto el tamaño del player, como la
-	// posicion inicial de la camara que esta desplazada 0.5, ya 
-	// que el centro de un bloque aparece en el centro de la base
+
 	if (posPlayer.x + sizePlayer.x - camera.position.x > (roomSize.x/2) && eCamMove == CamMove::STATIC)
 	{
 		timeCamMove = camera.movement.x;
@@ -266,44 +248,18 @@ void Scene::render()
 	viewMatrix = glm::translate(viewMatrix, -camera.position);
 	texProgram.setUniformMatrix4f("view", viewMatrix);
 
-
 	// Init matrix
 	modelMatrix = glm::mat4(1.0f);
 	normalMatrix = glm::transpose(glm::inverse(glm::mat3(viewMatrix * modelMatrix)));
 	texProgram.setUniformMatrix3f("normalmatrix", normalMatrix);
 
 
-	
-
-	// Render billboard
-	/*texProgram.setUniform1b("bLighting", false);
-	modelMatrix = glm::mat4(1.0f);
-	texProgram.setUniformMatrix4f("modelview", viewMatrix * modelMatrix);
-	normalMatrix = glm::transpose(glm::inverse(glm::mat3(viewMatrix * modelMatrix)));
-	texProgram.setUniformMatrix3f("normalmatrix", normalMatrix);
-	billboard->render(glm::vec3(2.f, -1.5f, 0.f), obs);
-	billboard->render(glm::vec3(-2.f, -1.5f, 0.f), obs);
-	billboard->render(glm::vec3(0.f, -1.5f, 2.f), obs);
-	billboard->render(glm::vec3(0.f, -1.5f, -2.f), obs);*/
-
-	// Render particles
-	/*glDepthMask(GL_FALSE);
-	glEnable(GL_BLEND);
-
-	modelMatrix = glm::mat4(1.0f);
-	texProgram.setUniformMatrix4f("modelview", viewMatrix * modelMatrix);
-	normalMatrix = glm::transpose(glm::inverse(glm::mat3(viewMatrix * modelMatrix)));
-	texProgram.setUniformMatrix3f("normalmatrix", normalMatrix);
-	particles->render(obs);
-
-	glDisable(GL_BLEND);
-	glDepthMask(GL_TRUE);*/
 
 	// Render TileMap
 	map->render(texProgram, player->getPosition());
 
 	// Render Player
-	player->render(texProgram);
+	player->render(texProgram, camera.position);
 
 	// Render Walls
 	for (int i = 0; i < walls.size(); ++i)
