@@ -12,10 +12,10 @@
 
 enum orientation
 {
-	up,
-	left,
-	down,
-	right,
+	UP,
+	LEFT,
+	DOWN,
+	RIGHT,
 };
 
 
@@ -61,6 +61,9 @@ private:
 	float lastVelocity = 0;
 
 	bool bSpace = false;
+	float timeRotate;
+	float timeScale;
+	orientation eScaleDir;
 
 };
 

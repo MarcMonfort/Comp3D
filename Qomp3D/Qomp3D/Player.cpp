@@ -55,28 +55,40 @@ void Player::update(int deltaTime, vector<Wall*>* walls, vector<BallSpike*>* bal
 
 			particles->addParticle(particle);
 		}
-
-
-
 		bSpace = false;
 	}
 	particles->update(deltaTime / 1000.f);
 	currentTime += deltaTime;
 	// End Update Particles
 
+	if (timeRotate > 0)
+		timeRotate -= deltaTime;
+
+	if (timeScale > 0)
+		timeScale -= deltaTime;
+
+
 
 	// Update X direction
 	posPlayer.x += deltaTime * velocity.x;
 
-	if (map->collisionMoveRight(posPlayer, model->getSize()))
+	if (map->collisionMoveRight(posPlayer, size))
 	{
 		posPlayer.x -= deltaTime * velocity.x;
 		velocity.x = -abs(velocity.x);
+
+		timeScale = 200.f;
+		eScaleDir = RIGHT;
+		timeRotate = 200.f;
 	}
-	else if (map->collisionMoveLeft(posPlayer, model->getSize()))
+	else if (map->collisionMoveLeft(posPlayer, size))
 	{
 		posPlayer.x -= deltaTime * velocity.x;
 		velocity.x = abs(velocity.x);
+
+		timeScale = 200.f;
+		eScaleDir = LEFT;
+		timeRotate = 200.f;
 	}
 
 	for (int i = 0; i < (*walls).size(); ++i) {
@@ -84,6 +96,9 @@ void Player::update(int deltaTime, vector<Wall*>* walls, vector<BallSpike*>* bal
 			if (collideWall((*walls)[i])) {
 				posPlayer.x -= deltaTime * velocity.x;
 				velocity.x = -velocity.x;
+				timeRotate = 200.f;
+				timeScale = 200.f;
+				eScaleDir = LEFT;
 			}
 	}
 	if (!PlayGameState::instance().getGodMode())
@@ -100,7 +115,7 @@ void Player::update(int deltaTime, vector<Wall*>* walls, vector<BallSpike*>* bal
 		if (collideButton(button)) {
 			posPlayer.x -= deltaTime * velocity.x;
 			velocity.x = -velocity.x;
-			if (!button->getPressed() && (button->getOrientation() == orientation::right || button->getOrientation() == orientation::left)) {
+			if (!button->getPressed() && (button->getOrientation() == orientation::RIGHT || button->getOrientation() == orientation::LEFT)) {
 				unpressAllButtons(buttons);
 				button->setPressed(true);
 				switchAllSwitchs(switchs);
@@ -118,16 +133,22 @@ void Player::update(int deltaTime, vector<Wall*>* walls, vector<BallSpike*>* bal
 	// Update Y direction
 	posPlayer.y += deltaTime * velocity.y;
 
-	if (map->collisionMoveUp(posPlayer, model->getSize()))
+	if (map->collisionMoveUp(posPlayer, size))
 	{
 		posPlayer.y -= deltaTime * velocity.y;
 		velocity.y = abs(velocity.y);
+
+		timeScale = 200.f;
+		eScaleDir = UP;
 	}
 
-	else if (map->collisionMoveDown(posPlayer, model->getSize()))
+	else if (map->collisionMoveDown(posPlayer, size))
 	{
 		posPlayer.y -= deltaTime * velocity.y;
 		velocity.y = -abs(velocity.y);
+
+		timeScale = 200.f;
+		eScaleDir = DOWN;
 	}
 
 	for (int i = 0; i < (*walls).size(); ++i) {
@@ -135,6 +156,9 @@ void Player::update(int deltaTime, vector<Wall*>* walls, vector<BallSpike*>* bal
 			if (collideWall((*walls)[i])) {
 				posPlayer.y -= deltaTime * velocity.y;
 				velocity.y = -velocity.y;
+				timeRotate = 200.f;
+				timeScale = 200.f;
+				eScaleDir = DOWN;
 			}
 	}
 
@@ -152,7 +176,7 @@ void Player::update(int deltaTime, vector<Wall*>* walls, vector<BallSpike*>* bal
 		if (collideButton(button)) {
 			posPlayer.y -= deltaTime * velocity.y;
 			velocity.y = -velocity.y;
-			if (!button->getPressed() && (button->getOrientation() == up || button->getOrientation() == down)) {
+			if (!button->getPressed() && (button->getOrientation() == UP || button->getOrientation() == DOWN)) {
 				unpressAllButtons(buttons);
 				button->setPressed(true);
 				switchAllSwitchs(switchs);
@@ -167,12 +191,12 @@ void Player::update(int deltaTime, vector<Wall*>* walls, vector<BallSpike*>* bal
 		}
 	}
 
-	if (map->lineCollision(posPlayer, model->getSize(), false)) {
+	if (map->lineCollision(posPlayer, size, false)) {
 		if (lastVelocity == 0)
 			lastVelocity = velocity.y;
 		velocity.y = 0;
 	}
-	else if (map->lineCollision(posPlayer, model->getSize(), true)) {
+	else if (map->lineCollision(posPlayer, size, true)) {
 		if (lastVelocity == 0)
 			lastVelocity = velocity.x;
 		velocity.x = 0;
@@ -193,21 +217,42 @@ void Player::render(ShaderProgram& program, const glm::vec3& eye)
 {
 	glm::mat4 modelMatrix;
 	modelMatrix = glm::translate(glm::mat4(1.0f), glm::vec3(posPlayer.x, -posPlayer.y, 0));
-	program.setUniformMatrix4f("model", modelMatrix);
 
+	if (timeRotate > 0)
+	{
+		int dir = ((velocity.x > 0) - (velocity.x < 0)) * ((velocity.y > 0) - (velocity.y < 0));
+
+		modelMatrix = glm::translate(modelMatrix, model->getCenter());
+		modelMatrix = glm::rotate(modelMatrix, glm::radians(15.f * dir), glm::vec3(0, 0, 1));
+		modelMatrix = glm::translate(modelMatrix, -model->getCenter());
+
+	}
+
+	if (timeScale > 0)
+	{
+		if (eScaleDir == UP || eScaleDir == DOWN)
+		{
+			modelMatrix = glm::translate(modelMatrix, model->getCenter());
+			modelMatrix = glm::scale(modelMatrix, glm::vec3(1.25, 0.8, 1));
+			modelMatrix = glm::translate(modelMatrix, -model->getCenter());
+		}
+		else
+		{
+			modelMatrix = glm::translate(modelMatrix, model->getCenter());
+			modelMatrix = glm::scale(modelMatrix, glm::vec3(0.8, 1.25, 1));
+			modelMatrix = glm::translate(modelMatrix, -model->getCenter());
+		}
+	}
+
+
+	program.setUniformMatrix4f("model", modelMatrix);
 	model->render(program);
 
 	// Render particles
 	glDepthMask(GL_FALSE);
 	glEnable(GL_BLEND);
-
 	modelMatrix = glm::mat4(1.0f);
 	program.setUniformMatrix4f("model", modelMatrix);
-	//normalMatrix = glm::transpose(glm::inverse(glm::mat3(viewMatrix * modelMatrix)));
-	//texProgram.setUniformMatrix3f("normalmatrix", normalMatrix);
-	//modelMatrix = glm::translate(modelMatrix, glm::vec3(5, 0, 10));
-	//program.setUniformMatrix4f("model", modelMatrix);
-
 	particles->render(eye);
 	glDisable(GL_BLEND);
 	glDepthMask(GL_TRUE);
@@ -230,7 +275,7 @@ glm::vec3 Player::getPosition()
 
 glm::vec3 Player::getSize()
 {
-	return model->getSize();
+	return size;
 }
 
 void Player::setTileMap(TileMap* tileMap)
@@ -249,6 +294,7 @@ void Player::keyPressed(int key)
 		else
 			velocity.y = -velocity.y;
 		bSpace = true;
+		timeRotate = 200.f;
 	}
 }
 
@@ -315,17 +361,15 @@ bool Player::collideButton(Button* button)
 	glm::vec3 buttonPos = button->getPosition();
 	glm::vec3 buttonSize = button->getSize();
 
-	glm::vec3 playerSize = getSize();
-
 	float Bxmin = buttonPos.x;
 	float Bxmax = buttonPos.x + buttonSize.x;
 	float Bymin = buttonPos.y;
 	float Bymax = buttonPos.y + buttonSize.y;
 
 	float Pxmin = posPlayer.x;
-	float Pxmax = posPlayer.x + playerSize.x;
+	float Pxmax = posPlayer.x + size.x;
 	float Pymin = posPlayer.y;
-	float Pymax = posPlayer.y + playerSize.y;
+	float Pymax = posPlayer.y + size.y;
 
 	return ((Bxmin < Pxmax&& Pxmin < Bxmax) && (Bymin < Pymax&& Pymin < Bymax));
 }
@@ -336,17 +380,15 @@ bool Player::collideSwitch(Switch* switx)
 		glm::vec3 switchPos = switx->getPosition();
 		glm::vec3 switchSize = switx->getSize();
 
-		glm::vec3 playerSize = getSize();
-
 		float Sxmin = switchPos.x;
 		float Sxmax = switchPos.x + switchSize.x;
 		float Symin = switchPos.y;
 		float Symax = switchPos.y + switchSize.y;
 
 		float Pxmin = posPlayer.x;
-		float Pxmax = posPlayer.x + playerSize.x;
+		float Pxmax = posPlayer.x + size.x;
 		float Pymin = posPlayer.y;
-		float Pymax = posPlayer.y + playerSize.y;
+		float Pymax = posPlayer.y + size.y;
 
 		return ((Sxmin < Pxmax&& Pxmin < Sxmax) && (Symin < Pymax&& Pymin < Symax));
 	}
