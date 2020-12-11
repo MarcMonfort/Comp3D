@@ -58,10 +58,18 @@ void Game::mouseMove(int x, int y)
 
 void Game::mousePress(int button)
 {
+	if (button == GLUT_LEFT_BUTTON)
+	{
+		keyPressed(' ');
+	}
 }
 
 void Game::mouseRelease(int button)
 {
+	if (button == GLUT_LEFT_BUTTON)
+	{
+		keyReleased(' ');
+	}
 }
 
 //void Game::reshape(int width, int height)
