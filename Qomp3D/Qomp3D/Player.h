@@ -71,6 +71,8 @@ private:
 	string line_sound = "sounds/line.mp3";
 	string death_sound = "sounds/death.mp3";
 	string basic_sound = "sounds/basic.mp3";
+
+	FMOD::Channel* line_channel;
 };
 
 #endif

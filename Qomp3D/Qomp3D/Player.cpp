@@ -208,27 +208,31 @@ void Player::update(int deltaTime, vector<Wall*>* walls, vector<BallSpike*>* bal
 	}
 
 	if (map->lineCollision(posPlayer, size, false)) {
-		if (lastVelocity == 0)
+		if (lastVelocity == 0) {
 			lastVelocity = velocity.y;
+			FMOD::Sound* sound = SoundManager::instance().loadSound(line_sound, FMOD_LOOP_NORMAL);
+			line_channel = SoundManager::instance().playSound(sound);
+		}
 		velocity.y = 0;
-		FMOD::Sound* sound = SoundManager::instance().loadSound(line_sound, FMOD_LOOP_NORMAL);
-		FMOD::Channel* channel = SoundManager::instance().playSound(sound);
 	}
 	else if (map->lineCollision(posPlayer, size, true)) {
-		if (lastVelocity == 0)
+		if (lastVelocity == 0) {
 			lastVelocity = velocity.x;
+			FMOD::Sound* sound = SoundManager::instance().loadSound(line_sound, FMOD_LOOP_NORMAL);
+			line_channel = SoundManager::instance().playSound(sound);
+		}
 		velocity.x = 0;
-		FMOD::Sound* sound = SoundManager::instance().loadSound(line_sound, FMOD_LOOP_NORMAL);
-		FMOD::Channel* channel = SoundManager::instance().playSound(sound);
 	}
 	else {
 		if (velocity.y == 0) {
 			velocity.y = lastVelocity;
 			lastVelocity = 0;
+			line_channel->setVolume(0.f);
 		}
 		if (velocity.x == 0) {
 			velocity.x = lastVelocity;
 			lastVelocity = 0;
+			line_channel->setVolume(0.f);
 		}
 	}
 }
