@@ -33,6 +33,9 @@ private:
 	ShaderProgram texProgram;
 	float currentTime;
 	glm::mat4 projection;
+
+	FMOD::Sound* main_theme;
+	FMOD::Channel* channel;
 };
 
 #endif // _GAME_INCLUDE

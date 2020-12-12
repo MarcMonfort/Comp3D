@@ -9,10 +9,10 @@ void Game::init()
 	glEnable(GL_DEPTH_TEST);
 	glClearColor(0.f, 0.f, 0.f, 1.0f);
 
+	SoundManager::instance().init();
+
 	currentGameState = &MenuGameState::instance();
 	currentGameState->init();
-
-	SoundManager::instance().init();
 }
 
 bool Game::update(int deltaTime)

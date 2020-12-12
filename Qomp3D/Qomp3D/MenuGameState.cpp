@@ -14,6 +14,10 @@ void MenuGameState::init()
 	background->setPosition(glm::vec2(0, 0));
 
 	projection = glm::ortho(0.f, float(SCREEN_WIDTH - 1), float(SCREEN_HEIGHT - 1), 0.f);
+
+	main_theme = SoundManager::instance().loadSound("sounds/main_theme.mp3", FMOD_DEFAULT);
+	channel = SoundManager::instance().playSound(main_theme);
+	channel->setVolume(0.3f);
 }
 
 void MenuGameState::update(int deltaTime)
@@ -43,6 +47,7 @@ void MenuGameState::keyPressed(int key)
 	}
 	else if (key == 32) // Space code
 	{
+		channel->setVolume(0.1f);
 		Game::instance().startGame();
 	}
 }
