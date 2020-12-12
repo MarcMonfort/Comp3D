@@ -132,6 +132,12 @@ private:
 		{'3', "models/chain.obj"},
 		{'4', "models/broken_chain.obj"},
 		{'5', "models/broken_chain.obj"},
+		{'7', "models/chain.obj"},
+		{'8', "models/lock.obj"},
+		{'6', "models/chain.obj"},
+		{'9', "models/chain.obj"},
+		{'(', "models/broken_chain.obj"},
+		{')', "models/broken_chain.obj"},
 	};
 
 	std::unordered_map<char, string> water =
@@ -155,6 +161,12 @@ private:
 		{'3', "models/chain.obj"},
 		{'4', "models/broken_chain.obj"},
 		{'5', "models/broken_chain.obj"},
+		{'7', "models/chain.obj"},
+		{'8', "models/lock.obj"},
+		{'6', "models/chain.obj"},
+		{'9', "models/chain.obj"},
+		{'(', "models/broken_chain.obj"},
+		{')', "models/broken_chain.obj"},
 	};
 
 	std::unordered_map<char, string> mario =
@@ -178,6 +190,12 @@ private:
 		{'3', "models/chain.obj"},
 		{'4', "models/broken_chain.obj"},
 		{'5', "models/broken_chain.obj"},
+		{'7', "models/chain.obj"},
+		{'8', "models/lock.obj"},
+		{'6', "models/chain.obj"},
+		{'9', "models/chain.obj"},
+		{'(', "models/broken_chain.obj"},
+		{')', "models/broken_chain.obj"},
 	};
 
 	std::unordered_map<char, string> minecraft =
@@ -201,6 +219,12 @@ private:
 		{'3', "models/chain.obj"},
 		{'4', "models/broken_chain.obj"},
 		{'5', "models/broken_chain.obj"},
+		{'7', "models/chain.obj"},
+		{'8', "models/lock.obj"},
+		{'6', "models/chain.obj"},
+		{'9', "models/chain.obj"},
+		{'(', "models/broken_chain.obj"},
+		{')', "models/broken_chain.obj"},
 	};
 
 	std::unordered_map<char, string> box =
@@ -224,6 +248,12 @@ private:
 		{'3', "models/chain.obj"},
 		{'4', "models/broken_chain.obj"},
 		{'5', "models/broken_chain.obj"},
+		{'7', "models/chain.obj"},
+		{'8', "models/lock.obj"},
+		{'6', "models/chain.obj"},
+		{'9', "models/chain.obj"},
+		{'(', "models/broken_chain.obj"},
+		{')', "models/broken_chain.obj"},
 	};
 
 	std::unordered_map<char, string>* paths;// = &water;

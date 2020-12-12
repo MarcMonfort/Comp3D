@@ -79,9 +79,15 @@ void TileMap::render(ShaderProgram& program, const glm::ivec3& posPlayer)
 						modelMatrix = glm::rotate(modelMatrix, float((M_PI / 4.0f)), glm::vec3(-1, 0, 0));
 						modelMatrix = glm::translate(modelMatrix, glm::vec3(-0.5, 0.5, 0.5));
 					}
-					if (it->first == '5') {
+					else if (it->first == '6' || it->first == '7' || it->first == '8' || it->first == '9' || it->first == '(' || it->first == ')') {
+						modelMatrix = glm::translate(modelMatrix, glm::vec3(-0.35f, 0.f, 0.f));
+						modelMatrix = glm::translate(modelMatrix, glm::vec3(0.5, -0.5, -0.5));
+						modelMatrix = glm::rotate(modelMatrix, float((M_PI / 5.0f)), glm::vec3(0, -1, 0));
+						modelMatrix = glm::rotate(modelMatrix, float((M_PI / 2.0f)), glm::vec3(0, 0, -1));
+						modelMatrix = glm::translate(modelMatrix, glm::vec3(-0.5, 0.5, 0.5));
+					}
+					if (it->first == '5' || it->first == ')') {
 						modelMatrix = glm::translate(modelMatrix, glm::vec3(0.5, -0.5, 0.5));
-						//modelMatrix = glm::rotate(modelMatrix, float((M_PI / 2.0f) * orientation), glm::vec3(0, 0, 1));
 						modelMatrix = glm::rotate(modelMatrix, float((M_PI / 2.0f) * 2), glm::vec3(0, 0, 1));
 						modelMatrix = glm::translate(modelMatrix, glm::vec3(-0.5, 0.5, -0.5));
 					}
@@ -243,6 +249,10 @@ bool TileMap::loadLevel(const string& levelFile, ShaderProgram& program)
 				case('q'):		// lock
 				case('2'):
 				case('3'):
+				case('6'):
+				case('7'):
+				case('8'):
+				case('9'):
 					map[j * mapSize.x + i] = tile;
 					doors.push_back(j * mapSize.x + i);
 					break;
@@ -373,7 +383,7 @@ int TileMap::checkBlock(int block)
 		return key;
 	else if (block == 'd' || block == 'j' || block == 'q' || block == '2' || block == '3')
 		return door;
-	else if (block == '4' || block == '5')
+	else if (block == '4' || block == '5' || block == '(' || block == ')')
 		return broken_chain;
 	else if (block == 'l' || block == 'm')
 		return line;
@@ -408,6 +418,10 @@ bool TileMap::treatCollision(int pos, int type)
 				map[doors[i]] = '4';
 			else if (map[doors[i]] == '3')
 				map[doors[i]] = '5';
+			else if (map[doors[i]] == '6')
+				map[doors[i]] = '(';
+			else if (map[doors[i]] == '9')
+				map[doors[i]] = ')';
 			else
 				map[doors[i]] = ' ';
 		}
