@@ -54,7 +54,8 @@ public:
 		spike,
 		checkpoint,
 		checkpoint2,
-		x_space
+		x_space,
+		none
 	};
 
 	enum orientation

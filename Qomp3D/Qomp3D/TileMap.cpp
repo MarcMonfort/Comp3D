@@ -67,8 +67,10 @@ void TileMap::render(ShaderProgram& program, const glm::ivec3& posPlayer)
 
 					// Es renderitza el model a la posició corresponent
 					modelMatrix = glm::translate(glm::mat4(1.0f), glm::vec3(i, -j, 0.f));
-					if (it->first == 'j' || it->first == 'q')
+					if (it->first == 'j' || it->first == 'q') {
+						modelMatrix = glm::translate(modelMatrix, glm::vec3(0.f, 0.5f, 0.f));
 						modelMatrix = glm::rotate(modelMatrix, float((M_PI / 4.0f)), glm::vec3(-1, 0, 0));
+					}
 					program.setUniformMatrix4f("model", modelMatrix);
 					it->second->render(program);
 				}
@@ -347,7 +349,7 @@ bool TileMap::collisionMoveUp(const glm::ivec3& pos, const glm::ivec3& size)
 
 int TileMap::checkBlock(int block)
 {
-	if (block == 1)
+	if (block == '1')
 		return basic;
 	else if (block == 'f')
 		return fin;
@@ -365,6 +367,7 @@ int TileMap::checkBlock(int block)
 		return checkpoint2;
 	else if (block == 'x')
 		return x_space;
+	else return none;
 }
 
 bool TileMap::treatCollision(int pos, int type)
