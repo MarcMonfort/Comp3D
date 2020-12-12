@@ -65,6 +65,12 @@ private:
 	float timeScale;
 	orientation eScaleDir;
 
+	string player_sound = "sounds/player.mp3";
+	string wall_sound = "sounds/wall.mp3";
+	string button_sound = "sounds/button.mp3";
+	string line_sound = "sounds/line.mp3";
+	string death_sound = "sounds/death.mp3";
+	string basic_sound = "sounds/basic.mp3";
 };
 
 #endif

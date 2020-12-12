@@ -355,7 +355,7 @@ int TileMap::checkBlock(int block)
 		return fin;
 	else if (block == 'k')
 		return key;
-	else if (block == 'd')
+	else if (block == 'd' || block == 'j' || block == 'q')
 		return door;
 	else if (block == 'l' || block == 'm')
 		return line;
@@ -388,16 +388,21 @@ bool TileMap::treatCollision(int pos, int type)
 		for (int i = 0; i < doors.size(); ++i) {
 			map[doors[i]] = ' ';
 		}
+		FMOD::Sound* sound = SoundManager::instance().loadSound(key_sound, FMOD_DEFAULT);
+		FMOD::Channel* channel = SoundManager::instance().playSound(sound);
 		return false;
 	}
 	else if (block == fin)
 	{
 		PlayGameState::instance().finalBlockTaken();
+		FMOD::Sound* sound = SoundManager::instance().loadSound(checkpoint_sound, FMOD_DEFAULT);
+		FMOD::Channel* channel = SoundManager::instance().playSound(sound);
 		return false;
 	}
 	else if (block == door)
 	{
-		//sonido
+		FMOD::Sound* sound = SoundManager::instance().loadSound(chain_sound, FMOD_DEFAULT);
+		FMOD::Channel* channel = SoundManager::instance().playSound(sound);
 		return true;
 	}
 	else if (block == line)
@@ -408,12 +413,16 @@ bool TileMap::treatCollision(int pos, int type)
 	{
 		if (!PlayGameState::instance().getGodMode())
 		{
+			FMOD::Sound* sound = SoundManager::instance().loadSound(death_sound, FMOD_DEFAULT);
+			FMOD::Channel* channel = SoundManager::instance().playSound(sound);
 			bPlayerDead = true;
 			return false;
 		}	
 	}
 	else if (block == checkpoint)
 	{
+		FMOD::Sound* sound = SoundManager::instance().loadSound(checkpoint_sound, FMOD_DEFAULT);
+		FMOD::Channel* channel = SoundManager::instance().playSound(sound);
 		bNewCheckPoint = true;
 		for (int j = 0; j < mapSize.y; j++)
 			for (int i = 0; i < mapSize.x; i++)
