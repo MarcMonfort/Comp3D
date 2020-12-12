@@ -56,6 +56,7 @@ public:
 		checkpoint,
 		checkpoint2,
 		x_space,
+		broken_chain,
 		none
 	};
 
@@ -126,7 +127,11 @@ private:
 		{'c', "models/checkpoint.obj"},
 		{'C', "models/checkpoint2.obj"},
 		{'j', "models/chain.obj"},
-		{'q', "models/lock.obj"}
+		{'q', "models/lock.obj"},
+		{'2', "models/chain.obj"},
+		{'3', "models/chain.obj"},
+		{'4', "models/broken_chain.obj"},
+		{'5', "models/broken_chain.obj"},
 	};
 
 	std::unordered_map<char, string> water =
@@ -145,7 +150,11 @@ private:
 		{'c', "models/checkpoint.obj"},
 		{'C', "models/checkpoint2.obj"},
 		{'j', "models/chain.obj"},
-		{'q', "models/lock.obj"}
+		{'q', "models/lock.obj"},
+		{'2', "models/chain.obj"},
+		{'3', "models/chain.obj"},
+		{'4', "models/broken_chain.obj"},
+		{'5', "models/broken_chain.obj"},
 	};
 
 	std::unordered_map<char, string> mario =
@@ -164,7 +173,11 @@ private:
 		{'c', "models/checkpoint.obj"},
 		{'C', "models/checkpoint2.obj"},
 		{'j', "models/chain.obj"},
-		{'q', "models/lock.obj"}
+		{'q', "models/lock.obj"},
+		{'2', "models/chain.obj"},
+		{'3', "models/chain.obj"},
+		{'4', "models/broken_chain.obj"},
+		{'5', "models/broken_chain.obj"},
 	};
 
 	std::unordered_map<char, string> minecraft =
@@ -183,7 +196,11 @@ private:
 		{'c', "models/checkpoint.obj"},
 		{'C', "models/checkpoint2.obj"},
 		{'j', "models/chain.obj"},
-		{'q', "models/lock.obj"}
+		{'q', "models/lock.obj"},
+		{'2', "models/chain.obj"},
+		{'3', "models/chain.obj"},
+		{'4', "models/broken_chain.obj"},
+		{'5', "models/broken_chain.obj"},
 	};
 
 	std::unordered_map<char, string> box =
@@ -202,7 +219,11 @@ private:
 		{'c', "models/checkpoint.obj"},
 		{'C', "models/checkpoint2.obj"},
 		{'j', "models/chain.obj"},
-		{'q', "models/lock.obj"}
+		{'q', "models/lock.obj"},
+		{'2', "models/chain.obj"},
+		{'3', "models/chain.obj"},
+		{'4', "models/broken_chain.obj"},
+		{'5', "models/broken_chain.obj"},
 	};
 
 	std::unordered_map<char, string>* paths;// = &water;
