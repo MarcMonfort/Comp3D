@@ -7,6 +7,7 @@
 #include "Texture.h"
 #include "ShaderProgram.h"
 #include "AssimpModel.h"
+#include "SoundManager.h"
 #include <tuple>
 
 
@@ -226,11 +227,14 @@ private:
 
 	glm::vec3 colorBackground;
 
-	string basic_sound = "sounds/basic.mp3";
-	string death_sound = "sounds/death.mp3";
-	string checkpoint_sound = "sounds/checkpoint.mp3";
-	string chain_sound = "sounds/chain.mp3";
-	string key_sound = "sounds/key.mp3";
+
+	FMOD::Sound* basic_sound;
+	FMOD::Sound* death_sound;
+	FMOD::Sound* checkpoint_sound;
+	FMOD::Sound* chain_sound;
+	FMOD::Sound* key_sound;
+
+	FMOD::Channel* channel;
 };
 
 

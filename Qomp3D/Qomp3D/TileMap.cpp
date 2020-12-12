@@ -24,7 +24,13 @@ TileMap::TileMap(const string& levelFile, const glm::vec2& minCoords, ShaderProg
 {
 	loadLevel(levelFile, program);
 	currentTime = 0.0f;
-	//prepareArrays(minCoords, program); No hace falta
+
+	// Init Sound
+	checkpoint_sound = SoundManager::instance().loadSound("sounds/checkpoint.mp3", FMOD_DEFAULT);
+	chain_sound = SoundManager::instance().loadSound("sounds/chain.mp3", FMOD_DEFAULT);
+	key_sound = SoundManager::instance().loadSound("sounds/key.mp3", FMOD_DEFAULT);
+	death_sound = SoundManager::instance().loadSound("sounds/death.mp3", FMOD_DEFAULT);
+	basic_sound = SoundManager::instance().loadSound("sounds/basic.mp3", FMOD_DEFAULT);
 }
 
 TileMap::~TileMap()
@@ -377,8 +383,7 @@ bool TileMap::treatCollision(int pos, int type)
 	if (block == basic)
 	{
 		if (type == 1) {
-			FMOD::Sound* sound = SoundManager::instance().loadSound(basic_sound, FMOD_DEFAULT);
-			FMOD::Channel* channel = SoundManager::instance().playSound(sound);
+			channel = SoundManager::instance().playSound(basic_sound);
 		}
 		return true;
 	}
@@ -388,21 +393,18 @@ bool TileMap::treatCollision(int pos, int type)
 		for (int i = 0; i < doors.size(); ++i) {
 			map[doors[i]] = ' ';
 		}
-		FMOD::Sound* sound = SoundManager::instance().loadSound(key_sound, FMOD_DEFAULT);
-		FMOD::Channel* channel = SoundManager::instance().playSound(sound);
+		channel = SoundManager::instance().playSound(key_sound);
 		return false;
 	}
 	else if (block == fin)
 	{
 		PlayGameState::instance().finalBlockTaken();
-		FMOD::Sound* sound = SoundManager::instance().loadSound(checkpoint_sound, FMOD_DEFAULT);
-		FMOD::Channel* channel = SoundManager::instance().playSound(sound);
+		channel = SoundManager::instance().playSound(checkpoint_sound);
 		return false;
 	}
 	else if (block == door)
 	{
-		FMOD::Sound* sound = SoundManager::instance().loadSound(chain_sound, FMOD_DEFAULT);
-		FMOD::Channel* channel = SoundManager::instance().playSound(sound);
+		channel = SoundManager::instance().playSound(chain_sound);
 		return true;
 	}
 	else if (block == line)
@@ -413,16 +415,14 @@ bool TileMap::treatCollision(int pos, int type)
 	{
 		if (!PlayGameState::instance().getGodMode())
 		{
-			FMOD::Sound* sound = SoundManager::instance().loadSound(death_sound, FMOD_DEFAULT);
-			FMOD::Channel* channel = SoundManager::instance().playSound(sound);
+			channel = SoundManager::instance().playSound(death_sound);
 			bPlayerDead = true;
 			return false;
 		}	
 	}
 	else if (block == checkpoint)
 	{
-		FMOD::Sound* sound = SoundManager::instance().loadSound(checkpoint_sound, FMOD_DEFAULT);
-		FMOD::Channel* channel = SoundManager::instance().playSound(sound);
+		channel = SoundManager::instance().playSound(checkpoint_sound);
 		bNewCheckPoint = true;
 		for (int j = 0; j < mapSize.y; j++)
 			for (int i = 0; i < mapSize.x; i++)

@@ -24,6 +24,17 @@ void Player::init(ShaderProgram& shaderProgram)
 	velocity.x = 0.01f;
 	velocity.y = 0.01f;
 
+
+	// Init Sound
+	wall_sound = SoundManager::instance().loadSound("sounds/wall.mp3", FMOD_DEFAULT);
+	player_sound = SoundManager::instance().loadSound("sounds/player.mp3", FMOD_DEFAULT);
+	button_sound = SoundManager::instance().loadSound("sounds/button.mp3", FMOD_DEFAULT);
+	line_sound = SoundManager::instance().loadSound("sounds/line.mp3", FMOD_LOOP_NORMAL);
+	death_sound = SoundManager::instance().loadSound("sounds/death.mp3", FMOD_DEFAULT);
+	basic_sound = SoundManager::instance().loadSound("sounds/basic.mp3", FMOD_DEFAULT);
+
+
+
 	currentTime = 0.0f;
 }
 
@@ -99,8 +110,7 @@ void Player::update(int deltaTime, vector<Wall*>* walls, vector<BallSpike*>* bal
 				timeRotate = 200.f;
 				timeScale = 200.f;
 				eScaleDir = LEFT;
-				FMOD::Sound* sound = SoundManager::instance().loadSound(wall_sound, FMOD_DEFAULT);
-				FMOD::Channel* channel = SoundManager::instance().playSound(sound);
+				channel = SoundManager::instance().playSound(wall_sound);
 			}
 	}
 	if (!PlayGameState::instance().getGodMode())
@@ -108,8 +118,7 @@ void Player::update(int deltaTime, vector<Wall*>* walls, vector<BallSpike*>* bal
 		for (int i = 0; i < (*ballSpike).size(); ++i) {
 			if (collideBallSpike((*ballSpike)[i])) {
 				map->setPlayerDead(true);
-				FMOD::Sound* sound = SoundManager::instance().loadSound(death_sound, FMOD_DEFAULT);
-				FMOD::Channel* channel = SoundManager::instance().playSound(sound);
+				channel = SoundManager::instance().playSound(death_sound);
 			}
 		}
 	}
@@ -123,8 +132,7 @@ void Player::update(int deltaTime, vector<Wall*>* walls, vector<BallSpike*>* bal
 				unpressAllButtons(buttons);
 				button->setPressed(true);
 				switchAllSwitchs(switchs);
-				FMOD::Sound* sound = SoundManager::instance().loadSound(button_sound, FMOD_DEFAULT);
-				FMOD::Channel* channel = SoundManager::instance().playSound(sound);
+				channel = SoundManager::instance().playSound(button_sound);
 			}
 		}
 	}
@@ -133,8 +141,7 @@ void Player::update(int deltaTime, vector<Wall*>* walls, vector<BallSpike*>* bal
 		if (collideSwitch((*switchs)[i])) {
 			posPlayer.x -= deltaTime * velocity.x;
 			velocity.x = -velocity.x;
-			FMOD::Sound* sound = SoundManager::instance().loadSound(basic_sound, FMOD_DEFAULT);
-			FMOD::Channel* channel = SoundManager::instance().playSound(sound);
+			channel = SoundManager::instance().playSound(basic_sound);
 		}
 	}
 
@@ -167,8 +174,7 @@ void Player::update(int deltaTime, vector<Wall*>* walls, vector<BallSpike*>* bal
 				timeRotate = 200.f;
 				timeScale = 200.f;
 				eScaleDir = DOWN;
-				FMOD::Sound* sound = SoundManager::instance().loadSound(wall_sound, FMOD_DEFAULT);
-				FMOD::Channel* channel = SoundManager::instance().playSound(sound);
+				channel = SoundManager::instance().playSound(wall_sound);
 			}
 	}
 
@@ -177,8 +183,7 @@ void Player::update(int deltaTime, vector<Wall*>* walls, vector<BallSpike*>* bal
 		for (int i = 0; i < (*ballSpike).size(); ++i) {
 			if (collideBallSpike((*ballSpike)[i])) {
 				map->setPlayerDead(true);
-				FMOD::Sound* sound = SoundManager::instance().loadSound(death_sound, FMOD_DEFAULT);
-				FMOD::Channel* channel = SoundManager::instance().playSound(sound);
+				channel = SoundManager::instance().playSound(death_sound);
 			}
 		}
 	}
@@ -192,8 +197,7 @@ void Player::update(int deltaTime, vector<Wall*>* walls, vector<BallSpike*>* bal
 				unpressAllButtons(buttons);
 				button->setPressed(true);
 				switchAllSwitchs(switchs);
-				FMOD::Sound* sound = SoundManager::instance().loadSound(button_sound, FMOD_DEFAULT);
-				FMOD::Channel* channel = SoundManager::instance().playSound(sound);
+				channel = SoundManager::instance().playSound(button_sound);
 			}
 		}
 	}
@@ -202,24 +206,21 @@ void Player::update(int deltaTime, vector<Wall*>* walls, vector<BallSpike*>* bal
 		if (collideSwitch((*switchs)[i])) {
 			posPlayer.y -= deltaTime * velocity.y;
 			velocity.y = -velocity.y;
-			FMOD::Sound* sound = SoundManager::instance().loadSound(basic_sound, FMOD_DEFAULT);
-			FMOD::Channel* channel = SoundManager::instance().playSound(sound);
+			channel = SoundManager::instance().playSound(basic_sound);
 		}
 	}
 
 	if (map->lineCollision(posPlayer, size, false)) {
 		if (lastVelocity == 0) {
 			lastVelocity = velocity.y;
-			FMOD::Sound* sound = SoundManager::instance().loadSound(line_sound, FMOD_LOOP_NORMAL);
-			line_channel = SoundManager::instance().playSound(sound);
+			line_channel = SoundManager::instance().playSound(line_sound);
 		}
 		velocity.y = 0;
 	}
 	else if (map->lineCollision(posPlayer, size, true)) {
 		if (lastVelocity == 0) {
 			lastVelocity = velocity.x;
-			FMOD::Sound* sound = SoundManager::instance().loadSound(line_sound, FMOD_LOOP_NORMAL);
-			line_channel = SoundManager::instance().playSound(sound);
+			line_channel = SoundManager::instance().playSound(line_sound);
 		}
 		velocity.x = 0;
 	}
@@ -320,8 +321,7 @@ void Player::keyPressed(int key)
 		bSpace = true;
 		timeRotate = 200.f;
 
-		FMOD::Sound* sound = SoundManager::instance().loadSound(player_sound, FMOD_DEFAULT);
-		FMOD::Channel* channel = SoundManager::instance().playSound(sound);
+		channel = SoundManager::instance().playSound(player_sound);
 	}
 }
 

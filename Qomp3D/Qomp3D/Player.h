@@ -54,9 +54,6 @@ private:
 	AssimpModel* model;
 	ParticleSystem* particles;
 
-	const SoundManager* soundManager;
-	FMOD::Sound* sound;
-	FMOD::Channel* channel;
 
 	float lastVelocity = 0;
 
@@ -65,13 +62,16 @@ private:
 	float timeScale;
 	orientation eScaleDir;
 
-	string player_sound = "sounds/player.mp3";
-	string wall_sound = "sounds/wall.mp3";
-	string button_sound = "sounds/button.mp3";
-	string line_sound = "sounds/line.mp3";
-	string death_sound = "sounds/death.mp3";
-	string basic_sound = "sounds/basic.mp3";
 
+
+	FMOD::Sound* wall_sound;
+	FMOD::Sound* player_sound;
+	FMOD::Sound* button_sound;
+	FMOD::Sound* line_sound;
+	FMOD::Sound* death_sound;
+	FMOD::Sound* basic_sound;
+
+	FMOD::Channel* channel;
 	FMOD::Channel* line_channel;
 };
 
