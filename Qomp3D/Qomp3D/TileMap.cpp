@@ -381,7 +381,7 @@ int TileMap::checkBlock(int block)
 		return fin;
 	else if (block == 'k')
 		return key;
-	else if (block == 'd' || block == 'j' || block == 'q' || block == '2' || block == '3')
+	else if (block == 'd' || block == 'j' || block == 'q' || block == '2' || block == '3' || block == '6' || block == '7' || block == '8' || block == '9')
 		return door;
 	else if (block == '4' || block == '5' || block == '(' || block == ')')
 		return broken_chain;
@@ -430,13 +430,16 @@ bool TileMap::treatCollision(int pos, int type)
 	}
 	else if (block == fin)
 	{
-		PlayGameState::instance().finalBlockTaken();
-		channel = SoundManager::instance().playSound(checkpoint_sound);
+		if (type == 1) {
+			PlayGameState::instance().finalBlockTaken();
+			channel = SoundManager::instance().playSound(checkpoint_sound);
+		}
 		return false;
 	}
 	else if (block == door)
 	{
-		channel = SoundManager::instance().playSound(chain_sound);
+		if (type == 1)
+			channel = SoundManager::instance().playSound(chain_sound);
 		return true;
 	}
 	else if (block == broken_chain)
@@ -449,7 +452,7 @@ bool TileMap::treatCollision(int pos, int type)
 	}
 	else if (block == spike)
 	{
-		if (!PlayGameState::instance().getGodMode())
+		if (!PlayGameState::instance().getGodMode() && type == 1)
 		{
 			channel = SoundManager::instance().playSound(death_sound);
 			bPlayerDead = true;
@@ -458,18 +461,19 @@ bool TileMap::treatCollision(int pos, int type)
 	}
 	else if (block == checkpoint)
 	{
-		channel = SoundManager::instance().playSound(checkpoint_sound);
-		bNewCheckPoint = true;
-		for (int j = 0; j < mapSize.y; j++)
-			for (int i = 0; i < mapSize.x; i++)
-				if (map[j * mapSize.x + i] == 'C')
-					map[j * mapSize.x + i] = ' ';
+		if (type == 1) {
+			channel = SoundManager::instance().playSound(checkpoint_sound);
+			bNewCheckPoint = true;
+			for (int j = 0; j < mapSize.y; j++)
+				for (int i = 0; i < mapSize.x; i++)
+					if (map[j * mapSize.x + i] == 'C')
+						map[j * mapSize.x + i] = ' ';
 
-		map[pos] = 'C';
+			map[pos] = 'C';
 
-		checkpointPlayer.y = pos / mapSize.x;
-		checkpointPlayer.x = pos % mapSize.x;
-
+			checkpointPlayer.y = pos / mapSize.x;
+			checkpointPlayer.x = pos % mapSize.x;
+		}
 		return false;
 	}
 	else if (block == checkpoint2)
