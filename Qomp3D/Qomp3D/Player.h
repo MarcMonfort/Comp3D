@@ -58,8 +58,8 @@ private:
 	float lastVelocity = 0;
 
 	bool bSpace = false;
-	float timeRotate;
-	float timeScale;
+	int timeRotate;
+	int timeScale;
 	orientation eScaleDir;
 
 

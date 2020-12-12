@@ -88,18 +88,18 @@ void Player::update(int deltaTime, vector<Wall*>* walls, vector<BallSpike*>* bal
 		posPlayer.x -= deltaTime * velocity.x;
 		velocity.x = -abs(velocity.x);
 
-		timeScale = 200.f;
+		timeScale = 200;
 		eScaleDir = RIGHT;
-		timeRotate = 200.f;
+		timeRotate = 200;
 	}
 	else if (map->collisionMoveLeft(posPlayer, size, 1))
 	{
 		posPlayer.x -= deltaTime * velocity.x;
 		velocity.x = abs(velocity.x);
 
-		timeScale = 200.f;
+		timeScale = 200;
 		eScaleDir = LEFT;
-		timeRotate = 200.f;
+		timeRotate = 200;
 	}
 
 	for (int i = 0; i < (*walls).size(); ++i) {
@@ -107,8 +107,8 @@ void Player::update(int deltaTime, vector<Wall*>* walls, vector<BallSpike*>* bal
 			if (collideWall((*walls)[i])) {
 				posPlayer.x -= deltaTime * velocity.x;
 				velocity.x = -velocity.x;
-				timeRotate = 200.f;
-				timeScale = 200.f;
+				timeRotate = 200;
+				timeScale = 200;
 				eScaleDir = LEFT;
 				channel = SoundManager::instance().playSound(wall_sound);
 			}
@@ -153,7 +153,7 @@ void Player::update(int deltaTime, vector<Wall*>* walls, vector<BallSpike*>* bal
 		posPlayer.y -= deltaTime * velocity.y;
 		velocity.y = abs(velocity.y);
 
-		timeScale = 200.f;
+		timeScale = 200;
 		eScaleDir = UP;
 	}
 
@@ -162,7 +162,7 @@ void Player::update(int deltaTime, vector<Wall*>* walls, vector<BallSpike*>* bal
 		posPlayer.y -= deltaTime * velocity.y;
 		velocity.y = -abs(velocity.y);
 
-		timeScale = 200.f;
+		timeScale = 200;
 		eScaleDir = DOWN;
 	}
 
@@ -171,8 +171,8 @@ void Player::update(int deltaTime, vector<Wall*>* walls, vector<BallSpike*>* bal
 			if (collideWall((*walls)[i])) {
 				posPlayer.y -= deltaTime * velocity.y;
 				velocity.y = -velocity.y;
-				timeRotate = 200.f;
-				timeScale = 200.f;
+				timeRotate = 200;
+				timeScale = 200;
 				eScaleDir = DOWN;
 				channel = SoundManager::instance().playSound(wall_sound);
 			}
@@ -274,13 +274,16 @@ void Player::render(ShaderProgram& program, const glm::vec3& eye)
 	model->render(program);
 
 	// Render particles
-	glDepthMask(GL_FALSE);
-	glEnable(GL_BLEND);
-	modelMatrix = glm::mat4(1.0f);
-	program.setUniformMatrix4f("model", modelMatrix);
-	particles->render(eye);
-	glDisable(GL_BLEND);
-	glDepthMask(GL_TRUE);
+	if (!particles->empty())
+	{
+		glDepthMask(GL_FALSE);
+		glEnable(GL_BLEND);
+		modelMatrix = glm::mat4(1.0f);
+		program.setUniformMatrix4f("model", modelMatrix);
+		particles->render(eye);
+		glDisable(GL_BLEND);
+		glDepthMask(GL_TRUE);
+	}
 }
 
 void Player::setPosition(const glm::vec3& position)
@@ -356,18 +359,18 @@ bool Player::collideWall(Wall* wall)
 bool Player::collideBallSpike(BallSpike* ballSpike)
 {
 	glm::vec3 ballSpikePos = ballSpike->getPosition();
+	glm::vec3 ballSpikeSize = ballSpike->getSize();
 
 	int distX = abs(posPlayer.x - ballSpikePos.x);
 	int distY = abs(posPlayer.y - ballSpikePos.y);
 
 
-	if (distX > map->getMovementCamera().x || distY > map->getMovementCamera().y)
+	if (distX > ballSpikeSize.x + 2 || distY > ballSpikeSize.y + 2)
 	{
 		return false;
 	}
 	else
 	{
-		glm::vec3 ballSpikeSize = ballSpike->getSize();
 		float Wxmin = (ballSpikePos.x-0.5);
 		float Wxmax = (ballSpikePos.x-0.5) + ballSpikeSize.x;
 		float Wymin = (ballSpikePos.y-0.5);

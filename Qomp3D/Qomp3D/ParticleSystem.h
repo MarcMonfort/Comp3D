@@ -26,6 +26,8 @@ public:
 	void update(float deltaTimeInSeconds);
 	void render(const glm::vec3 &eye);
 
+	bool empty();
+
 private:
 	int numParticles;
 	vector<Particle> particles;

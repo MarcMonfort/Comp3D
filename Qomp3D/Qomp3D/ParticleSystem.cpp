@@ -50,4 +50,9 @@ void ParticleSystem::render(const glm::vec3 &eye)
 		billboard->render(particles[i].position, eye);
 }
 
+bool ParticleSystem::empty()
+{
+	return particles.empty();
+}
+
 
