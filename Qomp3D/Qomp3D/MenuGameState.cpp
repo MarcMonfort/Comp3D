@@ -47,7 +47,7 @@ void MenuGameState::keyPressed(int key)
 	}
 	else if (key == 32) // Space code
 	{
-		channel->setVolume(0.1f);
+		channel->setVolume(0.2f);
 		Game::instance().startGame();
 	}
 }

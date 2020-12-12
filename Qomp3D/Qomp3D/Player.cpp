@@ -26,12 +26,12 @@ void Player::init(ShaderProgram& shaderProgram)
 
 
 	// Init Sound
-	wall_sound = SoundManager::instance().loadSound("sounds/wall.mp3", FMOD_DEFAULT);
-	player_sound = SoundManager::instance().loadSound("sounds/player.mp3", FMOD_DEFAULT);
+	wall_sound = SoundManager::instance().loadSound("sounds/wall3.mp3", FMOD_DEFAULT);
+	player_sound = SoundManager::instance().loadSound("sounds/player2.mp3", FMOD_DEFAULT);
 	button_sound = SoundManager::instance().loadSound("sounds/button.mp3", FMOD_DEFAULT);
 	line_sound = SoundManager::instance().loadSound("sounds/line.mp3", FMOD_LOOP_NORMAL);
 	death_sound = SoundManager::instance().loadSound("sounds/death.mp3", FMOD_DEFAULT);
-	basic_sound = SoundManager::instance().loadSound("sounds/basic.mp3", FMOD_DEFAULT);
+	basic_sound = SoundManager::instance().loadSound("sounds/basic2.mp3", FMOD_DEFAULT);
 
 
 
