@@ -114,7 +114,7 @@ private:
 	std::unordered_map<char, string> original =
 	{
 		{'1', "models/cube10.obj"},
-		{'f', "models/cube10_test.obj"},
+		{'f', "models/final.obj"},
 		{'k', "models/key.obj"},
 		{'d', "models/door.obj"},
 		{'l', "models/hline3.obj"},
@@ -143,7 +143,7 @@ private:
 	std::unordered_map<char, string> water =
 	{
 		{'1', "models/water.obj"},
-		{'f', "models/cube10_test.obj"},
+		{'f', "models/final.obj"},
 		{'k', "models/key.obj"},
 		{'d', "models/door.obj"},
 		{'l', "models/hline3.obj"},
@@ -172,7 +172,7 @@ private:
 	std::unordered_map<char, string> mario =
 	{
 		{'1', "models/mario.obj"},
-		{'f', "models/cube10_test.obj"},
+		{'f', "models/final.obj"},
 		{'k', "models/key.obj"},
 		{'d', "models/door.obj"},
 		{'l', "models/hline3.obj"},
@@ -201,7 +201,7 @@ private:
 	std::unordered_map<char, string> minecraft =
 	{
 		{'1', "models/minecraft.obj"},
-		{'f', "models/cube10_test.obj"},
+		{'f', "models/final.obj"},
 		{'k', "models/key.obj"},
 		{'d', "models/door.obj"},
 		{'l', "models/hline3.obj"},
@@ -230,7 +230,7 @@ private:
 	std::unordered_map<char, string> box =
 	{
 		{'1', "models/box.obj"},
-		{'f', "models/cube10_test.obj"},
+		{'f', "models/final.obj"},
 		{'k', "models/key.obj"},
 		{'d', "models/door.obj"},
 		{'l', "models/hline3.obj"},
@@ -286,6 +286,8 @@ private:
 	FMOD::Sound* key_sound;
 
 	FMOD::Channel* channel;
+
+	float miau;
 };
 
 

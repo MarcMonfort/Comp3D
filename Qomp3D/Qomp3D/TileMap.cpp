@@ -91,6 +91,13 @@ void TileMap::render(ShaderProgram& program, const glm::ivec3& posPlayer)
 						modelMatrix = glm::rotate(modelMatrix, float((M_PI / 2.0f) * 2), glm::vec3(0, 0, 1));
 						modelMatrix = glm::translate(modelMatrix, glm::vec3(-0.5, 0.5, -0.5));
 					}
+
+					if (it->first == 'f') {
+						modelMatrix = glm::translate(modelMatrix, glm::vec3(0.5, -0.5, 0.5));
+						modelMatrix = glm::scale(modelMatrix, glm::vec3(miau, miau, 1));
+						modelMatrix = glm::translate(modelMatrix, glm::vec3(-0.5, 0.5, -0.5));
+					}
+
 					program.setUniformMatrix4f("model", modelMatrix);
 					it->second->render(program);
 				}
@@ -99,10 +106,16 @@ void TileMap::render(ShaderProgram& program, const glm::ivec3& posPlayer)
 	}
 }
 
+float pulse(float time) {
+	const float pi = 3.14;
+	const float frequency = 1; // Frequency in Hz
+	return 0.7 + 0.4 * 0.5 * (1 + sin(2 * pi * frequency * time));
+}
+
 void TileMap::update(int deltaTime)
 {
 	currentTime += deltaTime;
-
+	miau = pulse(currentTime);
 }
 
 void TileMap::free()
