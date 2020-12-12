@@ -39,10 +39,10 @@ public:
 
 	int getTileSize() const { return tileSize; }
 
-	bool collisionMoveLeft(const glm::ivec3& pos, const glm::ivec3& size);
-	bool collisionMoveRight(const glm::ivec3& pos, const glm::ivec3& size);
-	bool collisionMoveDown(const glm::ivec3& pos, const glm::ivec3& size);
-	bool collisionMoveUp(const glm::ivec3& pos, const glm::ivec3& size);
+	bool collisionMoveLeft(const glm::ivec3& pos, const glm::ivec3& size, int type = 0);
+	bool collisionMoveRight(const glm::ivec3& pos, const glm::ivec3& size, int type = 0);
+	bool collisionMoveDown(const glm::ivec3& pos, const glm::ivec3& size, int type = 0);
+	bool collisionMoveUp(const glm::ivec3& pos, const glm::ivec3& size, int type = 0);
 
 	enum block
 	{
@@ -225,6 +225,8 @@ private:
 	bool bNewCheckPoint = false;
 
 	glm::vec3 colorBackground;
+
+	string basic_sound = "sounds/basic.mp3";
 };
 
 

@@ -281,7 +281,7 @@ bool TileMap::loadLevel(const string& levelFile, ShaderProgram& program)
 // Method collisionMoveDown also corrects Y coordinate if the box is
 // already intersecting a tile below.
 
-bool TileMap::collisionMoveLeft(const glm::ivec3& pos, const glm::ivec3& size)
+bool TileMap::collisionMoveLeft(const glm::ivec3& pos, const glm::ivec3& size, int type)
 {
 	int x, y0, y1;
 
@@ -291,13 +291,13 @@ bool TileMap::collisionMoveLeft(const glm::ivec3& pos, const glm::ivec3& size)
 	for (int y = y0; y <= y1; y++)
 	{
 		if (map[y * mapSize.x + x] != ' ')
-			return treatCollision(y * mapSize.x + x, 0);
+			return treatCollision(y * mapSize.x + x, type);
 	}
 
 	return false;
 }
 
-bool TileMap::collisionMoveRight(const glm::ivec3& pos, const glm::ivec3& size)
+bool TileMap::collisionMoveRight(const glm::ivec3& pos, const glm::ivec3& size, int type)
 {
 	int x, y0, y1;
 
@@ -308,14 +308,14 @@ bool TileMap::collisionMoveRight(const glm::ivec3& pos, const glm::ivec3& size)
 	for (int y = y0; y <= y1; y++)
 	{
 		if (map[y * mapSize.x + x] != ' ')
-			return treatCollision(y * mapSize.x + x, 0);
+			return treatCollision(y * mapSize.x + x, type);
 	}
 
 	return false;
 }
 
 
-bool TileMap::collisionMoveDown(const glm::ivec3& pos, const glm::ivec3& size)
+bool TileMap::collisionMoveDown(const glm::ivec3& pos, const glm::ivec3& size, int type)
 {
 	int x0, x1, y;
 
@@ -325,13 +325,13 @@ bool TileMap::collisionMoveDown(const glm::ivec3& pos, const glm::ivec3& size)
 	for (int x = x0; x <= x1; x++)
 	{
 		if (map[y * mapSize.x + x] != ' ')
-			return treatCollision(y * mapSize.x + x, 0);
+			return treatCollision(y * mapSize.x + x, type);
 	}
 
 	return false;
 }
 
-bool TileMap::collisionMoveUp(const glm::ivec3& pos, const glm::ivec3& size)
+bool TileMap::collisionMoveUp(const glm::ivec3& pos, const glm::ivec3& size, int type)
 {
 	int x0, x1, y;
 
@@ -341,7 +341,7 @@ bool TileMap::collisionMoveUp(const glm::ivec3& pos, const glm::ivec3& size)
 	for (int x = x0; x <= x1; x++)
 	{
 		if (map[y * mapSize.x + x] != ' ')
-			return treatCollision(y * mapSize.x + x, 0);
+			return treatCollision(y * mapSize.x + x, type);
 	}
 
 	return false;
@@ -376,6 +376,10 @@ bool TileMap::treatCollision(int pos, int type)
 
 	if (block == basic)
 	{
+		if (type == 1) {
+			FMOD::Sound* sound = SoundManager::instance().loadSound(basic_sound, FMOD_DEFAULT);
+			FMOD::Channel* channel = SoundManager::instance().playSound(sound);
+		}
 		return true;
 	}
 	else if (block == key)

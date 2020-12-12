@@ -72,7 +72,7 @@ void Player::update(int deltaTime, vector<Wall*>* walls, vector<BallSpike*>* bal
 	// Update X direction
 	posPlayer.x += deltaTime * velocity.x;
 
-	if (map->collisionMoveRight(posPlayer, size))
+	if (map->collisionMoveRight(posPlayer, size, 1))
 	{
 		posPlayer.x -= deltaTime * velocity.x;
 		velocity.x = -abs(velocity.x);
@@ -81,7 +81,7 @@ void Player::update(int deltaTime, vector<Wall*>* walls, vector<BallSpike*>* bal
 		eScaleDir = RIGHT;
 		timeRotate = 200.f;
 	}
-	else if (map->collisionMoveLeft(posPlayer, size))
+	else if (map->collisionMoveLeft(posPlayer, size, 1))
 	{
 		posPlayer.x -= deltaTime * velocity.x;
 		velocity.x = abs(velocity.x);
@@ -133,7 +133,7 @@ void Player::update(int deltaTime, vector<Wall*>* walls, vector<BallSpike*>* bal
 	// Update Y direction
 	posPlayer.y += deltaTime * velocity.y;
 
-	if (map->collisionMoveUp(posPlayer, size))
+	if (map->collisionMoveUp(posPlayer, size, 1))
 	{
 		posPlayer.y -= deltaTime * velocity.y;
 		velocity.y = abs(velocity.y);
@@ -142,7 +142,7 @@ void Player::update(int deltaTime, vector<Wall*>* walls, vector<BallSpike*>* bal
 		eScaleDir = UP;
 	}
 
-	else if (map->collisionMoveDown(posPlayer, size))
+	else if (map->collisionMoveDown(posPlayer, size, 1))
 	{
 		posPlayer.y -= deltaTime * velocity.y;
 		velocity.y = -abs(velocity.y);
