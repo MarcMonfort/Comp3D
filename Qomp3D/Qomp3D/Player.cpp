@@ -6,11 +6,31 @@
 #define PI 3.14159f
 
 
-void Player::init(ShaderProgram& shaderProgram)
+void Player::init(ShaderProgram& shaderProgram, TileMap* tileMap)
 {
 	// Init Model
+	map = tileMap;
+	int style = map->getStyle();
 	model = new AssimpModel();
-	model->loadFromFile("models/cube10.obj", shaderProgram);
+
+	switch (style)
+	{
+	case 0:
+		model->loadFromFile("models/cube10.obj", shaderProgram);
+		break;
+	case 1:
+		model->loadFromFile("models/water_player.obj", shaderProgram);
+		break;
+	case 2:
+		model->loadFromFile("models/box.obj", shaderProgram);
+		break;
+	case 3:
+		model->loadFromFile("models/mario_player_2.obj", shaderProgram);
+		break;
+	case 4:
+		model->loadFromFile("models/minecraft_player.obj", shaderProgram);
+		break;
+	}
 	size = model->getSize();
 
 	// Init particle system

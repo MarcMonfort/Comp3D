@@ -68,9 +68,9 @@ void Scene::init(int numLevel)
 
 	// Init Player
 	player = new Player();
-	player->init(texProgram);
+	player->init(texProgram, map);
 	player->setPosition(map->getCheckPointPlayer());
-	player->setTileMap(map);
+	//player->setTileMap(map);
 
 	// Init CheckPoint (player/camera)
 	checkpoint.posCamera = map->getCenterCamera();

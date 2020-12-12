@@ -22,7 +22,7 @@ enum orientation
 class Player
 {
 public:
-	void init(ShaderProgram& shaderProgram);
+	void init(ShaderProgram& shaderProgram, TileMap* tileMap);
 	void update(int deltaTime, vector<Wall*>* walls, vector<BallSpike*>* ballSpike, vector<Button*>* buttons, vector<Switch*>* switchs);
 	void render(ShaderProgram& program, const glm::vec3& eye);
 

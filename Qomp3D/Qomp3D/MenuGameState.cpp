@@ -17,7 +17,7 @@ void MenuGameState::init()
 
 	main_theme = SoundManager::instance().loadSound("sounds/main_theme.mp3", FMOD_LOOP_NORMAL);
 	channel = SoundManager::instance().playSound(main_theme);
-	channel->setVolume(0.3f);
+	channel->setVolume(1.f);
 }
 
 void MenuGameState::update(int deltaTime)
