@@ -3,7 +3,6 @@
 #include "Game.h"
 #include "SoundManager.h"
 
-
 void Game::init()
 {
 	bPlay = true;
@@ -14,8 +13,6 @@ void Game::init()
 	currentGameState->init();
 
 	SoundManager::instance().init();
-	FMOD::Sound* sound = SoundManager::instance().loadSound("sounds/eBall.mp3", FMOD_DEFAULT);
-	//FMOD::Channel* channel = SoundManager::instance().playSound(sound);
 }
 
 bool Game::update(int deltaTime)

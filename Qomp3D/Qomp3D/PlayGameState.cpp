@@ -1,6 +1,8 @@
 #include "Game.h"
 #include "PlayGameState.h"
 
+#define NUM_LEVELS 5
+
 
 void PlayGameState::init()
 {
@@ -46,8 +48,13 @@ void PlayGameState::nextLevel()
 	//animation->restart();
 	nextlevel = false;
 	++currentLevel;
-	scene = Scene();
-	scene.init(currentLevel);
+
+	if (currentLevel <= NUM_LEVELS) {
+		scene = Scene();
+		scene.init(currentLevel);
+	}
+	else
+		Game::instance().goBackToMenu();	
 }
 
 bool PlayGameState::getGodMode()
