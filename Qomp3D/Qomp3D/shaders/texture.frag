@@ -3,6 +3,8 @@
 uniform sampler2D tex;
 uniform bool bLighting;
 
+uniform float alpha;
+
 in vec3 normalFrag;
 in vec2 texCoordFrag;
 
@@ -34,6 +36,6 @@ void main()
 	else
 		lightContribution = 1.f;
 	
-	outColor = vec4(lightContribution * texColor.rgb, texColor.a);
+	outColor = vec4(lightContribution * texColor.rgb, texColor.a * alpha);
 }
 

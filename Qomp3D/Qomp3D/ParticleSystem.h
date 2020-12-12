@@ -20,11 +20,11 @@ public:
 	ParticleSystem();
 	~ParticleSystem();
 
-	void init(const glm::vec2 &billboardQuadSize, ShaderProgram &program, const string &billboardTextureName, float gravity = 0.f);
+	void init(const glm::vec2 &billboardQuadSize, ShaderProgram &program, const string &billboardTextureName, float gravity = 0.f, float fadeOut = 1.f);
 	void addParticle(Particle &newParticle);
 
 	void update(float deltaTimeInSeconds);
-	void render(const glm::vec3 &eye);
+	void render(ShaderProgram& program, const glm::vec3 &eye);
 
 	bool empty();
 
@@ -33,6 +33,8 @@ private:
 	vector<Particle> particles;
 	Billboard *billboard;
 	float g;
+
+	float fadeOut;
 };
 
 

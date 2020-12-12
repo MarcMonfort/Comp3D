@@ -17,7 +17,7 @@ void Player::init(ShaderProgram& shaderProgram)
 	ParticleSystem::Particle particle;
 	particle.lifetime = 1e10f;
 	particles = new ParticleSystem();
-	particles->init(glm::vec2(0.5f, 0.5f), shaderProgram, "images/smoke_1.png", 0.f);
+	particles->init(glm::vec2(0.5f, 0.5f), shaderProgram, "images/smoke_1.png", 0.f, 2.f);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE);
 
 	// Init Player
@@ -45,11 +45,11 @@ void Player::update(int deltaTime, vector<Wall*>* walls, vector<BallSpike*>* bal
 	//int nParticlesToSpawn = 20 * (int((currentTime + deltaTime) / 100.f) - int(currentTime / 100.f));
 	if (bSpace)
 	{
-		int nParticlesToSpawn = 20;
+		int nParticlesToSpawn = 30;
 		ParticleSystem::Particle particle;
 		float angle;
 
-		particle.lifetime = 1.5f;
+		particle.lifetime = 0.5f;
 
 		int dirX = (velocity.x > 0) - (velocity.x < 0);
 		int dirY = (velocity.y > 0) - (velocity.y < 0);
@@ -278,9 +278,14 @@ void Player::render(ShaderProgram& program, const glm::vec3& eye)
 	{
 		glDepthMask(GL_FALSE);
 		glEnable(GL_BLEND);
+		//glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
 		modelMatrix = glm::mat4(1.0f);
 		program.setUniformMatrix4f("model", modelMatrix);
-		particles->render(eye);
+		particles->render(program, eye);
+		program.setUniform1f("alpha", 1);
+
+		glBlendFunc(GL_SRC_ALPHA, GL_ONE);
 		glDisable(GL_BLEND);
 		glDepthMask(GL_TRUE);
 	}

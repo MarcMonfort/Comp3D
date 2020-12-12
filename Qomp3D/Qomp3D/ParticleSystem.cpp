@@ -12,10 +12,11 @@ ParticleSystem::~ParticleSystem()
 		delete billboard;
 }
 
-void ParticleSystem::init(const glm::vec2 &billboardQuadSize, ShaderProgram &program, const string &billboardTextureName, float gravity)
+void ParticleSystem::init(const glm::vec2 &billboardQuadSize, ShaderProgram &program, const string &billboardTextureName, float gravity, float fadeOut)
 {
 	billboard = Billboard::createBillboard(billboardQuadSize, program, billboardTextureName, BILLBOARD_CENTER);
 	g = gravity;
+	this->fadeOut = fadeOut;
 }
 
 void ParticleSystem::addParticle(Particle &newParticle)
@@ -42,12 +43,15 @@ void ParticleSystem::update(float deltaTimeInSeconds)
 	particles.resize(j);
 }
 
-void ParticleSystem::render(const glm::vec3 &eye)
+void ParticleSystem::render(ShaderProgram& program, const glm::vec3 &eye)
 {
 	if (billboard == NULL)
 		return;
 	for (unsigned int i = 0; i < particles.size(); i++)
+	{
+		program.setUniform1f("alpha", particles[i].lifetime / fadeOut);	// 1.5 is the max life time
 		billboard->render(particles[i].position, eye);
+	}
 }
 
 bool ParticleSystem::empty()
