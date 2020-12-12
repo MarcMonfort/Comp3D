@@ -81,9 +81,9 @@ void Scene::init(int numLevel)
 	for (int i = 0; i < pos_walls.size(); ++i)
 	{ 
 		Wall* wall = new Wall();
-		wall->init(texProgram, pos_walls[i].bVertical, static_cast<Wall::Type>(pos_walls[i].type));
+		wall->init(texProgram, pos_walls[i].bVertical, static_cast<Wall::Type>(pos_walls[i].type), map);
 		wall->setPosition(glm::vec3(pos_walls[i].position,0));
-		wall->setTileMap(map);
+		//wall->setTileMap(map);
 		walls.push_back(wall);
 	}
 

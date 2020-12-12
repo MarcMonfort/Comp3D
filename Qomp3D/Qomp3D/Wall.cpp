@@ -3,17 +3,60 @@
 #include <glm/gtc/matrix_transform.hpp>
 
 
-void Wall::init(ShaderProgram& shaderProgram, bool bVertical, Type type)
+void Wall::init(ShaderProgram& shaderProgram, bool bVertical, Type type, TileMap* tileMap)
 {
+	map = tileMap;
+
 	this->bVertical = bVertical;	//vertical or horizontal
 	model = new AssimpModel();
+
+	int style = map->getStyle();
 	if (bVertical)
-		model->loadFromFile("models/cube40_v.obj", shaderProgram);	// vertical
+	{
+		switch (style)
+		{
+		case 0:
+			model->loadFromFile("models/cube40_v.obj", shaderProgram);
+			break;
+		case 1:
+			model->loadFromFile("models/water_wall_v.obj", shaderProgram);
+			break;
+		case 2:
+			model->loadFromFile("models/box_wall.obj", shaderProgram);
+			break;
+		case 3:
+			model->loadFromFile("models/mario_wall_v.obj", shaderProgram);
+			break;
+		case 4:
+			model->loadFromFile("models/minecraft_wall_v.obj", shaderProgram);
+			break;
+		}
+	}
 	else
-		model->loadFromFile("models/cube40_h.obj", shaderProgram);  //horizontal
+	{
+		switch (style)
+		{
+		case 0:
+			model->loadFromFile("models/cube40_h.obj", shaderProgram);
+			break;
+		case 1:
+			model->loadFromFile("models/water_wall_h.obj", shaderProgram);
+			break;
+		case 2:
+			model->loadFromFile("models/box_wall_h.obj", shaderProgram);
+			break;
+		case 3:
+			model->loadFromFile("models/mario_wall_h.obj", shaderProgram);
+			break;
+		case 4:
+			model->loadFromFile("models/minecraft_wall_h.obj", shaderProgram);
+			break;
+		}
+	}
 
 	size = model->getSize();
 	velocity = 0.005;
+	//velocity = 0.000;
 
 	this->type = static_cast<int>(type);
 

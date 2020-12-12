@@ -153,7 +153,7 @@ bool TileMap::loadLevel(const string& levelFile, ShaderProgram& program)
 	sstream >> checkpointPlayer.x >> checkpointPlayer.y >> checkpointPlayer.z;
 	getline(fin, line);
 
-	int style;
+	style;
 	sstream.str(line);
 	sstream >> style;
 	switch (style)
@@ -612,4 +612,9 @@ glm::vec2 TileMap::getRoomSize()
 glm::vec3 TileMap::getColorBackground()
 {
 	return colorBackground;
+}
+
+int TileMap::getStyle()
+{
+	return style;
 }

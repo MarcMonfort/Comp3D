@@ -15,7 +15,7 @@ public:
 	};
 
 
-	void init(ShaderProgram& shaderProgram, bool bVertical, Type type);
+	void init(ShaderProgram& shaderProgram, bool bVertical, Type type, TileMap* tileMap);
 	void update(int deltaTime, const glm::vec3& posPlayer, const glm::vec3& sizePlayer);
 	void render(ShaderProgram& program, const glm::vec3& posPlayer);
 

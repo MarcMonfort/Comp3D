@@ -89,6 +89,8 @@ public:
 
 	glm::vec3 getColorBackground();
 
+	int getStyle();
+
 private:
 	bool loadLevel(const string& levelFile, ShaderProgram& program);
 	//void prepareArrays(const glm::vec2& minCoords, ShaderProgram& program);
@@ -286,6 +288,8 @@ private:
 	FMOD::Sound* key_sound;
 
 	FMOD::Channel* channel;
+
+	int style;
 
 	float miau;
 };
