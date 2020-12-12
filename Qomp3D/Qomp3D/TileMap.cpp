@@ -67,9 +67,17 @@ void TileMap::render(ShaderProgram& program, const glm::ivec3& posPlayer)
 
 					// Es renderitza el model a la posició corresponent
 					modelMatrix = glm::translate(glm::mat4(1.0f), glm::vec3(i, -j, 0.f));
-					if (it->first == 'j' || it->first == 'q') {
-						modelMatrix = glm::translate(modelMatrix, glm::vec3(0.f, 0.5f, 0.f));
+					if (it->first == 'j' || it->first == 'q' || it->first == '2' || it->first == '3' || it->first == '4' || it->first == '5') {
+						modelMatrix = glm::translate(modelMatrix, glm::vec3(0.f, 0.25f, 0.f));
+						modelMatrix = glm::translate(modelMatrix, glm::vec3(0.5, -0.5, -0.5));
 						modelMatrix = glm::rotate(modelMatrix, float((M_PI / 4.0f)), glm::vec3(-1, 0, 0));
+						modelMatrix = glm::translate(modelMatrix, glm::vec3(-0.5, 0.5, 0.5));
+					}
+					if (it->first == '5') {
+						modelMatrix = glm::translate(modelMatrix, glm::vec3(0.5, -0.5, 0.5));
+						//modelMatrix = glm::rotate(modelMatrix, float((M_PI / 2.0f) * orientation), glm::vec3(0, 0, 1));
+						modelMatrix = glm::rotate(modelMatrix, float((M_PI / 2.0f) * 2), glm::vec3(0, 0, 1));
+						modelMatrix = glm::translate(modelMatrix, glm::vec3(-0.5, 0.5, -0.5));
 					}
 					program.setUniformMatrix4f("model", modelMatrix);
 					it->second->render(program);
@@ -227,6 +235,8 @@ bool TileMap::loadLevel(const string& levelFile, ShaderProgram& program)
 				case('d'):		// door
 				case('j'):		// chain
 				case('q'):		// lock
+				case('2'):
+				case('3'):
 					map[j * mapSize.x + i] = tile;
 					doors.push_back(j * mapSize.x + i);
 					break;
@@ -355,8 +365,10 @@ int TileMap::checkBlock(int block)
 		return fin;
 	else if (block == 'k')
 		return key;
-	else if (block == 'd' || block == 'j' || block == 'q')
+	else if (block == 'd' || block == 'j' || block == 'q' || block == '2' || block == '3')
 		return door;
+	else if (block == '4' || block == '5')
+		return broken_chain;
 	else if (block == 'l' || block == 'm')
 		return line;
 	else if (block == 'r' || block == 's' || block == 't' || block == 'u')
@@ -367,7 +379,8 @@ int TileMap::checkBlock(int block)
 		return checkpoint2;
 	else if (block == 'x')
 		return x_space;
-	else return none;
+	else
+		return none;
 }
 
 bool TileMap::treatCollision(int pos, int type)
@@ -386,7 +399,12 @@ bool TileMap::treatCollision(int pos, int type)
 	{
 		map[pos] = ' ';
 		for (int i = 0; i < doors.size(); ++i) {
-			map[doors[i]] = ' ';
+			if (map[doors[i]] == '2')
+				map[doors[i]] = '4';
+			else if (map[doors[i]] == '3')
+				map[doors[i]] = '5';
+			else
+				map[doors[i]] = ' ';
 		}
 		FMOD::Sound* sound = SoundManager::instance().loadSound(key_sound, FMOD_DEFAULT);
 		FMOD::Channel* channel = SoundManager::instance().playSound(sound);
@@ -404,6 +422,10 @@ bool TileMap::treatCollision(int pos, int type)
 		FMOD::Sound* sound = SoundManager::instance().loadSound(chain_sound, FMOD_DEFAULT);
 		FMOD::Channel* channel = SoundManager::instance().playSound(sound);
 		return true;
+	}
+	else if (block == broken_chain)
+	{
+		return false;
 	}
 	else if (block == line)
 	{
