@@ -31,6 +31,10 @@ bool AssimpModel::loadFromFile(const string &filename, ShaderProgram &program)
 	prepareArrays(program);
 
 	return retCode;
+
+
+	if (!floor.loadFromFile("images/wood.jpeg", TEXTURE_PIXEL_FORMAT_RGB))
+		cout << "Could not load floor texture!!!" << endl;
 }
 
 glm::vec3 AssimpModel::getSize() const
@@ -55,6 +59,7 @@ void AssimpModel::render(ShaderProgram &program) const
 		{
 			glEnable(GL_TEXTURE_2D);
 			textures[meshes[index]->textureIndex]->use();
+			//floor.use();
 		}
 		else
 			glDisable(GL_TEXTURE_2D);

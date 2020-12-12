@@ -56,10 +56,10 @@ void TileMap::render(ShaderProgram& program, const glm::ivec3& posPlayer)
 				{
 					unordered_map<char, AssimpModel*>::const_iterator it = models.find(tile);
 
-					// Si el model encara no ha estat creat
+					// Si el model encara no ha estat creat (millor fer-ho abans)
 					if (it == models.end()) {
 						AssimpModel* new_model = new AssimpModel();
-						string path = (paths.find(tile))->second;
+						string path = (paths->find(tile))->second;
 						new_model->loadFromFile(path, program);
 						models.insert(pair<char, AssimpModel*>(tile, new_model));
 						it = models.find(tile);
@@ -116,6 +116,34 @@ bool TileMap::loadLevel(const string& levelFile, ShaderProgram& program)
 	getline(fin, line);
 	sstream.str(line);
 	sstream >> checkpointPlayer.x >> checkpointPlayer.y >> checkpointPlayer.z;
+	getline(fin, line);
+
+	int style;
+	sstream.str(line);
+	sstream >> style;
+	switch (style)
+	{
+	case 0:
+		paths = &original;
+		colorBackground = glm::vec3(0);
+		break;
+	case 1:
+		paths = &water;
+		colorBackground = glm::vec3(0,0,0.2);
+		break;
+	case 2:
+		paths = &box;
+		colorBackground = glm::vec3(0.74, 0.60, 0.47);
+		break;
+	case 3:
+		paths = &mario;
+		colorBackground = glm::vec3(0, 0.54, 0.78);
+		break;
+	case 4:
+		paths = &minecraft;
+		colorBackground = glm::vec3(0);
+		break;
+	}
 	
 	map = new char[mapSize.x * mapSize.y];
 	for (int j = 0; j < mapSize.y; j++)
@@ -509,4 +537,10 @@ void TileMap::setNewCheckPoint(bool b)
 glm::vec2 TileMap::getRoomSize()
 {
 	return roomSize;
+}
+
+
+glm::vec3 TileMap::getColorBackground()
+{
+	return colorBackground;
 }

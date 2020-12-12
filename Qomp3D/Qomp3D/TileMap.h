@@ -84,6 +84,8 @@ public:
 
 	glm::vec2 getRoomSize();
 
+	glm::vec3 getColorBackground();
+
 private:
 	bool loadLevel(const string& levelFile, ShaderProgram& program);
 	//void prepareArrays(const glm::vec2& minCoords, ShaderProgram& program);
@@ -105,9 +107,10 @@ private:
 
 	std::unordered_map<char, AssimpModel*> models = {};
 
-	std::unordered_map<char, string> paths =
+
+	std::unordered_map<char, string> original =
 	{
-		{'1', "models/cube10_yellow_blue.obj"},
+		{'1', "models/cube10.obj"},
 		{'f', "models/cube10_test.obj"},
 		{'k', "models/key.obj"},
 		{'d', "models/door.obj"},
@@ -124,6 +127,83 @@ private:
 		{'q', "models/lock.obj"}
 	};
 
+	std::unordered_map<char, string> water =
+	{
+		{'1', "models/water.obj"},
+		{'f', "models/cube10_test.obj"},
+		{'k', "models/key.obj"},
+		{'d', "models/door.obj"},
+		{'l', "models/hline3.obj"},
+		{'m', "models/vline3.obj"},
+		{'r', "models/spike_up.obj"},
+		{'s', "models/spike_down.obj"},
+		{'t', "models/spike_left.obj"},
+		{'u', "models/spike_right.obj"},
+		{'o', "models/test.obj"},
+		{'c', "models/checkpoint.obj"},
+		{'C', "models/checkpoint2.obj"},
+		{'j', "models/chain.obj"},
+		{'q', "models/lock.obj"}
+	};
+
+	std::unordered_map<char, string> mario =
+	{
+		{'1', "models/mario.obj"},
+		{'f', "models/cube10_test.obj"},
+		{'k', "models/key.obj"},
+		{'d', "models/door.obj"},
+		{'l', "models/hline3.obj"},
+		{'m', "models/vline3.obj"},
+		{'r', "models/spike_up.obj"},
+		{'s', "models/spike_down.obj"},
+		{'t', "models/spike_left.obj"},
+		{'u', "models/spike_right.obj"},
+		{'o', "models/test.obj"},
+		{'c', "models/checkpoint.obj"},
+		{'C', "models/checkpoint2.obj"},
+		{'j', "models/chain.obj"},
+		{'q', "models/lock.obj"}
+	};
+
+	std::unordered_map<char, string> minecraft =
+	{
+		{'1', "models/minecraft.obj"},
+		{'f', "models/cube10_test.obj"},
+		{'k', "models/key.obj"},
+		{'d', "models/door.obj"},
+		{'l', "models/hline3.obj"},
+		{'m', "models/vline3.obj"},
+		{'r', "models/spike_up.obj"},
+		{'s', "models/spike_down.obj"},
+		{'t', "models/spike_left.obj"},
+		{'u', "models/spike_right.obj"},
+		{'o', "models/test.obj"},
+		{'c', "models/checkpoint.obj"},
+		{'C', "models/checkpoint2.obj"},
+		{'j', "models/chain.obj"},
+		{'q', "models/lock.obj"}
+	};
+
+	std::unordered_map<char, string> box =
+	{
+		{'1', "models/box.obj"},
+		{'f', "models/cube10_test.obj"},
+		{'k', "models/key.obj"},
+		{'d', "models/door.obj"},
+		{'l', "models/hline3.obj"},
+		{'m', "models/vline3.obj"},
+		{'r', "models/spike_up.obj"},
+		{'s', "models/spike_down.obj"},
+		{'t', "models/spike_left.obj"},
+		{'u', "models/spike_right.obj"},
+		{'o', "models/test.obj"},
+		{'c', "models/checkpoint.obj"},
+		{'C', "models/checkpoint2.obj"},
+		{'j', "models/chain.obj"},
+		{'q', "models/lock.obj"}
+	};
+
+	std::unordered_map<char, string>* paths;// = &water;
 
 	glm::vec3 centerCamera;
 	glm::vec2 movementCamera;
@@ -142,6 +222,8 @@ private:
 
 	bool bPlayerDead = false;
 	bool bNewCheckPoint = false;
+
+	glm::vec3 colorBackground;
 };
 
 

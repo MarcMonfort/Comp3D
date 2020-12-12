@@ -97,15 +97,15 @@ void Level::prepareArrays(ShaderProgram &program)
 
 	vertices.push_back(size.x/2.f); vertices.push_back(-size.y/2.f); vertices.push_back(-size.z/2.f);
 	vertices.push_back(0.f); vertices.push_back(0.f); vertices.push_back(1.f);
-	vertices.push_back(size.x / 4.f); vertices.push_back(0.f);
+	vertices.push_back(1.f); vertices.push_back(0.f);
 
 	vertices.push_back(size.x/2.f); vertices.push_back(size.y/2.f); vertices.push_back(-size.z/2.f);
 	vertices.push_back(0.f); vertices.push_back(0.f); vertices.push_back(1.f);
-	vertices.push_back(size.x / 4.f); vertices.push_back(size.y / 4.f);
+	vertices.push_back(1.f); vertices.push_back(1.f);
 
 	vertices.push_back(-size.x/2.f); vertices.push_back(size.y/2.f); vertices.push_back(-size.z/2.f);
 	vertices.push_back(0.f); vertices.push_back(0.f); vertices.push_back(1.f);
-	vertices.push_back(0.f); vertices.push_back(size.y / 4.f);
+	vertices.push_back(0.f); vertices.push_back(1.f);
 
 	// Back wall
 	vertices.push_back(-size.x/2.f); vertices.push_back(-size.y/2.f); vertices.push_back(size.z/2.f);

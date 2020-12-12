@@ -44,6 +44,8 @@ private:
 	vector<GLuint> VAOs;
 	vector<GLuint> VBOs;
 	vector<GLint> posLocations, normalLocations, texCoordLocations;
+
+	Texture floor;
 };
 
 

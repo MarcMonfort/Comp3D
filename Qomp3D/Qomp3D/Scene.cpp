@@ -58,6 +58,9 @@ void Scene::init(int numLevel)
 	string pathLevel = "levels/level0" + to_string(numLevel) + ".txt";
 	map = TileMap::createTileMap(pathLevel, glm::vec2(0, 0), texProgram);
 	roomSize = map->getRoomSize();
+	glm::vec3 rgb = map->getColorBackground();
+	glClearColor(rgb.x, rgb.y, rgb.z, 1.0f);
+
 
 	// Init Camera. Depends on the level. Maybe use a map->getStartPosition()...
 	camera.position = map->getCenterCamera();
@@ -236,6 +239,7 @@ void Scene::render()
 {
 	glm::mat4 modelMatrix, viewMatrix;
 	glm::mat3 normalMatrix;
+
 
 	texProgram.use();
 	texProgram.setUniform1b("bLighting", true);	//si es fals, no se ven sombras
