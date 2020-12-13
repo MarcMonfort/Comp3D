@@ -116,6 +116,8 @@ private:
 	bool fadeOut;
 
 	int nupdate;
+
+	AssimpModel* crown;
 };
 
 
