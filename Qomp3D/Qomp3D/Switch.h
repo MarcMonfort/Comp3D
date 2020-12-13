@@ -7,7 +7,7 @@
 class Switch
 {
 public:
-	void init(ShaderProgram& shaderProgram, bool act);
+	void init(ShaderProgram& shaderProgram, bool act, TileMap* tileMap);
 	void update(int deltaTime);
 	void render(ShaderProgram& program);
 

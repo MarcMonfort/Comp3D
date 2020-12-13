@@ -44,6 +44,8 @@ void Player::init(ShaderProgram& shaderProgram, TileMap* tileMap)
 	velocity.x = 0.01f;
 	velocity.y = 0.01f;
 
+	/*velocity.x = 0.0f;
+	velocity.y = 0.0f;*/
 
 	// Init Sound
 	wall_sound = SoundManager::instance().loadSound("sounds/wall3.mp3", FMOD_DEFAULT);

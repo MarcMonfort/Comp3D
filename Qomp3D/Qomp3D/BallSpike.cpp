@@ -3,12 +3,34 @@
 #include <glm/gtc/matrix_transform.hpp>
 
 
-void BallSpike::init(ShaderProgram& shaderProgram, bool bVertical)
+void BallSpike::init(ShaderProgram& shaderProgram, bool bVertical, TileMap* tileMap)
 {
+	map = tileMap;
+
 	this->bVertical = bVertical;	//vertical or horizontal
 
 	model = new AssimpModel();
-	model->loadFromFile("models/test.obj", shaderProgram);
+
+	int style = map->getStyle();
+
+	switch (style)
+	{
+	case 0:
+		model->loadFromFile("models/ballSpike.obj", shaderProgram);
+		break;
+	case 1:
+		model->loadFromFile("models/water_ballSpike.obj", shaderProgram);
+		break;
+	case 2:
+		model->loadFromFile("models/box_ballSpike.obj", shaderProgram);
+		break;
+	case 3:
+		model->loadFromFile("models/mario_ballSpike.obj", shaderProgram);
+		break;
+	case 4:
+		model->loadFromFile("models/minecraft_ballSpike.obj", shaderProgram);
+		break;
+	}
 
 	size = model->getSize();
 	velocity = 0.005;
