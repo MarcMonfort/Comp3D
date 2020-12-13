@@ -60,200 +60,202 @@ void Player::init(ShaderProgram& shaderProgram, TileMap* tileMap)
 
 void Player::update(int deltaTime, vector<Wall*>* walls, vector<BallSpike*>* ballSpike, vector<Button*>* buttons, vector<Switch*>* switchs)
 {
+	if (velocity.x != 0 && velocity.y != 0) {
 
-	// Update Particles
-	//int nParticlesToSpawn = 20 * (int((currentTime + deltaTime) / 100.f) - int(currentTime / 100.f));
-	if (bSpace)
-	{
-		int nParticlesToSpawn = 30;
-		ParticleSystem::Particle particle;
-		float angle;
-
-		particle.lifetime = 0.5f;
-
-		int dirX = (velocity.x > 0) - (velocity.x < 0);
-		int dirY = (velocity.y > 0) - (velocity.y < 0);
-
-		glm::vec3 direction = glm::vec3(-(posPlayer.x + 0.5) - dirX, (posPlayer.y + 0.5) + dirY, 0.f);
-
-		for (int i = 0; i < nParticlesToSpawn; i++)
+		// Update Particles
+		//int nParticlesToSpawn = 20 * (int((currentTime + deltaTime) / 100.f) - int(currentTime / 100.f));
+		if (bSpace)
 		{
-			angle = 2.f * PI * (i + float(rand()) / RAND_MAX) / nParticlesToSpawn;
-			//angle = glm::radians(angle);
-			particle.position = glm::vec3(cos(angle) * 0.25 + (posPlayer.x+0.5), sin(angle) * 0.25 - (posPlayer.y+0.5), 0.f);
+			int nParticlesToSpawn = 30;
+			ParticleSystem::Particle particle;
+			float angle;
 
-			particle.speed = 5.f * glm::vec3(glm::normalize(particle.position + direction));
+			particle.lifetime = 0.5f;
 
-			particles->addParticle(particle);
+			int dirX = (velocity.x > 0) - (velocity.x < 0);
+			int dirY = (velocity.y > 0) - (velocity.y < 0);
+
+			glm::vec3 direction = glm::vec3(-(posPlayer.x + 0.5) - dirX, (posPlayer.y + 0.5) + dirY, 0.f);
+
+			for (int i = 0; i < nParticlesToSpawn; i++)
+			{
+				angle = 2.f * PI * (i + float(rand()) / RAND_MAX) / nParticlesToSpawn;
+				//angle = glm::radians(angle);
+				particle.position = glm::vec3(cos(angle) * 0.25 + (posPlayer.x + 0.5), sin(angle) * 0.25 - (posPlayer.y + 0.5), 0.f);
+
+				particle.speed = 5.f * glm::vec3(glm::normalize(particle.position + direction));
+
+				particles->addParticle(particle);
+			}
+			bSpace = false;
 		}
-		bSpace = false;
-	}
-	particles->update(deltaTime / 1000.f);
-	currentTime += deltaTime;
-	// End Update Particles
+		particles->update(deltaTime / 1000.f);
+		currentTime += deltaTime;
+		// End Update Particles
 
-	if (timeRotate > 0)
-		timeRotate -= deltaTime;
+		if (timeRotate > 0)
+			timeRotate -= deltaTime;
 
-	if (timeScale > 0)
-		timeScale -= deltaTime;
+		if (timeScale > 0)
+			timeScale -= deltaTime;
 
 
 
-	// Update X direction
-	posPlayer.x += deltaTime * velocity.x;
+		// Update X direction
+		posPlayer.x += deltaTime * velocity.x;
 
-	if (map->collisionMoveRight(posPlayer, size, 1))
-	{
-		posPlayer.x -= deltaTime * velocity.x;
-		velocity.x = -abs(velocity.x);
+		if (map->collisionMoveRight(posPlayer, size, 1))
+		{
+			posPlayer.x -= deltaTime * velocity.x;
+			velocity.x = -abs(velocity.x);
 
-		timeScale = 200;
-		eScaleDir = RIGHT;
-		timeRotate = 200;
-	}
-	else if (map->collisionMoveLeft(posPlayer, size, 1))
-	{
-		posPlayer.x -= deltaTime * velocity.x;
-		velocity.x = abs(velocity.x);
+			timeScale = 200;
+			eScaleDir = RIGHT;
+			timeRotate = 200;
+		}
+		else if (map->collisionMoveLeft(posPlayer, size, 1))
+		{
+			posPlayer.x -= deltaTime * velocity.x;
+			velocity.x = abs(velocity.x);
 
-		timeScale = 200;
-		eScaleDir = LEFT;
-		timeRotate = 200;
-	}
+			timeScale = 200;
+			eScaleDir = LEFT;
+			timeRotate = 200;
+		}
 
-	for (int i = 0; i < (*walls).size(); ++i) {
-		if (!PlayGameState::instance().getGodMode() || (*walls)[i]->getType() == 2)
-			if (collideWall((*walls)[i])) {
+		for (int i = 0; i < (*walls).size(); ++i) {
+			if (!PlayGameState::instance().getGodMode() || (*walls)[i]->getType() == 2)
+				if (collideWall((*walls)[i])) {
+					posPlayer.x -= deltaTime * velocity.x;
+					velocity.x = -velocity.x;
+					timeRotate = 200;
+					timeScale = 200;
+					eScaleDir = LEFT;
+					channel = SoundManager::instance().playSound(wall_sound);
+				}
+		}
+		if (!PlayGameState::instance().getGodMode())
+		{
+			for (int i = 0; i < (*ballSpike).size(); ++i) {
+				if (collideBallSpike((*ballSpike)[i])) {
+					map->setPlayerDead(true);
+					channel = SoundManager::instance().playSound(death_sound);
+				}
+			}
+		}
+
+		for (int i = 0; i < (*buttons).size(); ++i) {
+			Button* button = (*buttons)[i];
+			if (collideButton(button)) {
 				posPlayer.x -= deltaTime * velocity.x;
 				velocity.x = -velocity.x;
-				timeRotate = 200;
-				timeScale = 200;
-				eScaleDir = LEFT;
-				channel = SoundManager::instance().playSound(wall_sound);
-			}
-	}
-	if (!PlayGameState::instance().getGodMode())
-	{
-		for (int i = 0; i < (*ballSpike).size(); ++i) {
-			if (collideBallSpike((*ballSpike)[i])) {
-				map->setPlayerDead(true);
-				channel = SoundManager::instance().playSound(death_sound);
+				if (!button->getPressed() && (button->getOrientation() == orientation::RIGHT || button->getOrientation() == orientation::LEFT)) {
+					unpressAllButtons(buttons);
+					button->setPressed(true);
+					switchAllSwitchs(switchs);
+					channel = SoundManager::instance().playSound(button_sound);
+				}
 			}
 		}
-	}
 
-	for (int i = 0; i < (*buttons).size(); ++i) {
-		Button* button = (*buttons)[i];
-		if (collideButton(button)) {
-			posPlayer.x -= deltaTime * velocity.x;
-			velocity.x = -velocity.x;
-			if (!button->getPressed() && (button->getOrientation() == orientation::RIGHT || button->getOrientation() == orientation::LEFT)) {
-				unpressAllButtons(buttons);
-				button->setPressed(true);
-				switchAllSwitchs(switchs);
-				channel = SoundManager::instance().playSound(button_sound);
+		for (int i = 0; i < (*switchs).size(); ++i) {
+			if (collideSwitch((*switchs)[i])) {
+				posPlayer.x -= deltaTime * velocity.x;
+				velocity.x = -velocity.x;
+				channel = SoundManager::instance().playSound(basic_sound);
 			}
 		}
-	}
 
-	for (int i = 0; i < (*switchs).size(); ++i) {
-		if (collideSwitch((*switchs)[i])) {
-			posPlayer.x -= deltaTime * velocity.x;
-			velocity.x = -velocity.x;
-			channel = SoundManager::instance().playSound(basic_sound);
+		// Update Y direction
+		posPlayer.y += deltaTime * velocity.y;
+
+		if (map->collisionMoveUp(posPlayer, size, 1))
+		{
+			posPlayer.y -= deltaTime * velocity.y;
+			velocity.y = abs(velocity.y);
+
+			timeScale = 200;
+			eScaleDir = UP;
 		}
-	}
 
-	// Update Y direction
-	posPlayer.y += deltaTime * velocity.y;
+		else if (map->collisionMoveDown(posPlayer, size, 1))
+		{
+			posPlayer.y -= deltaTime * velocity.y;
+			velocity.y = -abs(velocity.y);
 
-	if (map->collisionMoveUp(posPlayer, size, 1))
-	{
-		posPlayer.y -= deltaTime * velocity.y;
-		velocity.y = abs(velocity.y);
+			timeScale = 200;
+			eScaleDir = DOWN;
+		}
 
-		timeScale = 200;
-		eScaleDir = UP;
-	}
+		for (int i = 0; i < (*walls).size(); ++i) {
+			if (!PlayGameState::instance().getGodMode() || (*walls)[i]->getType() == 2)
+				if (collideWall((*walls)[i])) {
+					posPlayer.y -= deltaTime * velocity.y;
+					velocity.y = -velocity.y;
+					timeRotate = 200;
+					timeScale = 200;
+					eScaleDir = DOWN;
+					channel = SoundManager::instance().playSound(wall_sound);
+				}
+		}
 
-	else if (map->collisionMoveDown(posPlayer, size, 1))
-	{
-		posPlayer.y -= deltaTime * velocity.y;
-		velocity.y = -abs(velocity.y);
+		if (!PlayGameState::instance().getGodMode())
+		{
+			for (int i = 0; i < (*ballSpike).size(); ++i) {
+				if (collideBallSpike((*ballSpike)[i])) {
+					map->setPlayerDead(true);
+					channel = SoundManager::instance().playSound(death_sound);
+				}
+			}
+		}
 
-		timeScale = 200;
-		eScaleDir = DOWN;
-	}
-
-	for (int i = 0; i < (*walls).size(); ++i) {
-		if (!PlayGameState::instance().getGodMode() || (*walls)[i]->getType() == 2)
-			if (collideWall((*walls)[i])) {
+		for (int i = 0; i < (*buttons).size(); ++i) {
+			Button* button = (*buttons)[i];
+			if (collideButton(button)) {
 				posPlayer.y -= deltaTime * velocity.y;
 				velocity.y = -velocity.y;
-				timeRotate = 200;
-				timeScale = 200;
-				eScaleDir = DOWN;
-				channel = SoundManager::instance().playSound(wall_sound);
-			}
-	}
-
-	if (!PlayGameState::instance().getGodMode())
-	{
-		for (int i = 0; i < (*ballSpike).size(); ++i) {
-			if (collideBallSpike((*ballSpike)[i])) {
-				map->setPlayerDead(true);
-				channel = SoundManager::instance().playSound(death_sound);
+				if (!button->getPressed() && (button->getOrientation() == UP || button->getOrientation() == DOWN)) {
+					unpressAllButtons(buttons);
+					button->setPressed(true);
+					switchAllSwitchs(switchs);
+					channel = SoundManager::instance().playSound(button_sound);
+				}
 			}
 		}
-	}
 
-	for (int i = 0; i < (*buttons).size(); ++i) {
-		Button* button = (*buttons)[i];
-		if (collideButton(button)) {
-			posPlayer.y -= deltaTime * velocity.y;
-			velocity.y = -velocity.y;
-			if (!button->getPressed() && (button->getOrientation() == UP || button->getOrientation() == DOWN)) {
-				unpressAllButtons(buttons);
-				button->setPressed(true);
-				switchAllSwitchs(switchs);
-				channel = SoundManager::instance().playSound(button_sound);
+		for (int i = 0; i < (*switchs).size(); ++i) {
+			if (collideSwitch((*switchs)[i])) {
+				posPlayer.y -= deltaTime * velocity.y;
+				velocity.y = -velocity.y;
+				channel = SoundManager::instance().playSound(basic_sound);
 			}
 		}
-	}
 
-	for (int i = 0; i < (*switchs).size(); ++i) {
-		if (collideSwitch((*switchs)[i])) {
-			posPlayer.y -= deltaTime * velocity.y;
-			velocity.y = -velocity.y;
-			channel = SoundManager::instance().playSound(basic_sound);
+		if (map->lineCollision(posPlayer, size, false)) {
+			if (lastVelocity == 0) {
+				lastVelocity = velocity.y;
+				line_channel = SoundManager::instance().playSound(line_sound);
+			}
+			velocity.y = 0;
 		}
-	}
-
-	if (map->lineCollision(posPlayer, size, false)) {
-		if (lastVelocity == 0) {
-			lastVelocity = velocity.y;
-			line_channel = SoundManager::instance().playSound(line_sound);
+		else if (map->lineCollision(posPlayer, size, true)) {
+			if (lastVelocity == 0) {
+				lastVelocity = velocity.x;
+				line_channel = SoundManager::instance().playSound(line_sound);
+			}
+			velocity.x = 0;
 		}
-		velocity.y = 0;
-	}
-	else if (map->lineCollision(posPlayer, size, true)) {
-		if (lastVelocity == 0) {
-			lastVelocity = velocity.x;
-			line_channel = SoundManager::instance().playSound(line_sound);
-		}
-		velocity.x = 0;
-	}
-	else {
-		if (velocity.y == 0) {
-			velocity.y = lastVelocity;
-			lastVelocity = 0;
-			line_channel->setVolume(0.f);
-		}
-		if (velocity.x == 0) {
-			velocity.x = lastVelocity;
-			lastVelocity = 0;
-			line_channel->setVolume(0.f);
+		else {
+			if (velocity.y == 0) {
+				velocity.y = lastVelocity;
+				lastVelocity = 0;
+				line_channel->setVolume(0.f);
+			}
+			if (velocity.x == 0) {
+				velocity.x = lastVelocity;
+				lastVelocity = 0;
+				line_channel->setVolume(0.f);
+			}
 		}
 	}
 }

@@ -40,6 +40,8 @@ public:
 	void keyPressed(int key);
 	void reshape(int width, int height);
 
+	void setFade(bool b);
+
 private:
 	void initShaders();
 
@@ -91,6 +93,9 @@ private:
 	Texture godMode_spritesheet;
 	Sprite* godMode_sprite;
 
+	Texture fade_spritesheet;
+	Sprite* fade_sprite;
+
 	int style;
 
 	FMOD::Sound* music;
@@ -103,6 +108,11 @@ private:
 		"sounds/theme4.mp3",
 		"sounds/theme5.mp3"
 	};
+
+	float totalFadeTime;
+	float fadeTime;
+
+	bool fade;
 
 };
 

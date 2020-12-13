@@ -22,6 +22,7 @@ public:
 	void update(int deltaTime);
 	void render();
 
+	void startFade();
 	void finalBlockTaken();
 
 	bool getGodMode();
