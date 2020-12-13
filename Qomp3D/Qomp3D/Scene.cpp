@@ -145,22 +145,38 @@ void Scene::init(int numLevel)
 	projection = glm::perspective(glm::radians(45.f), float(CAMERA_WIDTH) / float(CAMERA_HEIGHT), 0.1f, 1000.f);
 	currentTime = 0.0f;
 
-	nupdate = 0;
+	firstUpdate = true;
 }
 
 void Scene::update(int deltaTime)
 {
-	++nupdate;
-
 	currentTime += deltaTime;
 
-	if (nupdate <= 2)
+	if (firstUpdate)
+	{
 		deltaTime = 0;
+		firstUpdate = false;
+	}
 
 	if (fadeIn || fadeOut)
+	{
 		fadeTime += deltaTime;
 
-	if (!fadeIn && !fadeOut || nupdate == 1)
+		if (fadeTime >= totalFadeTime) {
+			if (fadeIn)
+			{
+				fadeIn = false;
+				fadeTime = 0;
+			}
+			else if (fadeOut)
+			{
+				PlayGameState::instance().finalBlockTaken();
+			}
+		}
+	}
+
+	
+	if (!fadeIn && !fadeOut)
 	{
 		if (map->getNewCheckPoint() && eCamMove == CamMove::STATIC)
 		{
@@ -184,26 +200,22 @@ void Scene::update(int deltaTime)
 		{
 			timeCamMove = camera.movement.x;
 			eCamMove = CamMove::RIGHT;
-			//player->setVelocity(glm::vec3(0, 0, 0));
 		}
 		else if (camera.position.x - posPlayer.x > (roomSize.x / 2) && eCamMove == CamMove::STATIC)
 		{
 			timeCamMove = camera.movement.x;
 			eCamMove = CamMove::LEFT;
-			//player->setVelocity(glm::vec3(0, 0, 0));
 		}
 
 		if (camera.position.y + (posPlayer.y + sizePlayer.y) > (roomSize.y / 2) && eCamMove == CamMove::STATIC)
 		{
 			timeCamMove = camera.movement.y;
 			eCamMove = CamMove::DOWN;
-			//player->setVelocity(glm::vec3(0, 0, 0));
 		}
 		else if (-posPlayer.y - camera.position.y > (roomSize.y / 2) && eCamMove == CamMove::STATIC)
 		{
 			timeCamMove = camera.movement.y;
 			eCamMove = CamMove::UP;
-			//player->setVelocity(glm::vec3(0, 0, 0));
 		}
 
 		switch (eCamMove)
@@ -257,8 +269,8 @@ void Scene::update(int deltaTime)
 			ballSpikes[i]->update(deltaTime, player->getPosition());
 		}
 
-		map->update(deltaTime);
 	}
+		map->update(deltaTime);
 }
 
 void Scene::render()
@@ -351,15 +363,9 @@ void Scene::render()
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE);
 		glDisable(GL_BLEND);
 		glDepthMask(GL_TRUE);
-
-		if (fadeTime >= totalFadeTime) {
-			fadeIn = false;
-			fadeTime = 0;
-			//PlayGameState::instance().finalBlockTaken();
-		}
 	}
 
-	if (fadeOut)
+	else if (fadeOut)
 	{
 		player->setVelocity(glm::vec3(0.f, 0.f, 0.f));
 
@@ -378,10 +384,6 @@ void Scene::render()
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE);
 		glDisable(GL_BLEND);
 		glDepthMask(GL_TRUE);
-
-		if (fadeTime >= totalFadeTime) {
-			PlayGameState::instance().finalBlockTaken();
-		}
 	}
 }
 

@@ -13,12 +13,14 @@ void PlayGameState::init()
 
 void PlayGameState::update(int deltaTime)
 {
+	
+
+	scene->update(deltaTime);
+
 	if (nextlevel)
 	{
 		nextLevel();
 	}
-
-	scene->update(deltaTime);
 
 }
 
