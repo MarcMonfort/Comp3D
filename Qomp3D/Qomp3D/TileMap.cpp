@@ -458,7 +458,7 @@ bool TileMap::treatCollision(int pos, int type)
 	}
 	else if (block == broken_chain)
 	{
-		return false;
+		return true;
 	}
 	else if (block == line)
 	{
