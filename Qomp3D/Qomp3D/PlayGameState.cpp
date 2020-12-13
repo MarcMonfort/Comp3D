@@ -49,7 +49,7 @@ void PlayGameState::nextLevel()
 	nextlevel = false;
 	++currentLevel;
 
-	if (currentLevel <= NUM_LEVELS) {
+	if (currentLevel <= NUM_LEVELS + 1) {
 		scene = Scene();
 		scene.init(currentLevel);
 	}
