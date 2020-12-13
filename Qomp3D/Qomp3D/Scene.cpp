@@ -145,25 +145,23 @@ void Scene::init(int numLevel)
 	projection = glm::perspective(glm::radians(45.f), float(CAMERA_WIDTH) / float(CAMERA_HEIGHT), 0.1f, 1000.f);
 	currentTime = 0.0f;
 
-	firstUpdate = true;
+	nupdate = 0;
 }
 
 void Scene::update(int deltaTime)
 {
+	++nupdate;
+
 	currentTime += deltaTime;
+
+	if (nupdate <= 2)
+		deltaTime = 0;
 
 	if (fadeIn || fadeOut)
 		fadeTime += deltaTime;
 
-	if (currentTime < 1500 || firstUpdate)
+	if (!fadeIn && !fadeOut || nupdate == 1)
 	{
-		deltaTime = 0;
-		firstUpdate = false;
-	}
-
-	if (!fadeOut)
-	{
-
 		if (map->getNewCheckPoint() && eCamMove == CamMove::STATIC)
 		{
 			checkpoint.posPlayer = map->getCheckPointPlayer();

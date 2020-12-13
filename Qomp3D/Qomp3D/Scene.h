@@ -109,13 +109,13 @@ private:
 		"sounds/theme5.mp3"
 	};
 
-	bool firstUpdate = true;
 	float totalFadeTime;
 	float fadeTime;
 
 	bool fadeIn;
 	bool fadeOut;
 
+	int nupdate;
 };
 
 

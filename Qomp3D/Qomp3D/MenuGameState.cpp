@@ -14,7 +14,7 @@ void MenuGameState::init()
 	background->setPosition(glm::vec2(0, 0));
 
 	// Init Fade
-	totalFadeTime = 750;
+	totalFadeTime = 1000;
 	fadeTime = 0;
 	fadeIn = true;
 	fadeOut = false;
