@@ -136,9 +136,10 @@ void Scene::init(int numLevel)
 	fade_spritesheet.loadFromFile("images/fade.png", TEXTURE_PIXEL_FORMAT_RGBA);
 	fade_sprite = Sprite::createSprite(glm::ivec2(12800, 12800), glm::vec2(1.f, 1.f), &fade_spritesheet, &texProgram);
 	fade_sprite->setPosition(glm::vec2(0, 0));
-	totalFadeTime = 1000;
+	totalFadeTime = 750;
 	fadeTime = 0;
-	fade = false;
+	fadeIn = true;
+	fadeOut = false;
 
 	// End Inits
 	projection = glm::perspective(glm::radians(45.f), float(CAMERA_WIDTH) / float(CAMERA_HEIGHT), 0.1f, 1000.f);
@@ -149,57 +150,61 @@ void Scene::update(int deltaTime)
 {
 	currentTime += deltaTime;
 
+	if (fadeIn || fadeOut)
+		fadeTime += deltaTime;
+
 	if (currentTime < 1500)
-	{
 		deltaTime = 0;
-	}
 
-	if (map->getNewCheckPoint() && eCamMove == CamMove::STATIC)
+	if (!fadeOut)
 	{
-		checkpoint.posPlayer = map->getCheckPointPlayer();
-		checkpoint.posCamera = camera.position;
-		map->setNewCheckPoint(false);
-	}
 
-	if (map->getPlayerDead())
-	{
-		player->setPosition(checkpoint.posPlayer);
-		camera.position = checkpoint.posCamera;
-		eCamMove = CamMove::STATIC;
-		map->setPlayerDead(false);
-	}
+		if (map->getNewCheckPoint() && eCamMove == CamMove::STATIC)
+		{
+			checkpoint.posPlayer = map->getCheckPointPlayer();
+			checkpoint.posCamera = camera.position;
+			map->setNewCheckPoint(false);
+		}
 
-	glm::vec3 posPlayer = player->getPosition();
-	glm::vec3 sizePlayer = player->getSize();
+		if (map->getPlayerDead())
+		{
+			player->setPosition(checkpoint.posPlayer);
+			camera.position = checkpoint.posCamera;
+			eCamMove = CamMove::STATIC;
+			map->setPlayerDead(false);
+		}
 
-	if (posPlayer.x + sizePlayer.x - camera.position.x > (roomSize.x/2) && eCamMove == CamMove::STATIC)
-	{
-		timeCamMove = camera.movement.x;
-		eCamMove = CamMove::RIGHT;
-		//player->setVelocity(glm::vec3(0, 0, 0));
-	}
-	else if (camera.position.x - posPlayer.x > (roomSize.x / 2) && eCamMove == CamMove::STATIC)
-	{
-		timeCamMove = camera.movement.x;
-		eCamMove = CamMove::LEFT;
-		//player->setVelocity(glm::vec3(0, 0, 0));
-	}
+		glm::vec3 posPlayer = player->getPosition();
+		glm::vec3 sizePlayer = player->getSize();
 
-	if (camera.position.y + (posPlayer.y + sizePlayer.y) > (roomSize.y / 2) && eCamMove == CamMove::STATIC)
-	{
-		timeCamMove = camera.movement.y;
-		eCamMove = CamMove::DOWN;
-		//player->setVelocity(glm::vec3(0, 0, 0));
-	}
-	else if (- posPlayer.y - camera.position.y > (roomSize.y / 2) && eCamMove == CamMove::STATIC)
-	{
-		timeCamMove = camera.movement.y;
-		eCamMove = CamMove::UP;
-		//player->setVelocity(glm::vec3(0, 0, 0));
-	}
+		if (posPlayer.x + sizePlayer.x - camera.position.x > (roomSize.x / 2) && eCamMove == CamMove::STATIC)
+		{
+			timeCamMove = camera.movement.x;
+			eCamMove = CamMove::RIGHT;
+			//player->setVelocity(glm::vec3(0, 0, 0));
+		}
+		else if (camera.position.x - posPlayer.x > (roomSize.x / 2) && eCamMove == CamMove::STATIC)
+		{
+			timeCamMove = camera.movement.x;
+			eCamMove = CamMove::LEFT;
+			//player->setVelocity(glm::vec3(0, 0, 0));
+		}
 
-	switch (eCamMove)
-	{
+		if (camera.position.y + (posPlayer.y + sizePlayer.y) > (roomSize.y / 2) && eCamMove == CamMove::STATIC)
+		{
+			timeCamMove = camera.movement.y;
+			eCamMove = CamMove::DOWN;
+			//player->setVelocity(glm::vec3(0, 0, 0));
+		}
+		else if (-posPlayer.y - camera.position.y > (roomSize.y / 2) && eCamMove == CamMove::STATIC)
+		{
+			timeCamMove = camera.movement.y;
+			eCamMove = CamMove::UP;
+			//player->setVelocity(glm::vec3(0, 0, 0));
+		}
+
+		switch (eCamMove)
+		{
 		case Scene::CamMove::STATIC:
 			break;
 		case Scene::CamMove::RIGHT:
@@ -234,25 +239,23 @@ void Scene::update(int deltaTime)
 				eCamMove = CamMove::STATIC;
 			}
 			break;
+		}
+
+		player->update(deltaTime, &walls, &ballSpikes, &buttons, &switchs);
+
+		for (int i = 0; i < walls.size(); ++i)
+		{
+			walls[i]->update(deltaTime, player->getPosition(), player->getSize());
+		}
+
+		//update BallSpikes
+		for (int i = 0; i < ballSpikes.size(); ++i)
+		{
+			ballSpikes[i]->update(deltaTime, player->getPosition());
+		}
+
+		map->update(deltaTime);
 	}
-
-	player->update(deltaTime, &walls, &ballSpikes, &buttons, &switchs);
-
-	for (int i = 0; i < walls.size(); ++i)
-	{
-		walls[i]->update(deltaTime, player->getPosition(), player->getSize());
-	}
-
-	//update BallSpikes
-	for (int i = 0; i < ballSpikes.size(); ++i)
-	{
-		ballSpikes[i]->update(deltaTime, player->getPosition());
-	}
-
-	map->update(deltaTime);
-
-	if (fade)
-		fadeTime += deltaTime;
 }
 
 void Scene::render()
@@ -328,7 +331,32 @@ void Scene::render()
 		godMode_sprite->render();
 	}
 
-	if (fade)
+	if (fadeIn)
+	{
+		glDepthMask(GL_FALSE);
+		glEnable(GL_BLEND);
+		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+		texProgram.setUniformMatrix4f("projection", glm::ortho(0.f, float(SCREEN_WIDTH - 1), float(SCREEN_HEIGHT - 1), 0.f));
+		texProgram.setUniformMatrix4f("view", glm::mat4(1.0f));
+		texProgram.setUniform2f("texCoordDispl", 0.f, 0.f);
+		texProgram.setUniform1b("bLighting", false);
+		float alpha = min(1.0f, fadeTime / totalFadeTime);
+		texProgram.setUniform1f("alpha", 1 - alpha);
+		fade_sprite->render();
+
+		glBlendFunc(GL_SRC_ALPHA, GL_ONE);
+		glDisable(GL_BLEND);
+		glDepthMask(GL_TRUE);
+
+		if (fadeTime >= totalFadeTime) {
+			fadeIn = false;
+			fadeTime = 0;
+			//PlayGameState::instance().finalBlockTaken();
+		}
+	}
+
+	if (fadeOut)
 	{
 		player->setVelocity(glm::vec3(0.f, 0.f, 0.f));
 
@@ -337,17 +365,12 @@ void Scene::render()
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
 		texProgram.setUniformMatrix4f("projection", glm::ortho(0.f, float(SCREEN_WIDTH - 1), float(SCREEN_HEIGHT - 1), 0.f));
-
-		//texProgram.setUniformMatrix4f("model", glm::mat4(1.0f));
 		texProgram.setUniformMatrix4f("view", glm::mat4(1.0f));
 		texProgram.setUniform2f("texCoordDispl", 0.f, 0.f);
 		texProgram.setUniform1b("bLighting", false);
 		float alpha = min(1.0f, fadeTime / totalFadeTime);
 		texProgram.setUniform1f("alpha", alpha);
 		fade_sprite->render();
-
-		/*texProgram.setUniformMatrix4f("model", modelMatrix);
-		particles->render(texProgram, eye);*/
 
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE);
 		glDisable(GL_BLEND);
@@ -398,7 +421,7 @@ void Scene::reshape(int width, int height)
 
 
 void Scene::setFade(bool b) {
-	fade = b;
+	fadeOut = b;
 }
 
 

@@ -36,6 +36,12 @@ private:
 
 	FMOD::Sound* main_theme;
 	FMOD::Channel* channel;
+
+	float totalFadeTime;
+	float fadeTime;
+
+	bool fadeIn;
+	bool fadeOut;
 };
 
 #endif // _GAME_INCLUDE

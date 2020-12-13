@@ -112,7 +112,8 @@ private:
 	float totalFadeTime;
 	float fadeTime;
 
-	bool fade;
+	bool fadeIn;
+	bool fadeOut;
 
 };
 

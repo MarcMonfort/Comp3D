@@ -13,6 +13,12 @@ void MenuGameState::init()
 	background = Sprite::createSprite(glm::ivec2(SCREEN_WIDTH, SCREEN_HEIGHT), glm::vec2(1.f, 1.f), &spritesheet, &texProgram);
 	background->setPosition(glm::vec2(0, 0));
 
+	// Init Fade
+	totalFadeTime = 750;
+	fadeTime = 0;
+	fadeIn = true;
+	fadeOut = false;
+
 	projection = glm::ortho(0.f, float(SCREEN_WIDTH - 1), float(SCREEN_HEIGHT - 1), 0.f);
 
 	/*main_theme = SoundManager::instance().loadSound("sounds/main_theme.mp3", FMOD_LOOP_NORMAL);
@@ -22,21 +28,58 @@ void MenuGameState::init()
 
 void MenuGameState::update(int deltaTime)
 {
+	if (fadeIn || fadeOut)
+		fadeTime += deltaTime;
 }
 
 void MenuGameState::render()
 {
-	glm::mat4 modelMatrix, viewMatrix;
+	glm::mat4 modelMatrix = glm::mat4(1.0f);
+	glm::mat4 viewMatrix = glm::mat4(1.0f);
+
 	texProgram.use();
 	texProgram.setUniformMatrix4f("projection", projection);
 	texProgram.setUniform4f("color", 1.0f, 1.0f, 1.0f, 1.0f);
-	modelMatrix = glm::mat4(1.0f);
-	viewMatrix = glm::mat4(1.0f);
 	texProgram.setUniformMatrix4f("model", modelMatrix);
 	texProgram.setUniformMatrix4f("view", viewMatrix);
 	texProgram.setUniform2f("texCoordDispl", 0.f, 0.f);
 
-	background->render();
+	if (fadeIn)
+	{
+		glEnable(GL_BLEND);
+		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+		float alpha = min(1.0f, fadeTime / totalFadeTime);
+		texProgram.setUniform1f("alpha", alpha);
+		background->render();
+
+		glBlendFunc(GL_SRC_ALPHA, GL_ONE);
+		glDisable(GL_BLEND);
+
+		if (fadeTime >= totalFadeTime) {
+			fadeIn = false;
+			fadeTime = 0;
+		}
+	}
+	else if (fadeOut)
+	{
+		glEnable(GL_BLEND);
+		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+		float alpha = min(1.0f, fadeTime / totalFadeTime);
+		texProgram.setUniform1f("alpha", 1 - alpha);
+		background->render();
+
+		glBlendFunc(GL_SRC_ALPHA, GL_ONE);
+		glDisable(GL_BLEND);
+
+		if (fadeTime >= totalFadeTime) {
+			Game::instance().startGame();
+		}
+	}
+	else {
+		background->render();
+	}
 }
 
 void MenuGameState::keyPressed(int key)
@@ -48,7 +91,9 @@ void MenuGameState::keyPressed(int key)
 	else if (key == 32) // Space code
 	{
 		channel->setVolume(1.f);
-		Game::instance().startGame();
+		fadeIn = false;
+		fadeOut = true;
+		fadeTime = 0;
 	}
 }
 
