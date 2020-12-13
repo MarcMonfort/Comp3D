@@ -445,7 +445,8 @@ bool TileMap::treatCollision(int pos, int type)
 	else if (block == fin)
 	{
 		if (type == 1) {
-			PlayGameState::instance().finalBlockTaken();
+			//PlayGameState::instance().finalBlockTaken();
+			PlayGameState::instance().startFade();
 			channel = SoundManager::instance().playSound(checkpoint_sound);
 		}
 		return false;

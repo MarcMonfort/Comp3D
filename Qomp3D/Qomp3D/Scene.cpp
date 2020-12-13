@@ -132,6 +132,14 @@ void Scene::init(int numLevel)
 	godMode_sprite = Sprite::createSprite(glm::ivec2(128, 16), glm::vec2(1.f, 1.f), &godMode_spritesheet, &texProgram);
 	godMode_sprite->setPosition(glm::vec2(50, 690));
 
+	// Init Fade
+	fade_spritesheet.loadFromFile("images/fade.png", TEXTURE_PIXEL_FORMAT_RGBA);
+	fade_sprite = Sprite::createSprite(glm::ivec2(12800, 12800), glm::vec2(1.f, 1.f), &fade_spritesheet, &texProgram);
+	fade_sprite->setPosition(glm::vec2(0, 0));
+	totalFadeTime = 1000;
+	fadeTime = 0;
+	fade = false;
+
 	// End Inits
 	projection = glm::perspective(glm::radians(45.f), float(CAMERA_WIDTH) / float(CAMERA_HEIGHT), 0.1f, 1000.f);
 	currentTime = 0.0f;
@@ -246,6 +254,8 @@ void Scene::update(int deltaTime)
 
 	map->update(deltaTime);
 
+	if (fade)
+		fadeTime += deltaTime;
 }
 
 void Scene::render()
@@ -309,6 +319,7 @@ void Scene::render()
 
 
 	// LO ULTIMO (2D)
+
 	if (PlayGameState::instance().getGodMode()) {
 		texProgram.setUniformMatrix4f("projection", glm::ortho(0.f, float(SCREEN_WIDTH - 1), float(SCREEN_HEIGHT - 1), 0.f));
 		//texProgram.setUniform4f("color", 1.0f, 1.0f, 1.0f, 1.0f);
@@ -318,6 +329,36 @@ void Scene::render()
 		texProgram.setUniform2f("texCoordDispl", 0.f, 0.f);
 		texProgram.setUniform1b("bLighting", false);
 		godMode_sprite->render();
+	}
+
+	if (fade)
+	{
+		player->setVelocity(glm::vec3(0.f, 0.f, 0.f));
+
+		glDepthMask(GL_FALSE);
+		glEnable(GL_BLEND);
+		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+		texProgram.setUniformMatrix4f("projection", glm::ortho(0.f, float(SCREEN_WIDTH - 1), float(SCREEN_HEIGHT - 1), 0.f));
+
+		//texProgram.setUniformMatrix4f("model", glm::mat4(1.0f));
+		texProgram.setUniformMatrix4f("view", glm::mat4(1.0f));
+		texProgram.setUniform2f("texCoordDispl", 0.f, 0.f);
+		texProgram.setUniform1b("bLighting", false);
+		float alpha = min(1.0f, fadeTime / totalFadeTime);
+		texProgram.setUniform1f("alpha", alpha);
+		fade_sprite->render();
+
+		/*texProgram.setUniformMatrix4f("model", modelMatrix);
+		particles->render(texProgram, eye);*/
+
+		glBlendFunc(GL_SRC_ALPHA, GL_ONE);
+		glDisable(GL_BLEND);
+		glDepthMask(GL_TRUE);
+
+		if (fadeTime >= totalFadeTime) {
+			PlayGameState::instance().finalBlockTaken();
+		}
 	}
 }
 
@@ -359,7 +400,9 @@ void Scene::reshape(int width, int height)
 }
 
 
-
+void Scene::setFade(bool b) {
+	fade = b;
+}
 
 
 
