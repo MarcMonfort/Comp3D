@@ -98,9 +98,9 @@ void Scene::init(int numLevel)
 	for (int i = 0; i < pos_ballSpikes.size(); ++i)  // maybe bolean to know if there is any...?
 	{
 		BallSpike* ballSpike = new BallSpike();
-		ballSpike->init(texProgram, pos_ballSpikes[i].first);
+		ballSpike->init(texProgram, pos_ballSpikes[i].first, map);
 		ballSpike->setPosition(glm::vec3(pos_ballSpikes[i].second, 0));
-		ballSpike->setTileMap(map);
+		//ballSpike->setTileMap(map);
 		ballSpikes.push_back(ballSpike);
 	}
 
