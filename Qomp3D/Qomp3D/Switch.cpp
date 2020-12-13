@@ -3,16 +3,41 @@
 #include <glm/gtc/matrix_transform.hpp>
 
 
-void Switch::init(ShaderProgram& shaderProgram, bool act)
+void Switch::init(ShaderProgram& shaderProgram, bool act, TileMap* tileMap)
 {
+	map = tileMap;
 	activated = act;
 
-	model_yes = new AssimpModel();
-	model_yes->loadFromFile("models/switch_yes4.obj", shaderProgram);
-	size = model_yes->getSize();
 
+	int style = map->getStyle();
+	model_yes = new AssimpModel();
 	model_no = new AssimpModel();
-	model_no->loadFromFile("models/switch_no.obj", shaderProgram);
+
+	switch (style)
+	{
+	case 0:
+		model_yes->loadFromFile("models/switch_yes.obj", shaderProgram);
+		model_no->loadFromFile("models/switch_no.obj", shaderProgram);
+		break;
+	case 1:
+		model_yes->loadFromFile("models/water_switch_yes.obj", shaderProgram);
+		model_no->loadFromFile("models/water_switch_no.obj", shaderProgram);
+		break;
+	case 2:
+		model_yes->loadFromFile("models/box_switch_yes.obj", shaderProgram);
+		model_no->loadFromFile("models/box_switch_no.obj", shaderProgram);
+		break;
+	case 3:
+		model_yes->loadFromFile("models/mario_switch_yes.obj", shaderProgram);
+		model_no->loadFromFile("models/mario_switch_no.obj", shaderProgram);
+		break;
+	case 4:
+		model_yes->loadFromFile("models/minecraft_switch_yes.obj", shaderProgram);
+		model_no->loadFromFile("models/minecraft_switch_no.obj", shaderProgram);
+		break;
+	}
+
+	size = model_yes->getSize();
 }
 
 void Switch::update(int deltaTime)

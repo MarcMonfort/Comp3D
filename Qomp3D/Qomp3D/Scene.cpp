@@ -121,9 +121,9 @@ void Scene::init(int numLevel)
 	for (int i = 0; i < pos_switchs.size(); ++i)  // maybe bolean to know if there is any...?
 	{
 		Switch* switx = new Switch();
-		switx->init(texProgram, pos_switchs[i].first);
+		switx->init(texProgram, pos_switchs[i].first, map);
 		switx->setPosition(glm::vec3(pos_switchs[i].second, 0));
-		switx->setTileMap(map);
+		//switx->setTileMap(map);
 		switchs.push_back(switx);
 	}
 
@@ -135,15 +135,18 @@ void Scene::init(int numLevel)
 	// End Inits
 	projection = glm::perspective(glm::radians(45.f), float(CAMERA_WIDTH) / float(CAMERA_HEIGHT), 0.1f, 1000.f);
 	currentTime = 0.0f;
+
+	firstUpdate = true;
 }
 
 void Scene::update(int deltaTime)
 {
 	currentTime += deltaTime;
 
-	if (currentTime < 1500)
+	if (currentTime < 1500 || firstUpdate)
 	{
 		deltaTime = 0;
+		firstUpdate = false;
 	}
 
 	if (map->getNewCheckPoint() && eCamMove == CamMove::STATIC)
