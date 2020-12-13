@@ -141,6 +141,10 @@ void Scene::init(int numLevel)
 	fadeIn = true;
 	fadeOut = false;
 
+	// Init Crown
+	crown = new AssimpModel();
+	crown->loadFromFile("models/crown.obj", texProgram);
+
 	// End Inits
 	projection = glm::perspective(glm::radians(45.f), float(CAMERA_WIDTH) / float(CAMERA_HEIGHT), 0.1f, 1000.f);
 	currentTime = 0.0f;
@@ -330,6 +334,14 @@ void Scene::render()
 	for (int i = 0; i < switchs.size(); ++i)
 	{
 		switchs[i]->render(texProgram);
+	}
+
+	// Render crown
+	if (PlayGameState::instance().getGodMode()) {
+		glm::vec3 playerPos = player->getPosition();
+		modelMatrix = glm::translate(glm::mat4(1.0f), glm::vec3(playerPos.x, -playerPos.y + 1, 0.f));
+		texProgram.setUniformMatrix4f("model", modelMatrix);
+		crown->render(texProgram);
 	}
 
 
