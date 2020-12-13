@@ -281,8 +281,6 @@ private:
 	FMOD::Channel* channel;
 
 	int style;
-
-	float miau;
 };
 
 
