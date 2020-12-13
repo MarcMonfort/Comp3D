@@ -163,6 +163,9 @@ void Scene::init(int numLevel)
 	}
 	
 	bDead = false;
+
+	rotation = 0.f;
+	victoryTime = 0.f;
 }
 
 void Scene::update(int deltaTime)
@@ -202,13 +205,14 @@ void Scene::update(int deltaTime)
 			}
 			else if (fadeOut)
 			{
+				channel->setVolume(0.f);
 				PlayGameState::instance().finalBlockTaken();
 			}
 		}
 	}
 
 	
-	if (!fadeIn && !fadeOut)
+	if (!fadeIn && !fadeOut || lastLevel)
 	{
 		if (map->getNewCheckPoint() && eCamMove == CamMove::STATIC)
 		{
@@ -232,7 +236,11 @@ void Scene::update(int deltaTime)
 		glm::vec3 posPlayer = player->getPosition();
 		glm::vec3 sizePlayer = player->getSize();
 
-		if (posPlayer.x + sizePlayer.x - camera.position.x > (roomSize.x / 2) && eCamMove == CamMove::STATIC)
+		if (lastLevel)
+		{
+			eCamMove = CamMove::FOLLOW;
+		}
+		else if (posPlayer.x + sizePlayer.x - camera.position.x > (roomSize.x / 2) && eCamMove == CamMove::STATIC)
 		{
 			timeCamMove = camera.movement.x;
 			eCamMove = CamMove::RIGHT;
@@ -290,6 +298,10 @@ void Scene::update(int deltaTime)
 				eCamMove = CamMove::STATIC;
 			}
 			break;
+		case Scene::CamMove::FOLLOW:
+			camera.position.x = posPlayer.x;
+			camera.position.y = -posPlayer.y;
+			break;
 		}
 
 		player->update(deltaTime, &walls, &ballSpikes, &buttons, &switchs);
@@ -306,7 +318,17 @@ void Scene::update(int deltaTime)
 		}
 
 	}
-		map->update(deltaTime);
+	map->update(deltaTime);
+
+	if (lastLevel) {
+		rotation += deltaTime / 2.0f;
+		if (rotation > 2 * PI)
+			rotation -= 2 * PI;
+
+		victoryTime += deltaTime;
+		if (victoryTime > 10500)
+			fadeOut = true;
+	}
 }
 
 void Scene::render()
@@ -324,6 +346,7 @@ void Scene::render()
 	// Camera position
 	viewMatrix = glm::mat4(1.0f);
 	viewMatrix = glm::translate(viewMatrix, -camera.position);
+	/*if (lastLevel) viewMatrix = glm::rotate(viewMatrix, glm::radians(15.f), glm::vec3(0, 1, 0));*/
 	texProgram.setUniformMatrix4f("view", viewMatrix);
 
 	// Init matrix
@@ -343,7 +366,7 @@ void Scene::render()
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 		texProgram.setUniform1f("alpha", 0.3);
 	}
-	player->render(texProgram, camera.position);
+	player->render(texProgram, camera.position, rotation);
 	if (PlayGameState::instance().getGodMode()) {
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE);
 		glDisable(GL_BLEND);
@@ -383,6 +406,9 @@ void Scene::render()
 	if (lastLevel) {
 		glm::vec3 playerPos = player->getPosition();
 		modelMatrix = glm::translate(glm::mat4(1.0f), glm::vec3(playerPos.x, -playerPos.y + 1, 0.f));
+		modelMatrix = glm::translate(modelMatrix, crown->getCenter());
+		modelMatrix = glm::rotate(modelMatrix, glm::radians(rotation), glm::vec3(0, -1, 0));
+		modelMatrix = glm::translate(modelMatrix, -crown->getCenter());
 		texProgram.setUniformMatrix4f("model", modelMatrix);
 		crown->render(texProgram);
 	}
@@ -422,7 +448,7 @@ void Scene::render()
 
 	else if (fadeOut)
 	{
-		player->setVelocity(glm::vec3(0.f, 0.f, 0.f));
+		if (!lastLevel) player->setVelocity(glm::vec3(0.f, 0.f, 0.f));
 
 		glDepthMask(GL_FALSE);
 		glEnable(GL_BLEND);

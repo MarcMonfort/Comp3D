@@ -61,8 +61,6 @@ void Player::init(ShaderProgram& shaderProgram, TileMap* tileMap)
 	death_sound = SoundManager::instance().loadSound("sounds/death.mp3", FMOD_DEFAULT);
 	basic_sound = SoundManager::instance().loadSound("sounds/basic2.mp3", FMOD_DEFAULT);
 
-
-
 	currentTime = 0.0f;
 }
 
@@ -277,12 +275,19 @@ void Player::update(int deltaTime, vector<Wall*>* walls, vector<BallSpike*>* bal
 	}
 }
 
-void Player::render(ShaderProgram& program, const glm::vec3& eye)
+void Player::render(ShaderProgram& program, const glm::vec3& eye, float rotation)
 {
 	glm::mat4 modelMatrix;
 	if (!bDead)
 	{
 		modelMatrix = glm::translate(glm::mat4(1.0f), glm::vec3(posPlayer.x, -posPlayer.y, 0));
+
+		if (rotation > 0)
+		{
+			modelMatrix = glm::translate(modelMatrix, model->getCenter());
+			modelMatrix = glm::rotate(modelMatrix, glm::radians(rotation), glm::vec3(0, 1, 0));
+			modelMatrix = glm::translate(modelMatrix, -model->getCenter());
+		}
 
 		if (timeRotate > 0)
 		{

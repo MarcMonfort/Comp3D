@@ -70,7 +70,8 @@ private:
 		RIGHT,
 		LEFT,
 		UP,
-		DOWN
+		DOWN,
+		FOLLOW
 	};
 	CamMove eCamMove = CamMove::STATIC;
 	float timeCamMove = 0.f;
@@ -122,6 +123,10 @@ private:
 
 	bool bDead = false;
 	int timeDead;
+
+	float rotation;
+
+	float victoryTime;
 
 };
 
