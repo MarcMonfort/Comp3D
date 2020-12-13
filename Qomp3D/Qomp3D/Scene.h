@@ -91,10 +91,19 @@ private:
 	Texture godMode_spritesheet;
 	Sprite* godMode_sprite;
 
+	int style;
 
+	FMOD::Sound* music;
+	FMOD::Channel* channel;
 
+	vector<string> themes{
+		"sounds/main_theme.mp3",
+		"sounds/minecraft.mp3",
+		"sounds/theme3.mp3",
+		"sounds/theme4.mp3",
+		"sounds/theme5.mp3"
+	};
 };
 
 
 #endif // _SCENE_INCLUDE
-

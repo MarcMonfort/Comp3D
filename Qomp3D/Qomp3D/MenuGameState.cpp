@@ -15,9 +15,9 @@ void MenuGameState::init()
 
 	projection = glm::ortho(0.f, float(SCREEN_WIDTH - 1), float(SCREEN_HEIGHT - 1), 0.f);
 
-	main_theme = SoundManager::instance().loadSound("sounds/main_theme.mp3", FMOD_LOOP_NORMAL);
+	/*main_theme = SoundManager::instance().loadSound("sounds/main_theme.mp3", FMOD_LOOP_NORMAL);
 	channel = SoundManager::instance().playSound(main_theme);
-	channel->setVolume(1.f);
+	channel->setVolume(1.f);*/
 }
 
 void MenuGameState::update(int deltaTime)

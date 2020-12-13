@@ -61,6 +61,12 @@ void Scene::init(int numLevel)
 	glm::vec3 rgb = map->getColorBackground();
 	glClearColor(rgb.x, rgb.y, rgb.z, 1.0f);
 
+	//Init Music
+	style = map->getStyle();
+	string theme = themes[style];
+	music = SoundManager::instance().loadSound(theme, FMOD_LOOP_NORMAL);
+	channel = SoundManager::instance().playSound(music);
+	channel->setVolume(1.f);
 
 	// Init Camera. Depends on the level. Maybe use a map->getStartPosition()...
 	camera.position = map->getCenterCamera();
