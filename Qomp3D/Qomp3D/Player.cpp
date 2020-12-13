@@ -526,7 +526,7 @@ void Player::setDead(bool b)
 		ParticleSystem::Particle particle;
 		float angle;
 
-		particle.lifetime = 3.f;
+		particle.lifetime = 1.f;
 
 		glm::vec3 direction = glm::vec3(-(posPlayer.x + 0.5), (posPlayer.y + 0.5), 0.f);
 
@@ -534,7 +534,7 @@ void Player::setDead(bool b)
 		{
 			angle = 2.f * PI * (i + float(rand()) / RAND_MAX) / nParticlesToSpawn;
 			particle.position = glm::vec3(cos(angle) * 0.25 + (posPlayer.x + 0.5), sin(angle) * 0.25 - (posPlayer.y + 0.5), 0.f);
-			particle.speed = 5.f * glm::vec3(glm::normalize(particle.position + direction));
+			particle.speed = 30.f * glm::vec3(glm::normalize(particle.position + direction));
 			particles_dead->addParticle(particle);
 		}
 	}

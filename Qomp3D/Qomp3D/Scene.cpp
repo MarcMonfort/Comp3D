@@ -224,7 +224,7 @@ void Scene::update(int deltaTime)
 		if (map->getPlayerDead())
 		{
 			bDead = true;
-			timeDead = 3000;
+			timeDead = 1000;
 			player->setDead(true);
 			map->setPlayerDead(false);
 
