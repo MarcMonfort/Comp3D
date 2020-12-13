@@ -293,7 +293,18 @@ void Scene::render()
 	map->render(texProgram, player->getPosition());
 
 	// Render Player
+	if (PlayGameState::instance().getGodMode()) {
+		glDepthMask(GL_FALSE);
+		glEnable(GL_BLEND);
+		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+		texProgram.setUniform1f("alpha", 0.3);
+	}
 	player->render(texProgram, camera.position);
+	if (PlayGameState::instance().getGodMode()) {
+		glBlendFunc(GL_SRC_ALPHA, GL_ONE);
+		glDisable(GL_BLEND);
+		glDepthMask(GL_TRUE);
+	}
 
 	// Render Walls
 	for (int i = 0; i < walls.size(); ++i)
