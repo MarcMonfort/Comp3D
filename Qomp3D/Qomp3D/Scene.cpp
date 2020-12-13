@@ -139,8 +139,12 @@ void Scene::init(int numLevel)
 
 void Scene::update(int deltaTime)
 {
-
 	currentTime += deltaTime;
+
+	if (currentTime < 1500)
+	{
+		deltaTime = 0;
+	}
 
 	if (map->getNewCheckPoint() && eCamMove == CamMove::STATIC)
 	{

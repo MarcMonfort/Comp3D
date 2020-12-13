@@ -28,7 +28,7 @@ public:
 	void setGodMode(bool b);
 
 private:
-	Scene scene;
+	Scene* scene;
 	int currentLevel = 0;
 	bool nextlevel = false;
 

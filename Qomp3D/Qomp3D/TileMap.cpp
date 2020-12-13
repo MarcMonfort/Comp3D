@@ -63,13 +63,13 @@ void TileMap::render(ShaderProgram& program, const glm::ivec3& posPlayer)
 					unordered_map<char, AssimpModel*>::const_iterator it = models.find(tile);
 
 					// Si el model encara no ha estat creat (millor fer-ho abans)
-					if (it == models.end()) {
+					/*if (it == models.end()) {
 						AssimpModel* new_model = new AssimpModel();
 						string path = (paths->find(tile))->second;
 						new_model->loadFromFile(path, program);
 						models.insert(pair<char, AssimpModel*>(tile, new_model));
 						it = models.find(tile);
-					}
+					}*/
 
 					// Es renderitza el model a la posició corresponent
 					modelMatrix = glm::translate(glm::mat4(1.0f), glm::vec3(i, -j, 0.f));
@@ -159,23 +159,24 @@ bool TileMap::loadLevel(const string& levelFile, ShaderProgram& program)
 	switch (style)
 	{
 	case 0:
-		paths = &original;
+		//paths = &original;
+		loadModels(original, program);
 		colorBackground = glm::vec3(0);
 		break;
 	case 1:
-		paths = &water;
+		loadModels(water, program);
 		colorBackground = glm::vec3(0,0,0.2);
 		break;
 	case 2:
-		paths = &box;
+		loadModels(box, program);
 		colorBackground = glm::vec3(0.74, 0.60, 0.47);
 		break;
 	case 3:
-		paths = &mario;
+		loadModels(mario, program);
 		colorBackground = glm::vec3(0, 0.54, 0.78);
 		break;
 	case 4:
-		paths = &minecraft;
+		loadModels(minecraft, program);
 		colorBackground = glm::vec3(0);
 		break;
 	}
@@ -617,4 +618,15 @@ glm::vec3 TileMap::getColorBackground()
 int TileMap::getStyle()
 {
 	return style;
+}
+
+void TileMap::loadModels(const unordered_map<char, string>& paths, ShaderProgram& program)
+{
+	for (auto const& x : paths)
+	{
+		AssimpModel* new_model = new AssimpModel();
+		string path = x.second;
+		new_model->loadFromFile(x.second, program);
+		models[x.first] = new_model;
+	}
 }

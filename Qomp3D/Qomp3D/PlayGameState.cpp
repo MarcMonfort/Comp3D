@@ -7,20 +7,24 @@
 void PlayGameState::init()
 {
 	currentLevel = 1;
-	scene = Scene();
-	scene.init(currentLevel);
+	scene = new Scene();
+	scene->init(currentLevel);
 }
 
 void PlayGameState::update(int deltaTime)
 {
 	if (nextlevel)
+	{
 		nextLevel();
-	scene.update(deltaTime);
+	}
+
+	scene->update(deltaTime);
+
 }
 
 void PlayGameState::render()
 {
-	scene.render();
+	scene->render();
 }
 
 void PlayGameState::keyPressed(int key)
@@ -34,7 +38,7 @@ void PlayGameState::keyPressed(int key)
 		bGodMode = !bGodMode;
 	}
 	else {
-		scene.keyPressed(key);
+		scene->keyPressed(key);
 	}
 }
 
@@ -50,8 +54,9 @@ void PlayGameState::nextLevel()
 	++currentLevel;
 
 	if (currentLevel <= NUM_LEVELS + 1) {
-		scene = Scene();
-		scene.init(currentLevel);
+		delete scene;
+		scene = new Scene();
+		scene->init(currentLevel);
 	}
 	else
 		Game::instance().goBackToMenu();	

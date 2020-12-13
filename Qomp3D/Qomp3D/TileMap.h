@@ -96,6 +96,7 @@ private:
 	//void prepareArrays(const glm::vec2& minCoords, ShaderProgram& program);
 	int checkBlock(int block);
 	bool treatCollision(int pos, int type);
+	void loadModels(const unordered_map<char, string>& paths, ShaderProgram& program);
 
 private:
 	GLuint vao;
