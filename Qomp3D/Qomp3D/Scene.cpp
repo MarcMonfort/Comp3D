@@ -161,11 +161,28 @@ void Scene::init(int numLevel)
 		crown = new AssimpModel();
 		crown->loadFromFile("models/crown.obj", texProgram);
 	}
+	
+	bDead = false;
 }
 
 void Scene::update(int deltaTime)
 {
 	currentTime += deltaTime;
+
+	if (bDead)
+	{
+		timeDead -= deltaTime;
+		if (timeDead <= 0)
+		{
+			bDead = false;
+			player->setDead(false);
+
+			player->setPosition(checkpoint.posPlayer);
+			camera.position = checkpoint.posCamera;
+			eCamMove = CamMove::STATIC;
+		}
+
+	}
 
 	if (firstUpdate)
 	{
@@ -202,10 +219,14 @@ void Scene::update(int deltaTime)
 
 		if (map->getPlayerDead())
 		{
-			player->setPosition(checkpoint.posPlayer);
-			camera.position = checkpoint.posCamera;
-			eCamMove = CamMove::STATIC;
+			bDead = true;
+			timeDead = 3000;
+			player->setDead(true);
 			map->setPlayerDead(false);
+
+			/*player->setPosition(checkpoint.posPlayer);
+			camera.position = checkpoint.posCamera;
+			eCamMove = CamMove::STATIC;*/
 		}
 
 		glm::vec3 posPlayer = player->getPosition();
@@ -423,7 +444,7 @@ void Scene::render()
 
 void Scene::keyPressed(int key)
 {
-	if (key == 'd' && eCamMove == CamMove::STATIC)
+	/*if (key == 'd' && eCamMove == CamMove::STATIC)
 	{
 		timeCamMove = 17;
 		eCamMove = CamMove::RIGHT;
@@ -442,6 +463,12 @@ void Scene::keyPressed(int key)
 	{
 		timeCamMove = 14;
 		eCamMove = CamMove::UP;
+	}*/
+	if (key == 'd')
+	{
+		bDead = true;
+		timeDead = 5000;
+		player->setDead(true);
 	}
 
 	player->keyPressed(key);

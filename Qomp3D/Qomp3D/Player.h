@@ -34,6 +34,7 @@ public:
 	glm::vec3 getSize();
 
 	void keyPressed(int key);
+	void setDead(bool b);
 
 private:
 	bool collideWall(Wall* wall);
@@ -53,6 +54,7 @@ private:
 	TileMap* map;
 	AssimpModel* model;
 	ParticleSystem* particles;
+	ParticleSystem* particles_dead;
 
 
 	float lastVelocity = 0;
@@ -73,6 +75,10 @@ private:
 
 	FMOD::Channel* channel;
 	FMOD::Channel* line_channel;
+
+	bool bDead = false;
+	int numDeadRounds = 0;
+	int timeDead;
 };
 
 #endif

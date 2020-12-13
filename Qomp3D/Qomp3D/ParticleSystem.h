@@ -20,7 +20,7 @@ public:
 	ParticleSystem();
 	~ParticleSystem();
 
-	void init(const glm::vec2 &billboardQuadSize, ShaderProgram &program, const string &billboardTextureName, float gravity = 0.f, float fadeOut = 1.f);
+	void init(const glm::vec2 &billboardQuadSize, ShaderProgram &program, const string &billboardTextureName, float gravity = 0.f, float fadeOut = 0.f);
 	void addParticle(Particle &newParticle);
 
 	void update(float deltaTimeInSeconds);

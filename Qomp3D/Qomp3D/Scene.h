@@ -119,6 +119,10 @@ private:
 
 	bool lastLevel;
 	AssimpModel* crown;
+
+	bool bDead = false;
+	int timeDead;
+
 };
 
 
