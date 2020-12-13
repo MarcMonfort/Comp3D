@@ -8,7 +8,7 @@ void Switch::init(ShaderProgram& shaderProgram, bool act)
 	activated = act;
 
 	model_yes = new AssimpModel();
-	model_yes->loadFromFile("models/switch_yes.obj", shaderProgram);
+	model_yes->loadFromFile("models/switch_yes4.obj", shaderProgram);
 	size = model_yes->getSize();
 
 	model_no = new AssimpModel();
