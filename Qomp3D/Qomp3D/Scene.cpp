@@ -9,6 +9,7 @@
 
 
 #define PI 3.14159f
+#define NUM_LEVELS 5
 
 
 Scene::Scene()
@@ -60,11 +61,18 @@ void Scene::init(int numLevel)
 	roomSize = map->getRoomSize();
 	glm::vec3 rgb = map->getColorBackground();
 	glClearColor(rgb.x, rgb.y, rgb.z, 1.0f);
+	lastLevel = numLevel == NUM_LEVELS + 1;
 
 	//Init Music
-	style = map->getStyle();
-	string theme = themes[style];
-	music = SoundManager::instance().loadSound(theme, FMOD_LOOP_NORMAL);
+	if (lastLevel)
+	{
+		music = SoundManager::instance().loadSound("sounds/fireworks.mp3", FMOD_LOOP_NORMAL);
+	}
+	else {
+		style = map->getStyle();
+		string theme = themes[style];
+		music = SoundManager::instance().loadSound(theme, FMOD_LOOP_NORMAL);
+	}
 	channel = SoundManager::instance().playSound(music);
 	channel->setVolume(1.f);
 
@@ -141,15 +149,18 @@ void Scene::init(int numLevel)
 	fadeIn = true;
 	fadeOut = false;
 
-	// Init Crown
-	crown = new AssimpModel();
-	crown->loadFromFile("models/crown.obj", texProgram);
-
 	// End Inits
 	projection = glm::perspective(glm::radians(45.f), float(CAMERA_WIDTH) / float(CAMERA_HEIGHT), 0.1f, 1000.f);
 	currentTime = 0.0f;
 
 	firstUpdate = true;
+
+	if (lastLevel)
+	{
+		// Init Crown
+		crown = new AssimpModel();
+		crown->loadFromFile("models/crown.obj", texProgram);
+	}
 }
 
 void Scene::update(int deltaTime)
@@ -348,7 +359,7 @@ void Scene::render()
 	}
 
 	// Render crown
-	if (PlayGameState::instance().getGodMode()) {
+	if (lastLevel) {
 		glm::vec3 playerPos = player->getPosition();
 		modelMatrix = glm::translate(glm::mat4(1.0f), glm::vec3(playerPos.x, -playerPos.y + 1, 0.f));
 		texProgram.setUniformMatrix4f("model", modelMatrix);

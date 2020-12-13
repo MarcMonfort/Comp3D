@@ -117,6 +117,7 @@ private:
 
 	bool firstUpdate = true;
 
+	bool lastLevel;
 	AssimpModel* crown;
 };
 
