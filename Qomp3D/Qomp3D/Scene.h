@@ -118,6 +118,10 @@ private:
 	bool firstUpdate = true;
 
 	AssimpModel* crown;
+
+	bool bDead = false;
+	int timeDead;
+
 };
 
 

@@ -49,7 +49,10 @@ void ParticleSystem::render(ShaderProgram& program, const glm::vec3 &eye)
 		return;
 	for (unsigned int i = 0; i < particles.size(); i++)
 	{
-		program.setUniform1f("alpha", particles[i].lifetime / fadeOut);	// 1.5 is the max life time
+		if (fadeOut > 0)
+		{
+			program.setUniform1f("alpha", particles[i].lifetime / fadeOut);	// 1.5 is the max life time
+		}
 		billboard->render(particles[i].position, eye);
 	}
 }
