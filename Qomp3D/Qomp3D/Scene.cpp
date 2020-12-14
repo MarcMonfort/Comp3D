@@ -68,13 +68,13 @@ void Scene::init(int numLevel)
 	{
 		fireworks = SoundManager::instance().loadSound("sounds/fireworks.mp3", FMOD_LOOP_NORMAL);
 		fireworks_channel = SoundManager::instance().playSound(fireworks);
-		fireworks_channel->setVolume(1.f);
+		fireworks_channel->setVolume(0.f);
 	}
 	style = map->getStyle();
 	string theme = themes[style];
 	music = SoundManager::instance().loadSound(theme, FMOD_LOOP_NORMAL);
 	channel = SoundManager::instance().playSound(music);
-	channel->setVolume(1.f);
+	channel->setVolume(0.f);
 	
 
 	// Init Camera. Depends on the level. Maybe use a map->getStartPosition()...
@@ -194,24 +194,29 @@ void Scene::update(int deltaTime)
 		firstUpdate = false;
 	}
 
-	if (fadeIn || fadeOut)
-	{
+	if (fadeIn) {
 		fadeTime += deltaTime;
+		channel->setVolume(fadeTime / totalFadeTime);
+		if (lastLevel) fireworks_channel->setVolume(fadeTime / totalFadeTime);
 
 		if (fadeTime >= totalFadeTime) {
-			if (fadeIn)
-			{
-				fadeIn = false;
-				fadeTime = 0;
-			}
-			else if (fadeOut)
-			{
-				channel->setVolume(0.f);
-				PlayGameState::instance().finalBlockTaken();
-			}
+			fadeIn = false;
+			fadeTime = 0;
+			channel->setVolume(1.0f);
+			if (lastLevel) fireworks_channel->setVolume(1.0f);
 		}
 	}
+	else if (fadeOut) {
+		fadeTime += deltaTime;
+		channel->setVolume(1.0f - fadeTime / totalFadeTime);
+		if (lastLevel) fireworks_channel->setVolume(1.0f - fadeTime / totalFadeTime);
 
+		if (fadeTime >= totalFadeTime) {
+			channel->setVolume(0.f);
+			if (lastLevel) fireworks_channel->setVolume(0.0f);
+			PlayGameState::instance().finalBlockTaken();
+		}
+	}
 	
 	if (!fadeIn && !fadeOut || lastLevel)
 	{
