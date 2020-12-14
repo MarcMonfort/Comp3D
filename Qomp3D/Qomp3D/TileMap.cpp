@@ -189,6 +189,11 @@ bool TileMap::loadLevel(const string& levelFile, ShaderProgram& program)
 					map[j * mapSize.x + i] = ' ';
 					break;
 
+				case('$'):
+					checkpointPlayer = glm::vec3(i, j, 0);
+					map[j * mapSize.x + i] = ' ';
+					break;
+
 				case('v'): {		// easy vertical wall
 					Wall wall;
 					wall.position = glm::vec2(i, j);
