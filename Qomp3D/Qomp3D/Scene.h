@@ -131,6 +131,8 @@ private:
 
 	float victoryTime;
 
+	float maxMusicVolume;
+
 };
 
 

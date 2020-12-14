@@ -75,6 +75,11 @@ void Scene::init(int numLevel)
 	music = SoundManager::instance().loadSound(theme, FMOD_LOOP_NORMAL);
 	channel = SoundManager::instance().playSound(music);
 	channel->setVolume(0.f);
+
+	if (lastLevel)
+		maxMusicVolume = 0.8f;
+	else
+		maxMusicVolume = 0.5f;
 	
 
 	// Init Camera. Depends on the level. Maybe use a map->getStartPosition()...
@@ -196,19 +201,19 @@ void Scene::update(int deltaTime)
 
 	if (fadeIn) {
 		fadeTime += deltaTime;
-		channel->setVolume(fadeTime / totalFadeTime);
+		channel->setVolume((fadeTime / totalFadeTime)*maxMusicVolume);
 		if (lastLevel) fireworks_channel->setVolume(fadeTime / totalFadeTime);
 
 		if (fadeTime >= totalFadeTime) {
 			fadeIn = false;
 			fadeTime = 0;
-			channel->setVolume(1.0f);
-			if (lastLevel) fireworks_channel->setVolume(1.0f);
+			channel->setVolume(maxMusicVolume);
+			if (lastLevel) fireworks_channel->setVolume(maxMusicVolume);
 		}
 	}
 	else if (fadeOut) {
 		fadeTime += deltaTime;
-		channel->setVolume(1.0f - fadeTime / totalFadeTime);
+		channel->setVolume(maxMusicVolume*(1.0f - fadeTime / totalFadeTime));
 		if (lastLevel) fireworks_channel->setVolume(1.0f - fadeTime / totalFadeTime);
 
 		if (fadeTime >= totalFadeTime) {
