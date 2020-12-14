@@ -172,6 +172,8 @@ void Scene::init(int numLevel)
 
 	rotation = 0.f;
 	victoryTime = 0.f;
+
+	escape = false;
 }
 
 void Scene::update(int deltaTime)
@@ -214,12 +216,20 @@ void Scene::update(int deltaTime)
 	else if (fadeOut) {
 		fadeTime += deltaTime;
 		channel->setVolume(maxMusicVolume*(1.0f - fadeTime / totalFadeTime));
+		player->setLineVolume(maxMusicVolume * (1.0f - fadeTime / totalFadeTime));
 		if (lastLevel) fireworks_channel->setVolume(1.0f - fadeTime / totalFadeTime);
 
 		if (fadeTime >= totalFadeTime) {
 			channel->setVolume(0.f);
-			if (lastLevel) fireworks_channel->setVolume(0.0f);
-			PlayGameState::instance().finalBlockTaken();
+			player->setLineVolume(0.f);
+
+			if (lastLevel)
+				fireworks_channel->setVolume(0.0f);
+
+			if (escape)
+				Game::instance().goBackToMenu();
+			else
+				PlayGameState::instance().finalBlockTaken();
 		}
 	}
 	
@@ -527,6 +537,10 @@ void Scene::setFade(bool b) {
 	fadeOut = b;
 }
 
+
+void Scene::setEscape(bool b) {
+	escape = b;
+}
 
 
 void Scene::initShaders()

@@ -32,10 +32,15 @@ void PlayGameState::render()
 void PlayGameState::keyPressed(int key)
 {
 	if (key == 27) // Escape code
-		Game::instance().goBackToMenu();
-	if (key == 'n')
-		//finalBlockTaken();
+	{
+		//Game::instance().goBackToMenu();
 		scene->setFade(true);
+		scene->setEscape(true);
+	}
+	if (key == 'n')
+	{
+		scene->setFade(true);
+	}
 	if (key == 'g' || key == 'G')
 	{
 		bGodMode = !bGodMode;

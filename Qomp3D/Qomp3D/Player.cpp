@@ -574,3 +574,7 @@ void Player::setDead(bool b)
 		}
 	}
 }
+
+void Player::setLineVolume(float lv) {
+	line_channel->setVolume(lv);
+}

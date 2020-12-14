@@ -41,6 +41,7 @@ public:
 	void reshape(int width, int height);
 
 	void setFade(bool b);
+	void setEscape(bool b);
 
 private:
 	void initShaders();
@@ -132,6 +133,8 @@ private:
 	float victoryTime;
 
 	float maxMusicVolume;
+
+	bool escape;
 
 };
 

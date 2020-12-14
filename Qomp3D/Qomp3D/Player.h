@@ -36,6 +36,8 @@ public:
 	void keyPressed(int key);
 	void setDead(bool b);
 
+	void setLineVolume(float lv);
+
 private:
 	bool collideWall(Wall* wall);
 	bool collideBallSpike(BallSpike* blockSpike);
