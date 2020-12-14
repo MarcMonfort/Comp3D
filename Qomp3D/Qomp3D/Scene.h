@@ -108,9 +108,9 @@ private:
 	vector<string> themes{
 		"sounds/main_theme.mp3",	// original
 		"sounds/underwater.mp3",	// water
-		"sounds/theme3.mp3",		// box
+		"sounds/factory.mp3",		// box
 		"sounds/mario.mp3",			// mario
-		"sounds/minecraft.mp3"		// minecraft
+		"sounds/underground.mp3"	// minecraft
 	};
 
 	float totalFadeTime;
