@@ -145,7 +145,10 @@ void Player::update(int deltaTime, vector<Wall*>* walls, vector<BallSpike*>* bal
 					velocity.x = -velocity.x;
 					timeRotate = 200;
 					timeScale = 200;
-					eScaleDir = LEFT;
+					if (velocity.x > 0)
+						eScaleDir = LEFT;
+					else
+						eScaleDir = RIGHT;
 					channel = SoundManager::instance().playSound(wall_sound);
 				}
 		}
@@ -209,7 +212,10 @@ void Player::update(int deltaTime, vector<Wall*>* walls, vector<BallSpike*>* bal
 					velocity.y = -velocity.y;
 					timeRotate = 200;
 					timeScale = 200;
-					eScaleDir = DOWN;
+					if (velocity.y > 0)
+						eScaleDir = UP;
+					else
+						eScaleDir = DOWN;
 					channel = SoundManager::instance().playSound(wall_sound);
 				}
 		}
@@ -301,17 +307,30 @@ void Player::render(ShaderProgram& program, const glm::vec3& eye, float rotation
 
 		if (timeScale > 0)
 		{
-			if (eScaleDir == UP || eScaleDir == DOWN)
+			if (eScaleDir == DOWN)
 			{
-				modelMatrix = glm::translate(modelMatrix, model->getCenter());
+				modelMatrix = glm::translate(modelMatrix, glm::vec3(model->getCenter().x, -size.y-(timeScale*0.0005), 0));
 				modelMatrix = glm::scale(modelMatrix, glm::vec3(1.25, 0.8, 1));
-				modelMatrix = glm::translate(modelMatrix, -model->getCenter());
+				modelMatrix = glm::translate(modelMatrix, glm::vec3(-model->getCenter().x, size.y,0));
+			}
+			else if (eScaleDir == UP)
+			{
+				modelMatrix = glm::translate(modelMatrix, glm::vec3(model->getCenter().x, timeScale*0.0005, 0));
+				modelMatrix = glm::scale(modelMatrix, glm::vec3(1.25, 0.8, 1));
+				modelMatrix = glm::translate(modelMatrix, glm::vec3(-model->getCenter().x, 0, 0));
+			}
+			else if (eScaleDir == LEFT)
+			{
+				modelMatrix = glm::translate(modelMatrix, glm::vec3(-timeScale * 0.0005, model->getCenter().y, 0));
+				modelMatrix = glm::scale(modelMatrix, glm::vec3(0.8, 1.25, 1));
+				modelMatrix = glm::translate(modelMatrix, glm::vec3(0, -model->getCenter().y, 0));
 			}
 			else
 			{
-				modelMatrix = glm::translate(modelMatrix, model->getCenter());
+				modelMatrix = glm::translate(modelMatrix, glm::vec3(size.x+ timeScale * 0.0005, model->getCenter().y, 0));
 				modelMatrix = glm::scale(modelMatrix, glm::vec3(0.8, 1.25, 1));
-				modelMatrix = glm::translate(modelMatrix, -model->getCenter());
+				modelMatrix = glm::translate(modelMatrix, glm::vec3(-size.x, -model->getCenter().y, 0));
+
 			}
 		}
 
@@ -395,11 +414,25 @@ void Player::keyPressed(int key)
 
 		channel = SoundManager::instance().playSound(player_sound);
 	}
-	/*else if (key == 'd')
+	/*else if (key == 's')
 	{
-		bDead = true;
-		numDeadRounds = 1;
-		timeDead = 5000;
+		timeScale = 1000;
+		eScaleDir = DOWN;
+	}
+	else if (key == 'w')
+	{
+		timeScale = 1000;
+		eScaleDir = UP;
+	}
+	else if (key == 'a')
+	{
+		timeScale = 1000;
+		eScaleDir = LEFT;
+	}
+	else if (key == 'f')
+	{
+		timeScale = 1000;
+		eScaleDir = RIGHT;
 	}*/
 }
 

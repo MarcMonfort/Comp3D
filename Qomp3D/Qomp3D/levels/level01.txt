@@ -6,13 +6,13 @@ TILEMAP
 5 6 0                           -- Player First CheckPoint
 0                               -- Style (0 = original, 1 = water, 2 = box, 3 = mario, 4 = minecraft)
 11111111111111111111111111111111111110000000000000000000000000000000000
-    sssss                         111                                 0
+    sssss   $                     111                                 0
       f                            11                                 0
                              k     11                                 0
    u                                1                                 0
-        h       o                   1                                 0
+        h                           1                                 0
                                     1                                 0
- |                v                 1                                 0
+ |               $v                 1                                 0
                                     1                                 0
          xxx           xxx          1                                 0
          xcx           xcx          1                                 0
