@@ -69,12 +69,19 @@ void Scene::init(int numLevel)
 		fireworks = SoundManager::instance().loadSound("sounds/fireworks.mp3", FMOD_LOOP_NORMAL);
 		fireworks_channel = SoundManager::instance().playSound(fireworks);
 		fireworks_channel->setVolume(0.f);
+
+		music = SoundManager::instance().loadSound("sounds/ending.mp3", FMOD_DEFAULT);
+		channel = SoundManager::instance().playSound(music);
+		channel->setVolume(0.f);
 	}
-	style = map->getStyle();
-	string theme = themes[style];
-	music = SoundManager::instance().loadSound(theme, FMOD_LOOP_NORMAL);
-	channel = SoundManager::instance().playSound(music);
-	channel->setVolume(0.f);
+	else {
+		style = map->getStyle();
+		string theme = themes[style];
+		music = SoundManager::instance().loadSound(theme, FMOD_LOOP_NORMAL);
+		channel = SoundManager::instance().playSound(music);
+		channel->setVolume(0.f);
+	}
+	
 
 	if (lastLevel)
 		maxMusicVolume = 0.8f;
@@ -210,7 +217,7 @@ void Scene::update(int deltaTime)
 			fadeIn = false;
 			fadeTime = 0;
 			channel->setVolume(maxMusicVolume);
-			if (lastLevel) fireworks_channel->setVolume(maxMusicVolume);
+			if (lastLevel) fireworks_channel->setVolume(1.0f);
 		}
 	}
 	else if (fadeOut) {
@@ -347,7 +354,7 @@ void Scene::update(int deltaTime)
 			rotation -= 2 * PI;
 
 		victoryTime += deltaTime;
-		if (victoryTime > 10500)
+		if (victoryTime > 21250)
 			fadeOut = true;
 	}
 }
