@@ -102,12 +102,15 @@ private:
 	FMOD::Sound* music;
 	FMOD::Channel* channel;
 
+	FMOD::Sound* fireworks;
+	FMOD::Channel* fireworks_channel;
+
 	vector<string> themes{
-		"sounds/main_theme.mp3",
-		"sounds/minecraft.mp3",
-		"sounds/theme3.mp3",
-		"sounds/theme4.mp3",
-		"sounds/theme5.mp3"
+		"sounds/main_theme.mp3",	// original
+		"sounds/underwater.mp3",	// water
+		"sounds/theme3.mp3",		// box
+		"sounds/mario.mp3",			// mario
+		"sounds/minecraft.mp3"		// minecraft
 	};
 
 	float totalFadeTime;

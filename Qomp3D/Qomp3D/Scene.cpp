@@ -66,15 +66,16 @@ void Scene::init(int numLevel)
 	//Init Music
 	if (lastLevel)
 	{
-		music = SoundManager::instance().loadSound("sounds/fireworks.mp3", FMOD_LOOP_NORMAL);
+		fireworks = SoundManager::instance().loadSound("sounds/fireworks.mp3", FMOD_LOOP_NORMAL);
+		fireworks_channel = SoundManager::instance().playSound(fireworks);
+		fireworks_channel->setVolume(1.f);
 	}
-	else {
-		style = map->getStyle();
-		string theme = themes[style];
-		music = SoundManager::instance().loadSound(theme, FMOD_LOOP_NORMAL);
-	}
+	style = map->getStyle();
+	string theme = themes[style];
+	music = SoundManager::instance().loadSound(theme, FMOD_LOOP_NORMAL);
 	channel = SoundManager::instance().playSound(music);
 	channel->setVolume(1.f);
+	
 
 	// Init Camera. Depends on the level. Maybe use a map->getStartPosition()...
 	camera.position = map->getCenterCamera();
