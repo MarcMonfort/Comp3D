@@ -107,7 +107,7 @@ private:
 	FMOD::Channel* fireworks_channel;
 
 	vector<string> themes{
-		"sounds/main_theme.mp3",	// original
+		"sounds/sky.mp3",			// original
 		"sounds/underwater.mp3",	// water
 		"sounds/factory.mp3",		// box
 		"sounds/mario.mp3",			// mario
