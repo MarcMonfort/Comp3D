@@ -58,9 +58,12 @@ void MenuGameState::render()
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE);
 		glDisable(GL_BLEND);
 
+		channel->setVolume(alpha);
+
 		if (fadeTime >= totalFadeTime) {
 			fadeIn = false;
 			fadeTime = 0;
+			channel->setVolume(1.0f);
 		}
 	}
 	else if (fadeOut)
@@ -75,7 +78,11 @@ void MenuGameState::render()
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE);
 		glDisable(GL_BLEND);
 
+		channel->setVolume(1 - alpha);
+
+
 		if (fadeTime >= totalFadeTime) {
+			channel->setVolume(0.f);
 			Game::instance().startGame();
 		}
 	}
