@@ -440,12 +440,12 @@ bool TileMap::treatCollision(int pos, int type)
 				map[doors[i]] = ' ';
 		}
 		channel = SoundManager::instance().playSound(key_sound);
+		channel->setVolume(5.0f);
 		return false;
 	}
 	else if (block == fin)
 	{
 		if (type == 1) {
-			//PlayGameState::instance().finalBlockTaken();
 			PlayGameState::instance().startFade();
 			channel = SoundManager::instance().playSound(checkpoint_sound);
 		}
