@@ -507,9 +507,13 @@ bool Player::collideButton(Button* button)
 		buttonSize = glm::vec3(buttonSize.y, buttonSize.x, buttonSize.z);
 
 	float Bxmin = buttonPos.x;
-	float Bxmax = buttonPos.x + buttonSize.x;
+	if (orientation == 1)
+		Bxmin += 0.5;
+	float Bxmax = Bxmin + buttonSize.x;
 	float Bymin = buttonPos.y;
-	float Bymax = buttonPos.y + buttonSize.y;
+	if (orientation == 0)
+		Bymin += 0.5;
+	float Bymax = Bymin + buttonSize.y;
 
 	float Pxmin = posPlayer.x;
 	float Pxmax = posPlayer.x + size.x;
