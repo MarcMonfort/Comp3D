@@ -256,7 +256,7 @@ void Player::update(int deltaTime, vector<Wall*>* walls, vector<BallSpike*>* bal
 			if (lastVelocity == 0) {
 				lastVelocity = velocity.y;
 				line_channel = SoundManager::instance().playSound(line_sound);
-				line_channel->setVolume(2.0f);
+				line_channel->setVolume(1.5f);
 			}
 			velocity.y = 0;
 		}
@@ -264,7 +264,7 @@ void Player::update(int deltaTime, vector<Wall*>* walls, vector<BallSpike*>* bal
 			if (lastVelocity == 0) {
 				lastVelocity = velocity.x;
 				line_channel = SoundManager::instance().playSound(line_sound);
-				line_channel->setVolume(2.0f);
+				line_channel->setVolume(1.5f);
 			}
 			velocity.x = 0;
 		}
