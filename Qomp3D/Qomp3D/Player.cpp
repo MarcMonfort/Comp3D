@@ -580,5 +580,8 @@ void Player::setDead(bool b)
 }
 
 void Player::setLineVolume(float lv) {
-	line_channel->setVolume(lv);
+	if (lv == 0.f)
+		line_channel->stop();
+	else
+		line_channel->setVolume(lv);
 }

@@ -82,7 +82,7 @@ void MenuGameState::render()
 
 
 		if (fadeTime >= totalFadeTime) {
-			channel->setVolume(0.f);
+			channel->stop();
 			Game::instance().startGame();
 		}
 	}

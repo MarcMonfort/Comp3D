@@ -220,11 +220,11 @@ void Scene::update(int deltaTime)
 		if (lastLevel) fireworks_channel->setVolume(1.0f - fadeTime / totalFadeTime);
 
 		if (fadeTime >= totalFadeTime) {
-			channel->setVolume(0.f);
+			channel->stop();
 			player->setLineVolume(0.f);
 
 			if (lastLevel)
-				fireworks_channel->setVolume(0.0f);
+				fireworks_channel->stop();
 
 			if (escape)
 				Game::instance().goBackToMenu();
