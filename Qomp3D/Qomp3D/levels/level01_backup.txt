@@ -4,32 +4,22 @@ TILEMAP
 10 -7.5 18.1                    -- Camera Center
 17 14                           -- Camera Movement
 5 6 0                           -- Player First CheckPoint
-10                              -- Number of models
-1 models/cube10.obj             -- Model for basic block
-f models/cube10_test.obj        -- Model for final block
-k models/key.obj                -- Model for keys
-d models/door.obj               -- Model for doors
-l models/hline3.obj             -- Model for horizontal lines
-m models/vline3.obj             -- Model for vertical lines
-s models/template_spike.obj     -- Model for spike
-o models/test.obj         -- Model for ball spike
-c models/checkpoint.obj         -- Model for checkpoint
-C models/checkpoint2.obj        -- Model for checkpoint 2
+0                               -- Style (0 = original, 1 = water, 2 = box, 3 = mario, 4 = minecraft)
 11111111111111111111111111111111111110000000000000000000000000000000000
-                                  111                                 0
-                                   11                                 0
-         o                   k     11                                 0
+    sssss   $                     111                                 0
+      f                            11                                 0
+                             k     11                                 0
+   u                                1                                 0
+        h                           1                                 0
                                     1                                 0
-                                    1                                 0
-                                    1                                 0
- |                v                 1                                 0
+ |               $v                 1                                 0
                                     1                                 0
          xxx           xxx          1                                 0
          xcx           xcx          1                                 0
          xxx           xxx          1                                 0
-          o                         1                                 0
-                       ssss         1                                 0
-1111111111111111111111dddddddddd111111111111111111111111111111111111111
+                                    1                                 0
+   rrrr                             1                                 0
+11111111111111111111112jjjjqjjjj311111111111111111111111111111111111111
                                     1                                 1
                                     1                                 1
                                     1                                 1

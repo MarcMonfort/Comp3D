@@ -336,7 +336,7 @@ void Scene::update(int deltaTime)
 
 		for (int i = 0; i < walls.size(); ++i)
 		{
-			walls[i]->update(deltaTime, player->getPosition(), player->getSize());
+			walls[i]->update(deltaTime, player->getPosition(), player->getSize(), &switchs);
 		}
 
 		//update BallSpikes

@@ -1,11 +1,10 @@
 TILEMAP
 71 57                           -- Size of tile map in tiles
-20 15                            -- Size of room
+20 15                           -- Size of room
 10 -7.5 18.1                    -- Camera Center
 17 14                           -- Camera Movement
 5 6 0                           -- Player First CheckPoint
-1                              -- Number of models
-1 models/cube10.obj 	    -- Model
+1 models/cube10.obj 	        -- Style (0 = original, 1 = water, 2 = box, 3 = mario, 4 = minecraft)
 11111111111111111111111111111111111111111111111111111111111111111111111
 1                1 1              1 1              1 1                1
 1                1 1              1 1              1 1                1

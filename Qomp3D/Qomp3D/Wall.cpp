@@ -77,7 +77,7 @@ void Wall::init(ShaderProgram& shaderProgram, bool bVertical, Type type, TileMap
 
 }
 
-void Wall::update(int deltaTime, const glm::vec3& posPlayer, const glm::vec3& sizePlayer)
+void Wall::update(int deltaTime, const glm::vec3& posPlayer, const glm::vec3& sizePlayer, vector<Switch*>* switchs)
 {
 	glm::vec2 centerPlayer = glm::vec2(posPlayer.x + sizePlayer.x / 2, posPlayer.y + sizePlayer.y / 2);
 	glm::vec2 centerWall = glm::vec2(position.x + size.x / 2, position.y + size.y / 2);
@@ -139,6 +139,18 @@ void Wall::update(int deltaTime, const glm::vec3& posPlayer, const glm::vec3& si
 				if (state == State::STATIC)
 					velocity = -abs(velocity);
 			}
+			for (int i = 0; i < (*switchs).size(); ++i) {
+				if (collideSwitch((*switchs)[i])) {
+					float switchPos = (*switchs)[i]->getPosition().y;
+					if (switchPos < position.y)
+						position.y += ceil(position.y) - position.y;
+					else
+						position.y -= (position.y + size.y) - floor(position.y + size.y);
+					if (state == State::STATIC)
+						velocity = -velocity;
+				}
+			}
+
 			position.y += deltaTime * velocity;
 			if (collidePlayer(posPlayer, sizePlayer)) {
 				position.y -= deltaTime * velocity;
@@ -159,6 +171,19 @@ void Wall::update(int deltaTime, const glm::vec3& posPlayer, const glm::vec3& si
 				if (state == State::STATIC)
 					velocity = abs(velocity);
 			}
+
+			for (int i = 0; i < (*switchs).size(); ++i) {
+				if (collideSwitch((*switchs)[i])) {
+					float switchPos = (*switchs)[i]->getPosition().x;
+					if (switchPos < position.x)
+						position.x += ceil(position.x) - position.x;
+					else
+						position.x -= (position.x + size.x) - floor(position.x + size.x);
+					if (state == State::STATIC)
+						velocity = -velocity;
+				}
+			}
+
 			position.x += deltaTime * velocity;
 			if (collidePlayer(posPlayer, sizePlayer)) {
 				position.x -= deltaTime * velocity;
@@ -261,4 +286,25 @@ bool Wall::collidePlayer(const glm::vec3& posPlayer, const glm::vec3& sizePlayer
 int Wall::getType()
 {
 	return type;
+}
+
+bool Wall::collideSwitch(Switch* switx)
+{
+	if (switx->getActivated()) {
+		glm::vec3 switchPos = switx->getPosition();
+		glm::vec3 switchSize = switx->getSize();
+
+		float Sxmin = switchPos.x;
+		float Sxmax = switchPos.x + switchSize.x;
+		float Symin = switchPos.y;
+		float Symax = switchPos.y + switchSize.y;
+
+		float Pxmin = position.x;
+		float Pxmax = position.x + size.x;
+		float Pymin = position.y;
+		float Pymax = position.y + size.y;
+
+		return ((Sxmin < Pxmax&& Pxmin < Sxmax) && (Symin < Pymax&& Pymin < Symax));
+	}
+	else return false;
 }

@@ -436,6 +436,19 @@ void Player::keyPressed(int key)
 		timeScale = 1000;
 		eScaleDir = RIGHT;
 	}*/
+	else if (key == 'p')
+	{
+		if (velocity.x == 0)
+		{
+			velocity.x = 0.01;
+			velocity.y = 0.01;
+		}
+		else
+		{
+			velocity.x = 0;
+			velocity.y = 0;
+		}
+	}
 }
 
 bool Player::collideWall(Wall* wall)

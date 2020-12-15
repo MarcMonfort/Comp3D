@@ -3,6 +3,8 @@
 
 #include "TileMap.h"
 #include "SoundManager.h"
+#include "Switch.h"
+
 
 class Wall
 {
@@ -16,7 +18,7 @@ public:
 
 
 	void init(ShaderProgram& shaderProgram, bool bVertical, Type type, TileMap* tileMap);
-	void update(int deltaTime, const glm::vec3& posPlayer, const glm::vec3& sizePlayer);
+	void update(int deltaTime, const glm::vec3& posPlayer, const glm::vec3& sizePlayer, vector<Switch*>* switchs);
 	void render(ShaderProgram& program, const glm::vec3& posPlayer);
 
 	void setTileMap(TileMap* tileMap);
@@ -47,6 +49,7 @@ private:
 
 	void followPlayer(const glm::vec2& centerPlayer);
 	bool collidePlayer(const glm::vec3& posPlayer, const glm::vec3& sizePlayer);
+	bool collideSwitch(Switch* switx);
 
 	bool follow = false;
 	float followDist = 0.f;
