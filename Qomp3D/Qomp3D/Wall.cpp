@@ -3,6 +3,18 @@
 #include <glm/gtc/matrix_transform.hpp>
 
 
+Wall::Wall()
+{
+	model = NULL;
+}
+
+Wall::~Wall()
+{
+	if (model != NULL)
+		delete model;
+}
+
+
 void Wall::init(ShaderProgram& shaderProgram, bool bVertical, Type type, TileMap* tileMap)
 {
 	map = tileMap;
@@ -56,7 +68,6 @@ void Wall::init(ShaderProgram& shaderProgram, bool bVertical, Type type, TileMap
 
 	size = model->getSize();
 	velocity = 0.005;
-	//velocity = 0.000;
 
 	this->type = static_cast<int>(type);
 

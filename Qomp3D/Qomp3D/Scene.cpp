@@ -14,46 +14,52 @@
 
 Scene::Scene()
 {
-	//level = NULL;
-	//model = NULL;
-	billboard = NULL;
-	particles = NULL;
 	map = NULL;
 	player = NULL;
+	crown = NULL;
+	channel = NULL;
+	fireworks_channel = NULL;
+	
 }
 
 Scene::~Scene()
 {
-	/*if (level != NULL)
-		delete level;
-	if (model != NULL)
-		delete model;*/
-	if (billboard != NULL)
-		delete billboard;
-	if (particles != NULL)
-		delete particles;
+	if (crown != NULL)
+		delete map;
 	if (map != NULL)
 		delete map;
 	if (player != NULL)
 		delete player;
+	for (Wall* obj : walls)
+	{
+		delete obj;
+	}
+	for (BallSpike* obj : ballSpikes)
+	{
+		delete obj;
+	}
+	for (Button* obj : buttons)
+	{
+		delete obj;
+	}
+	for (Switch* obj : switchs)
+	{
+		delete obj;
+	}
+	if (channel != NULL)
+	{
+		channel->stop();
+	}
+	if (fireworks_channel != NULL)
+	{
+		channel->stop();
+	}
 }
 
 
 void Scene::init(int numLevel)
 {
 	initShaders();
-	//level = Level::createLevel(glm::vec3(16, 4, 32), texProgram, "images/floor.png", "images/wall.png");
-	//model = new AssimpModel();
-	//model->loadFromFile("models/cube10_test.obj", texProgram);
-	billboard = Billboard::createBillboard(glm::vec2(1.f, 1.f), texProgram, "images/mushroom.png");
-	billboard->setType(BILLBOARD_Y_AXIS);
-
-	// Initialize particle system
-	ParticleSystem::Particle particle;
-	particle.lifetime = 1e10f;
-	particles = new ParticleSystem();
-	particles->init(glm::vec2(0.5f, 0.5f), texProgram, "images/particle.png", 2.f);
-	glBlendFunc(GL_SRC_ALPHA, GL_ONE);
 
 	// Initialize TileMap
 	string pathLevel = "levels/level0" + to_string(numLevel) + ".txt";
@@ -89,7 +95,7 @@ void Scene::init(int numLevel)
 		maxMusicVolume = 0.5f;
 	
 
-	// Init Camera. Depends on the level. Maybe use a map->getStartPosition()...
+	// Init Camera.
 	camera.position = map->getCenterCamera();
 	camera.movement = map->getMovementCamera();
 
@@ -97,7 +103,6 @@ void Scene::init(int numLevel)
 	player = new Player();
 	player->init(texProgram, map);
 	player->setPosition(map->getCheckPointPlayer());
-	//player->setTileMap(map);
 
 	// Init CheckPoint (player/camera)
 	checkpoint.posCamera = map->getCenterCamera();
@@ -110,24 +115,22 @@ void Scene::init(int numLevel)
 		Wall* wall = new Wall();
 		wall->init(texProgram, pos_walls[i].bVertical, static_cast<Wall::Type>(pos_walls[i].type), map);
 		wall->setPosition(glm::vec3(pos_walls[i].position,0));
-		//wall->setTileMap(map);
 		walls.push_back(wall);
 	}
 
 	// Init BallSpikes
 	vector<pair<bool, glm::vec2>> pos_ballSpikes = map->getBallSpikes();
-	for (int i = 0; i < pos_ballSpikes.size(); ++i)  // maybe bolean to know if there is any...?
+	for (int i = 0; i < pos_ballSpikes.size(); ++i)
 	{
 		BallSpike* ballSpike = new BallSpike();
 		ballSpike->init(texProgram, pos_ballSpikes[i].first, map);
 		ballSpike->setPosition(glm::vec3(pos_ballSpikes[i].second, 0));
-		//ballSpike->setTileMap(map);
 		ballSpikes.push_back(ballSpike);
 	}
 
 	// Init Buttons
 	vector<tuple<bool, glm::vec2, int>> pos_buttons = map->getButtons();
-	for (int i = 0; i < pos_buttons.size(); ++i)  // maybe bolean to know if there is any...?
+	for (int i = 0; i < pos_buttons.size(); ++i)
 	{
 		Button* button = new Button();
 		button->init(texProgram, get<0>(pos_buttons[i]));
@@ -139,12 +142,11 @@ void Scene::init(int numLevel)
 
 	// Init Switchs
 	vector<pair<bool, glm::vec2>> pos_switchs = map->getSwitchs();
-	for (int i = 0; i < pos_switchs.size(); ++i)  // maybe bolean to know if there is any...?
+	for (int i = 0; i < pos_switchs.size(); ++i)
 	{
 		Switch* switx = new Switch();
 		switx->init(texProgram, pos_switchs[i].first, map);
 		switx->setPosition(glm::vec3(pos_switchs[i].second, 0));
-		//switx->setTileMap(map);
 		switchs.push_back(switx);
 	}
 
@@ -255,10 +257,6 @@ void Scene::update(int deltaTime)
 			timeDead = 1000;
 			player->setDead(true);
 			map->setPlayerDead(false);
-
-			/*player->setPosition(checkpoint.posPlayer);
-			camera.position = checkpoint.posCamera;
-			eCamMove = CamMove::STATIC;*/
 		}
 
 		glm::vec3 posPlayer = player->getPosition();
@@ -446,9 +444,6 @@ void Scene::render()
 
 	if (PlayGameState::instance().getGodMode()) {
 		texProgram.setUniformMatrix4f("projection", glm::ortho(0.f, float(SCREEN_WIDTH - 1), float(SCREEN_HEIGHT - 1), 0.f));
-		//texProgram.setUniform4f("color", 1.0f, 1.0f, 1.0f, 1.0f);
-		modelMatrix = glm::mat4(1.0f);
-		//texProgram.setUniformMatrix4f("model", modelMatrix);
 		texProgram.setUniformMatrix4f("view", glm::mat4(1.0f));
 		texProgram.setUniform2f("texCoordDispl", 0.f, 0.f);
 		texProgram.setUniform1b("bLighting", false);
@@ -498,37 +493,10 @@ void Scene::render()
 
 void Scene::keyPressed(int key)
 {
-	/*if (key == 'd' && eCamMove == CamMove::STATIC)
-	{
-		timeCamMove = 17;
-		eCamMove = CamMove::RIGHT;
-	}
-	if (key == 's' && eCamMove == CamMove::STATIC)
-	{
-		timeCamMove = 14;
-		eCamMove = CamMove::DOWN;
-	}
-	if (key == 'a' && eCamMove == CamMove::STATIC)
-	{
-		timeCamMove = 17;
-		eCamMove = CamMove::LEFT;
-	}
-	if (key == 'w' && eCamMove == CamMove::STATIC)
-	{
-		timeCamMove = 14;
-		eCamMove = CamMove::UP;
-	}*/
-	if (key == 'd')
-	{
-		bDead = true;
-		timeDead = 5000;
-		player->setDead(true);
-	}
-
 	player->keyPressed(key);
 }
 
-
+// Not used
 void Scene::reshape(int width, int height)
 {
 	float FOV = glm::radians(90.f);

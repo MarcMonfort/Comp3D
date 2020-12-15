@@ -6,6 +6,31 @@
 #define PI 3.14159f
 
 
+Player::Player()
+{
+	model = NULL;
+	particles = NULL;
+	particles_dead = NULL;
+	channel = NULL;
+	line_channel = NULL;
+
+}
+
+Player::~Player()
+{
+	if (model != NULL)
+		delete model;
+	if (particles != NULL)
+		delete particles;
+	if (particles_dead != NULL)
+		delete particles_dead;
+	if (channel != NULL)
+		channel->stop();
+	if (line_channel != NULL)
+		line_channel->stop();
+}
+
+
 void Player::init(ShaderProgram& shaderProgram, TileMap* tileMap)
 {
 	// Init Model and Particles
@@ -49,9 +74,6 @@ void Player::init(ShaderProgram& shaderProgram, TileMap* tileMap)
 	// Init Player
 	velocity.x = 0.01f;
 	velocity.y = 0.01f;
-
-	/*velocity.x = 0.0f;
-	velocity.y = 0.0f;*/
 
 	// Init Sound
 	wall_sound = SoundManager::instance().loadSound("sounds/wall3.mp3", FMOD_DEFAULT);
@@ -415,39 +437,6 @@ void Player::keyPressed(int key)
 		timeRotate = 200.f;
 
 		channel = SoundManager::instance().playSound(player_sound);
-	}
-	/*else if (key == 's')
-	{
-		timeScale = 1000;
-		eScaleDir = DOWN;
-	}
-	else if (key == 'w')
-	{
-		timeScale = 1000;
-		eScaleDir = UP;
-	}
-	else if (key == 'a')
-	{
-		timeScale = 1000;
-		eScaleDir = LEFT;
-	}
-	else if (key == 'f')
-	{
-		timeScale = 1000;
-		eScaleDir = RIGHT;
-	}*/
-	else if (key == 'p')
-	{
-		if (velocity.x == 0)
-		{
-			velocity.x = 0.01;
-			velocity.y = 0.01;
-		}
-		else
-		{
-			velocity.x = 0;
-			velocity.y = 0;
-		}
 	}
 }
 

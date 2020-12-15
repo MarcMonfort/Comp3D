@@ -37,13 +37,19 @@ void PlayGameState::keyPressed(int key)
 		scene->setFade(true);
 		scene->setEscape(true);
 	}
-	if (key == 'n')
+	else if (key == 'n')
 	{
 		scene->setFade(true);
 	}
-	if (key == 'g' || key == 'G')
+	else if (key == 'g' || key == 'G')
 	{
 		bGodMode = !bGodMode;
+	}
+	else if (key == '1' || key == '2' || key == '3' || key == '4' || key == '5')
+	{
+		scene->setFade(true);
+		setLevel = true;
+		numSetLevel = key - '0';
 	}
 	else {
 		scene->keyPressed(key);
@@ -64,7 +70,16 @@ void PlayGameState::nextLevel()
 {
 	//animation->restart();
 	nextlevel = false;
-	++currentLevel;
+
+	if (setLevel)
+	{
+		currentLevel = numSetLevel;
+		setLevel = false;
+	}
+	else
+	{
+		++currentLevel;
+	}
 
 	if (currentLevel <= NUM_LEVELS + 1) {
 		delete scene;

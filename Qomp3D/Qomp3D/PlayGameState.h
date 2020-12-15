@@ -32,6 +32,8 @@ private:
 	Scene* scene;
 	int currentLevel = 0;
 	bool nextlevel = false;
+	bool setLevel = false;
+	int numSetLevel;
 
 	void nextLevel();
 

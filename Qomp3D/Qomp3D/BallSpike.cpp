@@ -3,6 +3,19 @@
 #include <glm/gtc/matrix_transform.hpp>
 
 
+
+BallSpike::BallSpike()
+{
+	model = NULL;
+}
+
+BallSpike::~BallSpike()
+{
+	if (model != NULL)
+		delete model;
+}
+
+
 void BallSpike::init(ShaderProgram& shaderProgram, bool bVertical, TileMap* tileMap)
 {
 	map = tileMap;

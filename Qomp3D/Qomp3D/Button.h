@@ -7,6 +7,10 @@
 class Button
 {
 public:
+
+	Button();
+	~Button();
+
 	void init(ShaderProgram& shaderProgram, bool press);
 	void update(int deltaTime);
 	void render(ShaderProgram& program);

@@ -3,6 +3,21 @@
 #include <glm/gtc/matrix_transform.hpp>
 
 
+Switch::Switch()
+{
+	model_yes = NULL;
+	model_no = NULL;
+}
+
+Switch::~Switch()
+{
+	if (model_yes != NULL)
+		delete model_yes;
+	if (model_no != NULL)
+		delete model_no;
+}
+
+
 void Switch::init(ShaderProgram& shaderProgram, bool act, TileMap* tileMap)
 {
 	map = tileMap;

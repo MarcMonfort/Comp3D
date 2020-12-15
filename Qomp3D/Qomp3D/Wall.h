@@ -9,6 +9,10 @@
 class Wall
 {
 public:
+
+	Wall();
+	~Wall();
+
 	enum class Type
 	{
 		EASY = 0,

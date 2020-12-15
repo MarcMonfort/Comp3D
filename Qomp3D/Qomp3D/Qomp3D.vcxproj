@@ -18,7 +18,6 @@
     <ClInclude Include="Button.h" />
     <ClInclude Include="Game.h" />
     <ClInclude Include="GameState.h" />
-    <ClInclude Include="Level.h" />
     <ClInclude Include="MenuGameState.h" />
     <ClInclude Include="Mesh.h" />
     <ClInclude Include="ParticleSystem.h" />
@@ -41,7 +40,6 @@
     <ClCompile Include="Button.cpp" />
     <ClCompile Include="Game.cpp" />
     <ClCompile Include="GameState.cpp" />
-    <ClCompile Include="Level.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="MenuGameState.cpp" />
     <ClCompile Include="ParticleSystem.cpp" />

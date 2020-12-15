@@ -4,10 +4,6 @@
 
 #include <glm/glm.hpp>
 #include "ShaderProgram.h"
-#include "Level.h"
-#include "AssimpModel.h"
-#include "Billboard.h"
-#include "ParticleSystem.h"
 #include "TileMap.h"
 #include "Player.h"
 #include "Wall.h"
@@ -47,10 +43,6 @@ private:
 	void initShaders();
 
 private:
-	Level *level;
-	AssimpModel *model;
-	Billboard *billboard;
-	ParticleSystem *particles;
 	ShaderProgram texProgram;
 	float currentTime;
 	glm::mat4 projection;

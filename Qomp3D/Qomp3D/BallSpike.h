@@ -7,6 +7,10 @@
 class BallSpike
 {
 public:
+
+	BallSpike();
+	~BallSpike();
+
 	enum class Type
 	{
 		EASY = 0,

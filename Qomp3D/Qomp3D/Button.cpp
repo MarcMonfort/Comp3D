@@ -4,6 +4,22 @@
 
 # define M_PI           3.14159265358979323846  /* pi */
 
+
+Button::Button()
+{
+	model_pressed = NULL;
+	model_not_pressed = NULL;
+}
+
+Button::~Button()
+{
+	if (model_pressed != NULL)
+		delete model_pressed;
+	if (model_not_pressed != NULL)
+		delete model_not_pressed;
+}
+
+
 void Button::init(ShaderProgram& shaderProgram, bool press)
 {
 	model_pressed = new AssimpModel();
