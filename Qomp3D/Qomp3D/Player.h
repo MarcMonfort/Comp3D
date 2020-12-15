@@ -65,8 +65,8 @@ private:
 	float lastVelocity = 0;
 
 	bool bSpace = false;
-	int timeRotate;
-	int timeScale;
+	int timeRotate = 0;
+	int timeScale = 0;
 	orientation eScaleDir;
 
 
@@ -83,7 +83,6 @@ private:
 
 	bool bDead = false;
 	int numDeadRounds = 0;
-	int timeDead;
 };
 
 #endif

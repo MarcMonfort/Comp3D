@@ -106,8 +106,8 @@ private:
 		"sounds/underground.mp3"	// minecraft
 	};
 
-	float totalFadeTime;
-	float fadeTime;
+	float totalFadeTime = 0;
+	float fadeTime = 0;
 
 	bool fadeIn;
 	bool fadeOut;
@@ -118,15 +118,15 @@ private:
 	AssimpModel* crown;
 
 	bool bDead = false;
-	int timeDead;
+	int timeDead = 0;
 
-	float rotation;
+	float rotation = 0;
 
-	float victoryTime;
+	float victoryTime = 0;
 
-	float maxMusicVolume;
+	float maxMusicVolume = 0;
 
-	bool escape;
+	bool escape = 0;
 
 };
 
