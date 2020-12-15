@@ -426,21 +426,24 @@ bool TileMap::treatCollision(int pos, int type)
 	}
 	else if (block == key)
 	{
-		map[pos] = ' ';
-		for (int i = 0; i < doors.size(); ++i) {
-			if (map[doors[i]] == '2')
-				map[doors[i]] = '4';
-			else if (map[doors[i]] == '3')
-				map[doors[i]] = '5';
-			else if (map[doors[i]] == '6')
-				map[doors[i]] = '(';
-			else if (map[doors[i]] == '9')
-				map[doors[i]] = ')';
-			else
-				map[doors[i]] = ' ';
+		if (type == 1)
+		{
+			map[pos] = ' ';
+			for (int i = 0; i < doors.size(); ++i) {
+				if (map[doors[i]] == '2')
+					map[doors[i]] = '4';
+				else if (map[doors[i]] == '3')
+					map[doors[i]] = '5';
+				else if (map[doors[i]] == '6')
+					map[doors[i]] = '(';
+				else if (map[doors[i]] == '9')
+					map[doors[i]] = ')';
+				else
+					map[doors[i]] = ' ';
+			}
+			channel = SoundManager::instance().playSound(key_sound);
+			channel->setVolume(5.0f);
 		}
-		channel = SoundManager::instance().playSound(key_sound);
-		channel->setVolume(5.0f);
 		return false;
 	}
 	else if (block == fin)
