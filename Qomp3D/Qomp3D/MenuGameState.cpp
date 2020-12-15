@@ -9,7 +9,7 @@ void MenuGameState::init()
 {
 	initShaders();
 
-	spritesheet.loadFromFile("images/menu_background.png", TEXTURE_PIXEL_FORMAT_RGBA);
+	spritesheet.loadFromFile("images/menu_background3.png", TEXTURE_PIXEL_FORMAT_RGBA);
 	background = Sprite::createSprite(glm::ivec2(SCREEN_WIDTH, SCREEN_HEIGHT), glm::vec2(1.f, 1.f), &spritesheet, &texProgram);
 	background->setPosition(glm::vec2(0, 0));
 
