@@ -16,7 +16,7 @@ void Switch::init(ShaderProgram& shaderProgram, bool act, TileMap* tileMap)
 	switch (style)
 	{
 	case 0:
-		model_yes->loadFromFile("models/switch_yes.obj", shaderProgram);
+		model_yes->loadFromFile("models/switch_yes4.obj", shaderProgram);
 		model_no->loadFromFile("models/switch_no.obj", shaderProgram);
 		break;
 	case 1:
