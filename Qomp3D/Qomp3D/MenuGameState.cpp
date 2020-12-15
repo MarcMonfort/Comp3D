@@ -99,10 +99,12 @@ void MenuGameState::keyPressed(int key)
 	}
 	else if (key == 32) // Space code
 	{
-		channel->setVolume(0.f);
-		fadeIn = false;
-		fadeOut = true;
-		fadeTime = 0;
+		if (!fadeOut)
+		{
+			fadeIn = false;
+			fadeOut = true;
+			fadeTime = 0;
+		}
 	}
 }
 
