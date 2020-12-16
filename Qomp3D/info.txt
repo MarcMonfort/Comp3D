@@ -1,4 +1,0 @@
-Nom i cognoms dels integrats del grup:
-- Jordi Cluet
-- Marc Monfort
-
