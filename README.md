@@ -3,12 +3,12 @@
 This project is a 3D remake of the original POMG and QOMP videogames, implemented in C++ via a custome engine. It was developed during the Videogames subject of the Bachelor's Degree in Computer Science of the [Universitat Politècnica de Catalunya](https://www.upc.edu/ca) - [Facultat d'informàtica de Barcelona](https://www.fib.upc.edu/).
 
 
-![Alt Text](./Qomp3D/Qomp3D/images/demo.gif)
+![Demo GIF](./Comp3D/Comp3D/images/demo.gif)
 
 *Gameplay*
 
 ## Installation
-Just download the binary files contained in the .zip from [releases](https://github.com/MarcMonfort/qomp3d/releases) and execute Comp3D.exe.
+Just download [releases.zip](https://github.com/MarcMonfort/Comp3D/releases) and execute Comp3D.exe.
 
 ## Built With
 * [OpenGL 4.5](https://www.opengl.org/) - Used to renderize graphics.
