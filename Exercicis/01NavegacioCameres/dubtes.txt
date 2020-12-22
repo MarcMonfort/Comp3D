@@ -1,3 +1,0 @@
-- Per que es veu la imatge mes gran en les bores (cantonades)?
-- Fer servir lookAt vs Rotate/Translate (Euler) per moure la camera?
-- Com afegir l'angle Roll junt amb Yaw i Pitch?
